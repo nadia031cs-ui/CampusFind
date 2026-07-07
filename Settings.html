@@ -226,20 +226,125 @@ button:hover{
         <button>Save Changes</button>
 
     </form>
-    <form action="">
-        <h2>Change Password</h2>
-        <p>Update your password to keep your account secure.</p>
-        <label for="Current password">Current Password </label>
-        <input type="text" placeholder="Enter Current password">
-        <br>
-        <label for="New password">New password</label>
-        <input type="text" placeholder=" Enter New password">
-        <br>
-        <label for="Confirm New Password">Confirm New Password</label>
-        <input type="text" placeholder="Confirm New Password">
-        <br>
-        <button>Update Password</button>
-    </form>
+  
     </main>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector("form");
+
+    const search = document.querySelector('main input[type="text"]');
+
+    const fullName = document.querySelector('input[placeholder="Enter Your Name"]');
+    const campusId = document.querySelector('input[placeholder="Campus ID"]');
+    const email = document.querySelector('input[type="email"]');
+
+    const department = document.getElementById("Department");
+    const year = document.getElementById("Year");
+    const semester = document.getElementById("Current Semester");
+
+    const inputs = document.querySelectorAll("input, select");
+
+    const savedProfile = JSON.parse(localStorage.getItem("profile"));
+
+    if (savedProfile) {
+
+        fullName.value = savedProfile.name || "";
+        campusId.value = savedProfile.id || "";
+        email.value = savedProfile.email || "";
+        department.value = savedProfile.department || "CSE";
+        semester.value = savedProfile.semester || "Semester 1";
+
+        if (savedProfile.batch) {
+
+            if (savedProfile.batch.includes("1")) year.value = "First Year";
+            else if (savedProfile.batch.includes("2")) year.value = "Second Year";
+            else if (savedProfile.batch.includes("3")) year.value = "Third Year";
+            else if (savedProfile.batch.includes("4")) year.value = "Fourth Year";
+
+        }
+
+    }
+
+    inputs.forEach(function (input) {
+
+        input.addEventListener("focus", function () {
+            input.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+        });
+
+        input.addEventListener("blur", function () {
+            input.style.boxShadow = "none";
+        });
+
+    });
+
+    search.addEventListener("keyup", function () {
+        console.log("Searching:", search.value);
+    });
+
+    form.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (fullName.value.trim() === "") {
+            alert("Please enter your full name.");
+            fullName.focus();
+            return;
+        }
+
+        if (campusId.value.trim() === "") {
+            alert("Please enter your Campus ID.");
+            campusId.focus();
+            return;
+        }
+
+        if (email.value.trim() === "") {
+            alert("Please enter your email address.");
+            email.focus();
+            return;
+        }
+
+        if (!emailPattern.test(email.value.trim())) {
+            alert("Please enter a valid email address.");
+            email.focus();
+            return;
+        }
+
+        const profile = JSON.parse(localStorage.getItem("profile")) || {};
+
+        profile.name = fullName.value.trim();
+        profile.id = campusId.value.trim();
+        profile.email = email.value.trim();
+        profile.department = department.value;
+        profile.semester = semester.value;
+        profile.year = year.value;
+
+        localStorage.setItem("profile", JSON.stringify(profile));
+
+        alert("Settings updated successfully!");
+
+        window.location.href = "profiledashboard.html";
+
+    });
+
+    inputs.forEach(function (input) {
+
+        input.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+                form.requestSubmit();
+
+            }
+
+        });
+
+    });
+
+});
+</script>
 </body>
 </html>
