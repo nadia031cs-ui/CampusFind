@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        body {
+            background: rgb(60, 45, 131);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        form {
+            width: 700px;
+            max-width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+        }
+
+        h2 {
+            color: rgb(60, 45, 131);
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .comment-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: rgb(60, 45, 131);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: rgb(60, 45, 131);
+            box-shadow: 0 0 5px rgba(60, 45, 131, .25);
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: rgb(60, 45, 131);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        button:hover {
+            background: rgb(20, 8, 91);
+        }
+
+        @media(max-width:768px) {
+
+            form {
+                padding: 25px;
+            }
+
+            .form-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <form action="Submit.php">
+
+        <h2>Feedback</h2>
+        <p>We'd love to hear your thoughts and suggestions.</p>
+
+        <div class="form-group">
+            <label for="Name">Name</label>
+            <input type="text" id="Name" placeholder="Enter Your Name" required>
+
+            <label for="Email">Email</label>
+            <input type="email" id="Email" placeholder="Enter Your Email" required>
+        </div>
+
+        <div class="comment-group">
+            <label for="Comments">Comments</label>
+            <textarea id="Comments" placeholder="Enter Your Comments"></textarea>
+        </div>
+
+        <button type="submit">Submit</button>
+
+    </form>
+
+</body>
+
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+
+        body {
+            background-color: rgb(60, 45, 131);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 25px;
+        }
+
+
+        h2 {
+            color: white;
+            margin-bottom: 10px;
+            margin-right: 18px;
+
+        }
+
+
+        form {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            width: 700px;
+        }
+
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            height: 120px;
+            resize: vertical;
+        }
+
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+
+
+
+
+
+
+
+        #image-box {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: gray;
+            cursor: pointer;
+            text-align: center;
+            background-color: rgb(233, 233, 233);
+        }
+
+
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+
+
+        }
+
+        #Cancel {
+            color: rgb(255, 255, 255);
+            background-color: red;
+        }
+
+        #buttons{
+            display: flex;
+            justify-content: space-between;
+            
+        }
+
+
+
+
+
+        @media(max-width:600px) {
+            #form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+    <div>
+        <h2>Post Creation</h2>
+
+
+
+
+        <form action="">
+            <textarea id="textt" rows="5" placeholder="What did you lose or find? "></textarea>
+            <br>
+            <label for="Upload image">Upload image</label>
+            <input id="image-box" type="file" accept="image/*">
+            <br>
+            <label for="Loaction">Location</label>
+            <input type="text" placeholder="Enter Your Loaction">
+            <br>
+            <label for="Date">Date</label>
+            <input type="date" placeholder="Date">
+            <br>
+            <label for="Item Type">Item Type </label>
+            <select id="Item Type">
+                <option value="electronics">Electronics</option>
+                <option value="Documents">Documents</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Books and study materials">Books and study materials</option>
+                <option value="Personal Items">Personal Items</option>
+                <option value="Others">Others</option>
+
+
+
+            </select>
+            <div id="buttons">
+                <button id="post">Post</button>
+                <button id="Cancel">Cancel</button>
+            </div>
+
+        </form>
+</body>
+
+</html>

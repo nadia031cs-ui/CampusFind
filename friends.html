@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        body {
+            background: rgb(60, 45, 131);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 250px;
+            background: rgb(14, 3, 77);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: rgb(20, 8, 91);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            transition: .3s;
+        }
+
+        nav a:hover {
+            background: white;
+            color: black;
+        }
+
+        main {
+            flex: 1;
+            padding: 35px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            padding: 13px 25px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            color: rgb(60, 45, 131);
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .search-bar button:hover {
+            background: rgb(225, 225, 225);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+        }
+
+        h2 {
+            color: rgb(60, 45, 131);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgb(60, 45, 131);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: rgb(245, 245, 245);
+        }
+
+        .action-btn {
+            background: rgb(60, 45, 131);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .action-btn:hover {
+            background: rgb(20, 8, 91);
+        }
+
+        .back {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .back a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .back a:hover {
+            text-decoration: underline;
+        }
+
+        @media(max-width:600px) {
+
+            body {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-bar button {
+                width: 100%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <aside>
+
+        <div class="logo">
+            <img src="cmpLOGO.jpeg" alt="" width="180">
+        </div>
+
+        <nav>
+            <a href="friends.html">Friends</a>
+            <a href="FindFriends.html">Find Friends</a>
+            <a href="Friend_req.html">Friend Requests</a>
+        </nav>
+
+    </aside>
+
+    <main>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Search anything...">
+            <button>Go</button>
+        </div>
+
+        <div class="card">
+
+            <h2>Friends</h2>
+
+            <p>Connect with friends and stay updated together.</p>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Friends</th>
+                        <th>Department</th>
+                        <th>Campus ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="text-align:center;color:#777;padding:40px;">
+                            No friends to display.
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="back">
+            <p>Back to <a href="Home_Feed.html">Home</a></p>
+        </div>
+
+    </main>
+
+</body>
+
+</html>

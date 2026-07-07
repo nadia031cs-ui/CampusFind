@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Feed</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        body {
+            background: rgb(60, 45, 131);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 250px;
+            background: rgb(14, 3, 77);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: rgb(20, 8, 91);
+            padding: 12px;
+            border-radius: 8px;
+            transition: .3s;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            background: white;
+            color: black;
+        }
+
+        #logout button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgb(220, 53, 69);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        #logout button:hover {
+            background: rgb(180, 25, 40);
+        }
+
+        main {
+            flex: 1;
+            padding: 35px;
+        }
+
+        #search {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgb(225, 225, 225);
+            margin-bottom: 25px;
+        }
+
+        form {
+            background: white;
+            height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            padding: 25px;
+        }
+
+        #right h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        #right select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        #filter {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            color: rgb(60, 45, 131);
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        #filter:hover {
+            background: rgb(230, 230, 230);
+        }
+
+        #tips,
+        #loc {
+            margin-top: 35px;
+            color: white;
+        }
+
+        #tips h3,
+        #loc h3 {
+            margin-bottom: 12px;
+        }
+
+        #tips p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: rgb(225, 225, 225);
+        }
+
+        ul {
+            padding-left: 18px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: rgb(225, 225, 225);
+        }
+
+        @media(max-width:600px) {
+            body {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+            }
+
+            main {
+                padding: 20px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <aside>
+
+        <div>
+
+            <div class="logo">
+                CampusFind
+            </div>
+
+            <nav>
+                <a href="Home_Feed.html">Home Feed</a>
+                <a href="Create_Post.html">Post an Item</a>
+                <a href="University_Map.html">University Map</a>
+                <a href="Messages.html">Messages</a>
+                <a href="friends.html">Friends</a>
+                <a href="profiledashboard.html">Profile</a>
+                <a href="Settings.html">Settings</a>
+            </nav>
+
+        </div>
+
+        <div id="logout">
+            <button>Logout</button>
+        </div>
+
+    </aside>
+
+    <main>
+
+        <input id="search" type="text" placeholder="Search Anything">
+
+        <h2>Home Feed</h2>
+
+        <p class="subtitle">
+            See the latest lost and found items posted by our university community.
+        </p>
+
+        <form action="Post">
+
+        </form>
+
+    </main>
+
+    <aside id="right">
+
+        <div>
+
+            <h3>Filter Posts</h3>
+
+            <select>
+                <option>All Categories</option>
+            </select>
+
+            <select>
+                <option>All Locations</option>
+            </select>
+
+            <select>
+                <option>All Status</option>
+            </select>
+
+            <button id="filter">Clear Filters</button>
+
+        </div>
+
+        <div id="tips">
+            <h3>Quick Tips</h3>
+
+            <p>If you found an item, make sure to post it so the owner can find it easily.</p>
+
+            <p>Provide accurate location details to help others locate items quickly.</p>
+        </div>
+
+        <div id="loc">
+
+            <h3>Popular Locations</h3>
+
+            <ul>
+                <li>Library</li>
+                <li>Floor 1</li>
+                <li>Canteen</li>
+                <li>Floor 4</li>
+                <li>Prayer Spot</li>
+            </ul>
+
+        </div>
+
+    </aside>
+
+</body>
+
+</html>

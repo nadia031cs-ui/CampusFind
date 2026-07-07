@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        body {
+            background: rgb(60, 45, 131);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 450px;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .logo img {
+            width: 220px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 8px;
+            font-size: 30px;
+        }
+
+        .subtitle {
+            color: rgb(220, 220, 220);
+            margin-bottom: 30px;
+        }
+
+        form {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgb(60, 45, 131);
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 18px;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: rgb(60, 45, 131);
+            box-shadow: 0 0 5px rgba(60, 45, 131, .25);
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #444;
+        }
+
+        .remember input {
+            width: auto;
+        }
+
+        .options a {
+            color: rgb(60, 45, 131);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .options a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: rgb(60, 45, 131);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        button:hover {
+            background: rgb(20, 8, 91);
+        }
+
+        .signup {
+            margin-top: 25px;
+            color: white;
+        }
+
+        .signup a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .signup a:hover {
+            text-decoration: underline;
+        }
+
+        @media(max-width:600px) {
+
+            .container {
+                width: 100%;
+            }
+
+            form {
+                padding: 25px;
+            }
+
+            .options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="logo">
+            <img src="MU.jpeg" alt="MU Logo">
+        </div>
+
+        <h2>User Panel</h2>
+        <p class="subtitle">Sign in to access your CampusFind account.</p>
+
+        <form action="Signin.php">
+
+            <label>Email</label>
+            <input type="text" placeholder="Enter Your Email" required>
+
+            <label>Password</label>
+            <input type="password" placeholder="Enter Your Password" required>
+
+            <div class="options">
+
+                <div class="remember">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember Me</label>
+                </div>
+
+                <a href="Forget_Password.html">Forgot Password?</a>
+
+            </div>
+
+            <button type="submit">Sign In</button>
+
+        </form>
+
+        <div class="signup">
+            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

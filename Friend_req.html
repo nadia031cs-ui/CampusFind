@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Requests</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        body {
+            background: rgb(60, 45, 131);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 250px;
+            background: rgb(14, 3, 77);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: rgb(20, 8, 91);
+            padding: 12px;
+            border-radius: 8px;
+            transition: .3s;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            background: white;
+            color: black;
+        }
+
+        #logout button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgb(220, 53, 69);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        #logout button:hover {
+            background: rgb(180, 25, 40);
+        }
+
+        main {
+            flex: 1;
+            padding: 35px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgb(225, 225, 225);
+        }
+
+        .request-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgb(220, 220, 220);
+        }
+
+        .user-info h4 {
+            color: rgb(60, 45, 131);
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            color: #666;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .buttons button {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            transition: .3s;
+        }
+
+        .decline {
+            background: rgb(220, 53, 69);
+        }
+
+        .decline:hover {
+            background: rgb(180, 25, 40);
+        }
+
+        .accept {
+            background: rgb(60, 45, 131);
+        }
+
+        .accept:hover {
+            background: rgb(20, 8, 91);
+        }
+
+        @media(max-width:900px) {
+
+            body {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            .request-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .buttons {
+                width: 100%;
+            }
+
+            .buttons button {
+                flex: 1;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <aside>
+
+        <div>
+
+            <div class="logo">
+                <img src="cmpLOGO.jpeg" alt="Logo" width="180">
+            </div>
+
+            <nav>
+                <a href="friends.html">Friends</a>
+                <a href="FindFriends.html">Find Friends</a>
+                <a href="Friend_req.html">Friend Requests</a>
+            </nav>
+
+        </div>
+
+        <div id="logout">
+            <button>Logout</button>
+        </div>
+
+    </aside>
+
+    <main>
+
+        <input class="search-box" type="text" placeholder="Search anything...">
+
+        <div class="header">
+            <h2>Friend Requests</h2>
+            <p>Review and respond to your incoming friend requests.</p>
+        </div>
+
+        <div class="request-card">
+
+            <div class="user-info">
+
+                <div class="avatar"></div>
+
+                <div>
+                    <h4>Sarah Ahmed</h4>
+                    <p>Computer Science Department</p>
+                </div>
+
+            </div>
+
+            <div class="buttons">
+                <button class="decline">Decline</button>
+                <button class="accept">Accept</button>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>
