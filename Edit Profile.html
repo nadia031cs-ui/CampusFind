@@ -225,6 +225,44 @@
                 width: 100%;
             }
         }
+
+        #profilePhoto {
+            padding: 10px;
+            background: white;
+            cursor: pointer;
+        }
+
+        #previewImage {
+            display: block;
+            margin: 15px auto 0;
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid rgb(60, 45, 131);
+            background: #f2f2f2;
+        }
+
+        input[type="file"] {
+            border: none;
+            background: transparent;
+            padding: 0;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: rgb(60, 45, 131);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 15px;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: rgb(20, 8, 91);
+        }
     </style>
 
 </head>
@@ -272,18 +310,29 @@
             <form action="">
 
                 <div class="full">
+                    <label>Profile Picture</label>
+
+                    <input type="file" id="profilePhoto" accept="image/*">
+
+                    <br><br>
+
+                    <img id="previewImage" src="default-profile.png" alt="Profile Preview" width="150" height="150"
+                        style="border-radius:50%; object-fit:cover; border:4px solid rgb(60,45,131);">
+                </div>
+
+                <div class="full">
                     <label>Name</label>
-                    <input type="text" placeholder="Enter Your Name">
+                    <input type="text" id="name" placeholder="Enter Your Name">
                 </div>
 
                 <div>
                     <label>Campus ID</label>
-                    <input type="text" placeholder="Enter Your ID">
+                    <input type="text" id="campusId" placeholder="Enter Your ID">
                 </div>
 
                 <div>
                     <label>Current Semester</label>
-                    <select>
+                    <select id="semester">
                         <option>Semester 1</option>
                         <option>Semester 2</option>
                         <option>Semester 3</option>
@@ -301,7 +350,7 @@
 
                 <div>
                     <label>Department</label>
-                    <select>
+                    <select id="department">
                         <option>CSE</option>
                         <option>BBA</option>
                         <option>ENG</option>
@@ -313,17 +362,17 @@
 
                 <div>
                     <label>University Email</label>
-                    <input type="email" placeholder="Enter Your Email">
+                    <input type="email" id="email" placeholder="Enter Your Email">
                 </div>
 
                 <div>
                     <label>Batch</label>
-                    <input type="text" placeholder="Enter Your Batch">
+                    <input type="text" id="batch" placeholder="Enter Your Batch">
                 </div>
 
-                <div>
+                <div class="full">
                     <label>Phone Number</label>
-                    <input type="tel" placeholder="Enter Your Number">
+                    <input type="tel" id="phone" placeholder="Enter Your Number">
                 </div>
 
                 <div class="buttons">
@@ -336,6 +385,195 @@
         </div>
 
     </main>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            console.log("Edit Profile Page Loaded");
+
+            // Logout Button
+            const logoutBtn = document.querySelector(".logout button");
+
+            logoutBtn.addEventListener("click", function () {
+
+                if (confirm("Are you sure you want to logout?")) {
+                    alert("You have been logged out.");
+                    window.location.href = "Login.html";
+                }
+
+            });
+
+            // Navigation Hover
+            const navLinks = document.querySelectorAll("nav a");
+
+            navLinks.forEach(function (link) {
+
+                link.addEventListener("mouseenter", function () {
+                    link.style.transform = "translateX(5px)";
+                });
+
+                link.addEventListener("mouseleave", function () {
+                    link.style.transform = "translateX(0)";
+                });
+
+            });
+
+            // Search Box
+            const searchBox = document.querySelector(".search input");
+
+            searchBox.addEventListener("keydown", function (event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    const keyword = searchBox.value.trim();
+
+                    if (keyword === "") {
+                        alert("Please enter something to search.");
+                        return;
+                    }
+
+                    alert("Searching for: " + keyword);
+
+                }
+
+            });
+
+            searchBox.addEventListener("focus", function () {
+                searchBox.style.boxShadow = "0 0 8px white";
+            });
+
+            searchBox.addEventListener("blur", function () {
+                searchBox.style.boxShadow = "none";
+            });
+
+            // Profile Picture Preview
+            const profilePhoto = document.getElementById("profilePhoto");
+            const previewImage = document.getElementById("previewImage");
+
+            profilePhoto.addEventListener("change", function () {
+
+                const file = this.files[0];
+
+                if (file) {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+
+                        previewImage.src = e.target.result;
+
+                    };
+
+                    reader.readAsDataURL(file);
+
+                }
+
+            });
+
+            // Load Saved Profile
+            const savedProfile = JSON.parse(localStorage.getItem("profile"));
+
+            if (savedProfile) {
+
+                document.getElementById("name").value = savedProfile.name || "";
+                document.getElementById("campusId").value = savedProfile.id || "";
+                document.getElementById("semester").value = savedProfile.semester || "Semester 1";
+                document.getElementById("department").value = savedProfile.department || "CSE";
+                document.getElementById("email").value = savedProfile.email || "";
+                document.getElementById("batch").value = savedProfile.batch || "";
+                document.getElementById("phone").value = savedProfile.phone || "";
+
+                if (savedProfile.photo) {
+                    previewImage.src = savedProfile.photo;
+                }
+
+            }
+
+            // Save Profile
+            const form = document.querySelector("form");
+
+            form.addEventListener("submit", function (event) {
+
+                event.preventDefault();
+
+                const profile = {
+
+                    name: document.getElementById("name").value.trim(),
+
+                    id: document.getElementById("campusId").value.trim(),
+
+                    semester: document.getElementById("semester").value,
+
+                    department: document.getElementById("department").value,
+
+                    email: document.getElementById("email").value.trim(),
+
+                    batch: document.getElementById("batch").value.trim(),
+
+                    phone: document.getElementById("phone").value.trim(),
+
+                    photo: previewImage.src
+
+                };
+
+                if (
+                    profile.name === "" ||
+                    profile.id === "" ||
+                    profile.email === "" ||
+                    profile.batch === "" ||
+                    profile.phone === ""
+                ) {
+
+                    alert("Please fill in all required fields.");
+                    return;
+
+                }
+
+                localStorage.setItem("profile", JSON.stringify(profile));
+
+                alert("Profile updated successfully!");
+
+                window.location.href = "profiledashboard.html";
+
+            });
+
+            // Reset Button
+            const resetBtn = document.querySelector(".cancel");
+
+            resetBtn.addEventListener("click", function (event) {
+
+                if (!confirm("Are you sure you want to clear all fields?")) {
+                    event.preventDefault();
+                }
+
+            });
+
+            // Input Highlight
+            const inputs = document.querySelectorAll("input, select");
+
+            inputs.forEach(function (input) {
+
+                input.addEventListener("focus", function () {
+
+                    input.style.backgroundColor = "#f5f5ff";
+
+                });
+
+                input.addEventListener("blur", function () {
+
+                    input.style.backgroundColor = "white";
+
+                });
+
+            });
+
+        });
+    </script>
+
+
 
 </body>
 

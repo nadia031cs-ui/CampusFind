@@ -245,6 +245,126 @@
 
     </main>
 
+    <script>
+
+        const STORAGE_KEY = "campusfind_friends";
+
+        const seedFriends = [
+            { name: "John Doe", department: "Computer Science", id: "CSE22001" },
+            { name: "Sarah Ahmed", department: "Business Administration", id: "BBA22015" },
+            { name: "Rahim Khan", department: "Electrical Engineering", id: "EEE22010" },
+            { name: "Nusrat Jahan", department: "English", id: "ENG22005" },
+            { name: "Tanvir Hasan", department: "Civil Engineering", id: "CE22020" }
+        ];
+
+        function loadFriends() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(seedFriends));
+            return seedFriends;
+        }
+
+        function saveFriends(list) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        let friends = loadFriends();
+
+        const tbody = document.querySelector("tbody");
+        const searchInput = document.querySelector(".search-bar input");
+        const searchButton = document.querySelector(".search-bar button");
+
+        function displayFriends(list) {
+
+            tbody.innerHTML = "";
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align:center;color:#777;padding:40px;">
+                        No friends to display.
+                    </td>
+                </tr>
+                `;
+                return;
+            }
+
+            list.forEach((friend) => {
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${friend.name}</td>
+                    <td>${friend.department}</td>
+                    <td>${friend.id}</td>
+                    <td>
+                        <button class="action-btn view-btn">View</button>
+                        <button class="action-btn remove-btn" style="background:#dc3545;margin-left:8px;">
+                            Unfriend
+                        </button>
+                    </td>
+                `;
+
+                row.querySelector(".view-btn").addEventListener("click", function () {
+                    alert(
+                        "Friend Profile\n\n" +
+                        "Name: " + friend.name +
+                        "\nDepartment: " + friend.department +
+                        "\nCampus ID: " + friend.id
+                    );
+                });
+
+                row.querySelector(".remove-btn").addEventListener("click", function () {
+                    if (confirm("Remove " + friend.name + " from your friends?")) {
+
+                        friends = friends.filter(f => f.id !== friend.id);
+                        saveFriends(friends);
+                        searchFriends();
+                    }
+                });
+
+                tbody.appendChild(row);
+
+            });
+
+        }
+
+        function searchFriends() {
+            const keyword = searchInput.value.toLowerCase();
+            const filtered = friends.filter(friend =>
+                friend.name.toLowerCase().includes(keyword) ||
+                friend.department.toLowerCase().includes(keyword) ||
+                friend.id.toLowerCase().includes(keyword)
+            );
+            displayFriends(filtered);
+        }
+
+        searchInput.addEventListener("keyup", searchFriends);
+        searchButton.addEventListener("click", searchFriends);
+
+        window.addEventListener("storage", function (e) {
+            if (e.key === STORAGE_KEY) {
+                friends = loadFriends();
+                searchFriends();
+            }
+        });
+
+        window.addEventListener("focus", function () {
+            friends = loadFriends();
+            searchFriends();
+        });
+
+        displayFriends(friends);
+
+    </script>
+
 </body>
 
 </html>

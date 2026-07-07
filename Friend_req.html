@@ -5,251 +5,293 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friend Requests</title>
-
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
 
-        body {
-            background: rgb(60, 45, 131);
-            display: flex;
-            min-height: 100vh;
-        }
+body {
+    background: rgb(60, 45, 131);
+    display: flex;
+    min-height: 100vh;
+}
 
-        aside {
-            width: 250px;
-            background: rgb(14, 3, 77);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+/* Sidebar */
 
-        .logo {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+aside {
+    width: 250px;
+    background: rgb(14, 3, 77);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
 
-        nav {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-        nav a {
-            text-decoration: none;
-            color: white;
-            background: rgb(20, 8, 91);
-            padding: 12px;
-            border-radius: 8px;
-            transition: .3s;
-            font-size: 18px;
-        }
+nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-        nav a:hover {
-            background: white;
-            color: black;
-        }
+nav a {
+    text-decoration: none;
+    color: white;
+    background: rgb(20, 8, 91);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: .3s;
+}
 
-        #logout button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: rgb(220, 53, 69);
-            color: white;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: .3s;
-        }
+nav a:hover {
+    background: white;
+    color: black;
+}
 
-        #logout button:hover {
-            background: rgb(180, 25, 40);
-        }
+/* Main */
 
-        main {
-            flex: 1;
-            padding: 35px;
-        }
+main {
+    flex: 1;
+    padding: 35px;
+}
 
-        .search-box {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 10px;
-            outline: none;
-            font-size: 16px;
-            margin-bottom: 25px;
-        }
+/* Search */
 
-        .header {
-            margin-bottom: 30px;
-        }
+.search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
 
-        .header h2 {
-            color: white;
-            margin-bottom: 10px;
-        }
+.search-bar input {
+    flex: 1;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    font-size: 16px;
+}
 
-        .header p {
-            color: rgb(225, 225, 225);
-        }
+.search-bar button {
+    padding: 13px 25px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: rgb(60, 45, 131);
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
 
-        .request-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+.search-bar button:hover {
+    background: rgb(225, 225, 225);
+}
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+/* Card */
 
-        .avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: rgb(220, 220, 220);
-        }
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 6px 15px rgba(0,0,0,.2);
+}
 
-        .user-info h4 {
-            color: rgb(60, 45, 131);
-            margin-bottom: 5px;
-        }
+.card h2 {
+    color: rgb(60, 45, 131);
+    margin-bottom: 10px;
+}
 
-        .user-info p {
-            color: #666;
-        }
+.card p {
+    color: #555;
+    margin-bottom: 25px;
+}
 
-        .buttons {
-            display: flex;
-            gap: 10px;
-        }
+/* Table */
 
-        .buttons button {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-size: 15px;
-            transition: .3s;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-        .decline {
-            background: rgb(220, 53, 69);
-        }
+th {
+    background: rgb(60, 45, 131);
+    color: white;
+    padding: 15px;
+    text-align: left;
+}
 
-        .decline:hover {
-            background: rgb(180, 25, 40);
-        }
+td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
 
-        .accept {
-            background: rgb(60, 45, 131);
-        }
+tr:hover {
+    background: rgb(245,245,245);
+}
 
-        .accept:hover {
-            background: rgb(20, 8, 91);
-        }
+/* Buttons */
 
-        @media(max-width:900px) {
+.action-btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: .3s;
+    font-size: 14px;
+}
 
-            body {
-                flex-direction: column;
-            }
+.accept-btn {
+    background: #28a745;
+}
 
-            aside {
-                width: 100%;
-            }
+.accept-btn:hover {
+    background: #218838;
+}
 
-            main {
-                padding: 20px;
-            }
+.delete-btn {
+    background: #dc3545;
+    margin-left: 8px;
+}
 
-            .request-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
-            }
+.delete-btn:hover {
+    background: #bb2d3b;
+}
 
-            .buttons {
-                width: 100%;
-            }
+/* Empty message */
 
-            .buttons button {
-                flex: 1;
-            }
-        }
+.empty-message {
+    text-align: center;
+    color: #777;
+    padding: 40px;
+    font-size: 17px;
+}
+
+/* Back */
+
+.back {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.back a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+
+@media(max-width:600px){
+
+    body{
+        flex-direction: column;
+    }
+
+    aside{
+        width:100%;
+    }
+
+    main{
+        padding:20px;
+    }
+
+    table{
+        display:block;
+        overflow-x:auto;
+    }
+
+    .search-bar{
+        flex-direction:column;
+    }
+
+    .search-bar button{
+        width:100%;
+    }
+
+    .action-btn{
+        width:100%;
+        margin:5px 0;
+    }
+
+    .delete-btn{
+        margin-left:0;
+    }
+}
     </style>
 
+    <link rel="stylesheet" href="Friend_req.css">
 </head>
 
 <body>
 
     <aside>
 
-        <div>
-
-            <div class="logo">
-                <img src="cmpLOGO.jpeg" alt="Logo" width="180">
-            </div>
-
-            <nav>
-                <a href="friends.html">Friends</a>
-                <a href="FindFriends.html">Find Friends</a>
-                <a href="Friend_req.html">Friend Requests</a>
-            </nav>
-
+        <div class="logo">
+            <img src="cmpLOGO.jpeg" alt="" width="180">
         </div>
 
-        <div id="logout">
-            <button>Logout</button>
-        </div>
+        <nav>
+            <a href="friends.html">Friends</a>
+            <a href="FindFriends.html">Find Friends</a>
+            <a href="Friend_req.html">Friend Requests</a>
+        </nav>
 
     </aside>
 
     <main>
 
-        <input class="search-box" type="text" placeholder="Search anything...">
-
-        <div class="header">
-            <h2>Friend Requests</h2>
-            <p>Review and respond to your incoming friend requests.</p>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search friend requests...">
+            <button id="searchBtn">Go</button>
         </div>
 
-        <div class="request-card">
+        <div class="card">
 
-            <div class="user-info">
+            <h2>Friend Requests</h2>
 
-                <div class="avatar"></div>
+            <p>Accept or remove incoming friend requests.</p>
 
-                <div>
-                    <h4>Sarah Ahmed</h4>
-                    <p>Computer Science Department</p>
-                </div>
+            <table>
 
-            </div>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Campus ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-            <div class="buttons">
-                <button class="decline">Decline</button>
-                <button class="accept">Accept</button>
-            </div>
+                <tbody id="requestTable">
 
+                    <!-- JavaScript will load requests here -->
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="back">
+            <p>Back to <a href="Home_Feed.html">Home</a></p>
         </div>
 
     </main>
+
+    <!-- Link your JavaScript file -->
+    <script src="Friend_req.js"></script>
 
 </body>
 

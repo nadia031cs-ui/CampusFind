@@ -219,9 +219,7 @@
             See the latest lost and found items posted by our university community.
         </p>
 
-        <form action="Post">
-
-        </form>
+       <div id="feedContainer"></div>
 
     </main>
 
@@ -270,6 +268,197 @@
         </div>
 
     </aside>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("Welcome to CampusFind!");
+
+    // Logout
+    const logoutBtn = document.querySelector("#logout button");
+
+    logoutBtn.addEventListener("click", function () {
+        const confirmLogout = confirm("Are you sure you want to logout?");
+
+        if (confirmLogout) {
+            alert("You have been logged out.");
+            window.location.href = "login.html";
+        }
+    });
+
+    // Navigation Links
+    const navLinks = document.querySelectorAll("nav a");
+
+    navLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+            console.log("Opening: " + link.textContent);
+        });
+
+        link.addEventListener("mouseenter", function () {
+            link.style.transform = "translateX(5px)";
+        });
+
+        link.addEventListener("mouseleave", function () {
+            link.style.transform = "translateX(0)";
+        });
+
+    });
+
+    // Search Box
+    const search = document.getElementById("search");
+
+    search.addEventListener("keydown", function (event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            const keyword = search.value.trim();
+
+            if (keyword === "") {
+                alert("Please enter something to search.");
+                return;
+            }
+
+            alert("Searching for: " + keyword);
+
+            console.log("Searching for:", keyword);
+
+            // If you later create a search page, use:
+            // window.location.href = "search.html?q=" + encodeURIComponent(keyword);
+        }
+
+    });
+
+    search.addEventListener("focus", function () {
+        search.style.boxShadow = "0 0 8px white";
+    });
+
+    search.addEventListener("blur", function () {
+        search.style.boxShadow = "none";
+    });
+
+    // Clear Filter Button
+    const filterBtn = document.getElementById("filter");
+
+    filterBtn.addEventListener("click", function () {
+
+        const selects = document.querySelectorAll("#right select");
+
+        selects.forEach(function (select) {
+            select.selectedIndex = 0;
+        });
+
+        alert("Filters have been cleared.");
+
+    });
+
+    // Filter Dropdown
+    const filters = document.querySelectorAll("#right select");
+
+    filters.forEach(function (filter) {
+
+        filter.addEventListener("change", function () {
+            console.log("Selected:", filter.value);
+        });
+
+    });
+
+    // Popular Locations
+    const locations = document.querySelectorAll("#loc li");
+
+    locations.forEach(function (location) {
+
+        location.style.cursor = "pointer";
+
+        location.addEventListener("click", function () {
+
+            search.value = location.textContent;
+
+            alert("Searching location: " + location.textContent);
+
+            console.log("Searching location:", location.textContent);
+
+        });
+
+    });
+
+    // Quick Tips Hover Effect
+    const tips = document.querySelectorAll("#tips p");
+
+    tips.forEach(function (tip) {
+
+        tip.addEventListener("mouseenter", function () {
+            tip.style.color = "white";
+        });
+
+        tip.addEventListener("mouseleave", function () {
+            tip.style.color = "rgb(225,225,225)";
+        });
+
+    });
+
+    // Feed Area
+    const feed = document.querySelector("form");
+
+    feed.addEventListener("click", function () {
+        console.log("Feed area clicked.");
+    });
+    // ==================== Load Posts ====================
+
+const feedContainer = document.getElementById("feedContainer");
+
+const posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+if (posts.length === 0) {
+
+    feedContainer.innerHTML =
+        "<h3 style='text-align:center;color:gray'>No posts yet.</h3>";
+
+} else {
+
+    posts.forEach(function(post){
+
+        feedContainer.innerHTML += `
+
+        <div style="
+        background:white;
+        border-radius:10px;
+        padding:20px;
+        margin-bottom:20px;
+        box-shadow:0 3px 10px rgba(0,0,0,.2);
+        ">
+
+            ${
+                post.image ?
+                `<img src="${post.image}" style="width:100%;max-height:300px;object-fit:cover;border-radius:10px;margin-bottom:15px;">`
+                : ""
+            }
+
+            <h3>${post.itemType}</h3>
+
+            <p style="margin:10px 0;">
+                ${post.description}
+            </p>
+
+            <p><b>Location:</b> ${post.location}</p>
+
+            <p><b>Date:</b> ${post.date}</p>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+});
+</script>
 
 </body>
 

@@ -35,12 +35,12 @@
         }
 
         .profile-link {
+            display: block;
             text-decoration: none;
             color: white;
             background: rgb(20, 8, 91);
             padding: 12px;
             border-radius: 8px;
-            display: block;
             text-align: center;
             margin-bottom: 25px;
             font-size: 18px;
@@ -64,8 +64,8 @@
             background: rgb(20, 8, 91);
             padding: 12px;
             border-radius: 8px;
-            transition: .3s;
             font-size: 18px;
+            transition: .3s;
         }
 
         nav a:hover {
@@ -73,17 +73,13 @@
             color: black;
         }
 
-        .logout {
-            margin-top: 30px;
-        }
-
         .logout button {
             width: 100%;
             padding: 12px;
-            background: rgb(220, 53, 69);
-            color: white;
             border: none;
             border-radius: 8px;
+            background: rgb(220, 53, 69);
+            color: white;
             font-size: 17px;
             font-weight: bold;
             cursor: pointer;
@@ -115,51 +111,101 @@
         .card {
             background: white;
             border-radius: 12px;
-            padding: 30px;
+            padding: 35px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
         }
 
-        h2 {
+        .card h2 {
             color: rgb(60, 45, 131);
             margin-bottom: 10px;
         }
 
-        p {
-            color: #555;
-            margin-bottom: 25px;
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 40px;
+            margin-bottom: 35px;
+        }
+
+        .profile-image {
+            text-align: center;
+        }
+
+        .profile-image img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid rgb(60, 45, 131);
+            background: #eee;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .info-title {
+            width: 180px;
+            font-weight: bold;
+            color: rgb(60, 45, 131);
+        }
+
+        .info-value {
+            color: #444;
+            font-size: 16px;
         }
 
         .edit-btn {
             display: inline-block;
+            margin-top: 30px;
             text-decoration: none;
             background: rgb(60, 45, 131);
             color: white;
-            padding: 12px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
-            margin-bottom: 30px;
-            transition: .3s;
             font-weight: bold;
+            transition: .3s;
         }
 
         .edit-btn:hover {
             background: rgb(20, 8, 91);
         }
 
-        h4 {
-            color: rgb(60, 45, 131);
-            margin-bottom: 12px;
+        .posts {
+            margin-top: 30px;
         }
 
-        select {
+        .posts h3 {
+            color: rgb(60, 45, 131);
+            margin-bottom: 15px;
+        }
+
+        .posts select {
             width: 250px;
             padding: 12px;
             border: 1px solid #ccc;
-            border-radius: 10px;
+            border-radius: 8px;
             outline: none;
             font-size: 15px;
         }
 
-        @media(max-width:600px) {
+        .posts select:focus {
+            border-color: rgb(60, 45, 131);
+        }
+
+        @media (max-width:900px) {
 
             body {
                 flex-direction: column;
@@ -173,12 +219,31 @@
                 padding: 20px;
             }
 
-            select {
+            .profile-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-info {
+                width: 100%;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 6px;
+                text-align: center;
+            }
+
+            .info-title {
+                width: auto;
+            }
+
+            .posts select {
                 width: 100%;
             }
         }
     </style>
-</head>
 
 <body>
 
@@ -187,10 +252,12 @@
         <div>
 
             <div class="logo">
-                <img src="cmpLOGO.jpeg" alt="" width="180">
+                <img src="cmpLOGO.jpeg" alt="CampusFind Logo" width="180">
             </div>
 
-            <a class="profile-link" href="profiledashboard.html">Your Profile</a>
+            <a href="profiledashboard.html" class="profile-link">
+                Your Profile
+            </a>
 
             <nav>
                 <a href="Home_Feed.html">Home Feed</a>
@@ -218,24 +285,202 @@
         <div class="card">
 
             <h2>Profile Dashboard</h2>
-            <p>View and manage your profile and activity.</p>
 
-            <a href="Edit Profile.html" class="edit-btn">Edit Profile</a>
+            <p class="subtitle">
+                View and manage your profile information.
+            </p>
 
-            <h4>My Posts</h4>
+            <div class="profile-section">
 
-            <form action="">
-                <select id="AllPosts">
-                    <option>All Posts</option>
-                    <option>Lost</option>
-                    <option>Found</option>
-                </select>
-            </form>
+                <div class="profile-image">
+                    <img id="profilePic" src="default-profile.png" alt="Profile Picture">
+                </div>
 
+                <div class="profile-info">
+
+                    <div class="info-row">
+                        <div class="info-title">Name</div>
+                        <div class="info-value" id="userName">Your Name</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-title">Campus ID</div>
+                        <div class="info-value" id="campusId">221-15-XXXX</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-title">Department</div>
+                        <div class="info-value" id="department">CSE</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-title">Semester</div>
+                        <div class="info-value" id="semester">Semester 7</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-title">Batch</div>
+                        <div class="info-value" id="batch">61</div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-title">University Email</div>
+                        <div class="info-value" id="email">
+                            example@university.edu
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-title">Phone Number</div>
+                        <div class="info-value" id="phone">
+                            01XXXXXXXXX
+                        </div>
+                    </div>
+
+                    <a href="Edit Profile.html" class="edit-btn">
+                        Edit Profile
+                    </a>
+
+                </div>
+
+            </div>
+            <div class="posts">
+
+                <h3>My Posts</h3>
+
+                <form id="postForm">
+
+                    <select id="AllPosts">
+
+                        <option>All Posts</option>
+                        <option>Lost Items</option>
+                        <option>Found Items</option>
+
+                    </select>
+
+                </form>
+
+            </div>
         </div>
 
     </main>
 
-</body>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-</html>
+            console.log("Profile Dashboard Loaded");
+
+            // Logout Button
+            const logoutBtn = document.querySelector(".logout button");
+
+            logoutBtn.addEventListener("click", function () {
+
+                const confirmLogout = confirm("Are you sure you want to logout?");
+
+                if (confirmLogout) {
+                    alert("You have been logged out.");
+                    window.location.href = "Login.html";
+                }
+
+            });
+
+            // Navigation Links
+            const navLinks = document.querySelectorAll("nav a");
+
+            navLinks.forEach(function (link) {
+
+                link.addEventListener("mouseenter", function () {
+                    link.style.transform = "translateX(5px)";
+                });
+
+                link.addEventListener("mouseleave", function () {
+                    link.style.transform = "translateX(0)";
+                });
+
+                link.addEventListener("click", function () {
+                    console.log("Opening: " + link.textContent);
+                });
+
+            });
+
+            // Search Box
+            const searchBox = document.querySelector(".search input");
+
+            searchBox.addEventListener("keydown", function (event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    const keyword = searchBox.value.trim();
+
+                    if (keyword === "") {
+                        alert("Please enter something to search.");
+                        return;
+                    }
+
+                    alert("Searching for: " + keyword);
+
+                    console.log("Searching:", keyword);
+
+                }
+
+            });
+
+            searchBox.addEventListener("focus", function () {
+                searchBox.style.boxShadow = "0 0 8px white";
+            });
+
+            searchBox.addEventListener("blur", function () {
+                searchBox.style.boxShadow = "none";
+            });
+
+            // Load Profile Data
+            const profile = JSON.parse(localStorage.getItem("profile"));
+
+            if (profile) {
+
+                document.getElementById("userName").textContent = profile.name || "Your Name";
+
+                document.getElementById("campusId").textContent = profile.id || "N/A";
+
+                document.getElementById("department").textContent = profile.department || "N/A";
+
+                document.getElementById("semester").textContent = profile.semester || "N/A";
+
+                document.getElementById("batch").textContent = profile.batch || "N/A";
+
+                document.getElementById("email").textContent = profile.email || "N/A";
+
+                document.getElementById("phone").textContent = profile.phone || "N/A";
+
+                if (profile.photo) {
+                    document.getElementById("profilePic").src = profile.photo;
+                }
+
+            }
+
+            // My Posts Filter
+            const posts = document.getElementById("AllPosts");
+
+            posts.addEventListener("change", function () {
+
+                alert("Showing: " + posts.value);
+
+                console.log("Filter:", posts.value);
+
+            });
+
+            // Edit Profile Button
+            const editBtn = document.querySelector(".edit-btn");
+
+            editBtn.addEventListener("click", function () {
+
+                console.log("Opening Edit Profile");
+
+            });
+
+        });
+    </script>
+
+</body>

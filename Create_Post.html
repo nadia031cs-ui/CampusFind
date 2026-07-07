@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
+    <title>Create Post</title>
 
     <style>
         * {
@@ -15,9 +14,8 @@
             font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
         }
 
-
         body {
-            background-color: rgb(60, 45, 131);
+            background: rgb(60, 45, 131);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,146 +23,292 @@
             padding: 25px;
         }
 
+        .container {
+            width: 700px;
+            max-width: 100%;
+        }
 
         h2 {
             color: white;
-            margin-bottom: 10px;
-            margin-right: 18px;
-
+            margin-bottom: 15px;
         }
-
 
         form {
-            background-color: white;
+            background: white;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-            width: 700px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
         }
-
 
         label {
             display: block;
-            margin: 10px 0 5px;
+            margin: 12px 0 6px;
             font-weight: bold;
         }
 
-
-        textarea {
+        textarea,
+        input,
+        select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 10px;
+            outline: none;
             margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        textarea {
             height: 120px;
             resize: vertical;
         }
 
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: rgb(60, 45, 131);
+            box-shadow: 0 0 6px rgba(60, 45, 131, .3);
         }
 
-
-
-
-
-
-
-
-        #image-box {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            height: 100px;
+        #buttons {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            color: gray;
-            cursor: pointer;
-            text-align: center;
-            background-color: rgb(233, 233, 233);
+            justify-content: space-between;
+            margin-top: 20px;
         }
-
-
 
         button {
-            padding: 10px 18px;
+            width: 48%;
+            padding: 12px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
             font-weight: bold;
+        }
 
+        #post {
+            background: rgb(60, 45, 131);
+            color: white;
+        }
 
+        #post:hover {
+            background: rgb(20, 8, 91);
         }
 
         #Cancel {
-            color: rgb(255, 255, 255);
-            background-color: red;
+            background: red;
+            color: white;
         }
 
-        #buttons{
-            display: flex;
-            justify-content: space-between;
-            
+        #Cancel:hover {
+            background: darkred;
         }
-
-
-
-
 
         @media(max-width:600px) {
-            #form-row {
-                flex-direction: column;
+
+            form {
+                padding: 25px;
             }
+
+            #buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            button {
+                width: 100%;
+            }
+
         }
     </style>
-
-
 
 </head>
 
 <body>
-    <div>
-        <h2>Post Creation</h2>
 
+    <div class="container">
 
+        <h2>Create a Post</h2>
 
+        <form id="postForm">
+            <label for="description">Description</label>
 
-        <form action="">
-            <textarea id="textt" rows="5" placeholder="What did you lose or find? "></textarea>
-            <br>
-            <label for="Upload image">Upload image</label>
-            <input id="image-box" type="file" accept="image/*">
-            <br>
-            <label for="Loaction">Location</label>
-            <input type="text" placeholder="Enter Your Loaction">
-            <br>
-            <label for="Date">Date</label>
-            <input type="date" placeholder="Date">
-            <br>
-            <label for="Item Type">Item Type </label>
-            <select id="Item Type">
-                <option value="electronics">Electronics</option>
-                <option value="Documents">Documents</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Books and study materials">Books and study materials</option>
-                <option value="Personal Items">Personal Items</option>
-                <option value="Others">Others</option>
+            <textarea id="description" name="description" placeholder="What did you lose or find?" required></textarea>
 
+            <label for="image">Upload Image</label>
 
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <label for="location">Location</label>
+
+            <input type="text" id="location" name="location" placeholder="Enter Location" required>
+
+            <label for="date">Date</label>
+
+            <input type="date" id="date" name="date" required>
+
+            <label for="itemType">Item Type</label>
+
+            <select id="itemType" name="itemType" required>
+
+                <option value="">Select Item Type</option>
+                <option>Electronics</option>
+                <option>Documents</option>
+                <option>Accessories</option>
+                <option>Books and Study Materials</option>
+                <option>Personal Items</option>
+                <option>Others</option>
 
             </select>
+
             <div id="buttons">
-                <button id="post">Post</button>
-                <button id="Cancel">Cancel</button>
+
+                <button id="post" type="submit">Post</button>
+
+                <button id="Cancel" type="button">Cancel</button>
+
             </div>
 
         </form>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const form = document.getElementById("postForm");
+            const description = document.getElementById("description");
+            const image = document.getElementById("image");
+            const location = document.getElementById("location");
+            const date = document.getElementById("date");
+            const itemType = document.getElementById("itemType");
+            const cancelBtn = document.getElementById("Cancel");
+
+            // ==========================
+            // Focus Effect
+            // ==========================
+            const fields = document.querySelectorAll("textarea, input, select");
+
+            fields.forEach(function (field) {
+
+                field.addEventListener("focus", function () {
+                    field.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+                });
+
+                field.addEventListener("blur", function () {
+                    field.style.boxShadow = "none";
+                });
+
+            });
+
+            // ==========================
+            // Image Selection
+            // ==========================
+            image.addEventListener("change", function () {
+
+                if (this.files.length > 0) {
+                    alert("Selected Image: " + this.files[0].name);
+                }
+
+            });
+
+            // ==========================
+            // Cancel Button
+            // ==========================
+            cancelBtn.addEventListener("click", function () {
+
+                if (confirm("Are you sure you want to cancel?")) {
+                    window.location.href = "Home_Feed.html";
+                }
+
+            });
+
+            // ==========================
+            // Create Post
+            // ==========================
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                // Validation
+                if (description.value.trim() === "") {
+                    alert("Please enter a description.");
+                    description.focus();
+                    return;
+                }
+
+                if (location.value.trim() === "") {
+                    alert("Please enter the location.");
+                    location.focus();
+                    return;
+                }
+
+                if (date.value === "") {
+                    alert("Please select a date.");
+                    date.focus();
+                    return;
+                }
+
+                if (itemType.value === "") {
+                    alert("Please select an item type.");
+                    itemType.focus();
+                    return;
+                }
+
+                // Save Post
+                function savePost(imageData) {
+
+                    const post = {
+                        id: Date.now(),
+                        description: description.value.trim(),
+                        location: location.value.trim(),
+                        date: date.value,
+                        itemType: itemType.value,
+                        image: imageData,
+                        createdAt: new Date().toLocaleString()
+                    };
+
+                    // ---------- Home Feed ----------
+                    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+                    posts.unshift(post);
+                    localStorage.setItem("posts", JSON.stringify(posts));
+
+                    // ---------- Personal Dashboard ----------
+                    let myPosts = JSON.parse(localStorage.getItem("myPosts")) || [];
+                    myPosts.unshift(post);
+                    localStorage.setItem("myPosts", JSON.stringify(myPosts));
+
+                    alert("Post Created Successfully!");
+
+                    form.reset();
+
+                    window.location.href = "Home_Feed.html";
+                }
+
+                // Read image if selected
+                if (image.files.length > 0) {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        savePost(e.target.result);
+                    };
+
+                    reader.readAsDataURL(image.files[0]);
+
+                } else {
+
+                    savePost("");
+
+                }
+
+            });
+
+        });
+
+
+    </script>
+
 </body>
 
 </html>

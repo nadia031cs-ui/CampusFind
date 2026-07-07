@@ -217,6 +217,14 @@
             transition: .3s;
         }
 
+        .message img {
+            max-width: 220px;
+            max-height: 220px;
+            border-radius: 10px;
+            object-fit: cover;
+            display: block;
+        }
+
         .message-box button:hover {
             background: rgb(20, 8, 91);
         }
@@ -339,6 +347,184 @@
         </div>
 
     </main>
+
+    <script>
+        const chatItems = document.querySelectorAll(".chat-item");
+        const chatHeader = document.querySelector(".chat-header");
+        const messages = document.querySelector(".messages");
+        const messageInput = document.querySelector('.message-box input[type="text"]');
+        const fileInput = document.querySelector('.message-box input[type="file"]');
+        const sendButton = document.querySelector(".message-box button");
+        const searchInput = document.querySelector("#left-panel input");
+
+        const chatData = {
+            "John Doe": [
+                {
+                    type: "received",
+                    text: "Hello! I think I found your ID card."
+                },
+                {
+                    type: "sent",
+                    text: "Really? Thank you! Where can I collect it?"
+                }
+            ],
+
+            "Sarah Ahmed": [
+                {
+                    type: "received",
+                    text: "Did you lose a blue notebook?"
+                }
+            ],
+
+            "Campus Admin": [
+                {
+                    type: "received",
+                    text: "Your lost item request has been received."
+                }
+            ]
+        };
+
+        function loadChat(name) {
+
+            chatHeader.textContent = name;
+            messages.innerHTML = "";
+
+            chatData[name].forEach(msg => {
+
+                const div = document.createElement("div");
+                div.className = "message " + msg.type;
+
+                if (msg.image) {
+
+                    const img = document.createElement("img");
+                    img.src = msg.image;
+                    img.style.maxWidth = "220px";
+                    img.style.borderRadius = "10px";
+                    img.style.display = "block";
+                    img.style.cursor = "pointer";
+
+                    div.appendChild(img);
+
+                } else {
+
+                    div.textContent = msg.text;
+
+                }
+
+                messages.appendChild(div);
+
+            });
+
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        chatItems.forEach(item => {
+
+            item.addEventListener("click", () => {
+                loadChat(item.textContent.trim());
+            });
+
+        });
+
+        function sendMessage() {
+
+            const text = messageInput.value.trim();
+            const file = fileInput.files[0];
+
+            if (text === "" && !file) {
+                alert("Please write a message or select an image.");
+                return;
+            }
+
+            const currentChat = chatHeader.textContent;
+
+            if (text !== "") {
+
+                const msg = {
+                    type: "sent",
+                    text: text
+                };
+
+                chatData[currentChat].push(msg);
+
+                const div = document.createElement("div");
+                div.className = "message sent";
+                div.textContent = text;
+
+                messages.appendChild(div);
+
+            }
+
+            if (file) {
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    const imageURL = e.target.result;
+
+                    chatData[currentChat].push({
+                        type: "sent",
+                        image: imageURL
+                    });
+
+                    const div = document.createElement("div");
+                    div.className = "message sent";
+
+                    const img = document.createElement("img");
+                    img.src = imageURL;
+                    img.style.maxWidth = "220px";
+                    img.style.borderRadius = "10px";
+                    img.style.display = "block";
+                    img.style.cursor = "pointer";
+
+                    div.appendChild(img);
+
+                    messages.appendChild(div);
+
+                    messages.scrollTop = messages.scrollHeight;
+
+                };
+
+                reader.readAsDataURL(file);
+
+            }
+
+            messageInput.value = "";
+            fileInput.value = "";
+
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        sendButton.addEventListener("click", sendMessage);
+
+        messageInput.addEventListener("keydown", function (e) {
+
+            if (e.key === "Enter") {
+                e.preventDefault();
+                sendMessage();
+            }
+
+        });
+
+        searchInput.addEventListener("keyup", function () {
+
+            const value = this.value.toLowerCase();
+
+            chatItems.forEach(item => {
+
+                if (item.textContent.toLowerCase().includes(value)) {
+                    item.style.display = "block";
+                } else {
+                    item.style.display = "none";
+                }
+
+            });
+
+        });
+
+        loadChat("John Doe");
+    </script>
 
 </body>
 

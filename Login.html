@@ -30,18 +30,18 @@
         }
 
         .logo img {
-            width: 220px;
+            width: 180px;
             margin-bottom: 20px;
         }
 
         h2 {
             color: white;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 30px;
         }
 
         .subtitle {
-            color: rgb(220, 220, 220);
+            color: #ddd;
             margin-bottom: 30px;
         }
 
@@ -66,15 +66,9 @@
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            font-size: 15px;
             outline: none;
             margin-bottom: 18px;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: rgb(60, 45, 131);
-            box-shadow: 0 0 5px rgba(60, 45, 131, .25);
+            font-size: 15px;
         }
 
         .options {
@@ -82,18 +76,12 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            font-size: 15px;
         }
 
         .remember {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #444;
-        }
-
-        .remember input {
-            width: auto;
         }
 
         .options a {
@@ -109,10 +97,10 @@
         button {
             width: 100%;
             padding: 13px;
-            background: rgb(60, 45, 131);
-            color: white;
             border: none;
             border-radius: 10px;
+            background: rgb(60, 45, 131);
+            color: white;
             font-size: 17px;
             font-weight: bold;
             cursor: pointer;
@@ -130,8 +118,8 @@
 
         .signup a {
             color: white;
-            font-weight: bold;
             text-decoration: none;
+            font-weight: bold;
         }
 
         .signup a:hover {
@@ -153,6 +141,7 @@
                 align-items: flex-start;
                 gap: 15px;
             }
+
         }
     </style>
 
@@ -163,19 +152,24 @@
     <div class="container">
 
         <div class="logo">
-            <img src="MU.jpeg" alt="MU Logo">
+            <img src="MU.jpeg" alt="CampusFind Logo">
         </div>
 
-        <h2>User Panel</h2>
-        <p class="subtitle">Sign in to access your CampusFind account.</p>
+        <h2>CampusFind Login</h2>
 
-        <form action="Signin.php">
+        <p class="subtitle">
+            Sign in to access your CampusFind account.
+        </p>
 
-            <label>Email</label>
-            <input type="text" placeholder="Enter Your Email" required>
+        <form action="Signin.php" method="post">
 
-            <label>Password</label>
-            <input type="password" placeholder="Enter Your Password" required>
+            <label for="email">Email</label>
+
+            <input type="text" id="email" name="email" placeholder="Enter Your Email" required>
+
+            <label for="password">Password</label>
+
+            <input type="password" id="password" name="password" placeholder="Enter Your Password" required>
 
             <div class="options">
 
@@ -193,10 +187,140 @@
         </form>
 
         <div class="signup">
-            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+
+            <p>
+                Don't have an account?
+                <a href="signup.html">Sign Up</a>
+            </p>
+
         </div>
 
     </div>
+
+    <script src="Signin.js"></script>
+
+</body>
+
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        console.log("CampusFind Sign In Loaded.");
+
+        const form = document.querySelector("form");
+        const email = document.querySelector('input[type="text"]');
+        const password = document.querySelector('input[type="password"]');
+        const remember = document.getElementById("remember");
+        const forgotLink = document.querySelector('.options a');
+        const signupLink = document.querySelector('.signup a');
+
+        // Focus Effects
+        email.addEventListener("focus", function () {
+            email.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+        });
+
+        email.addEventListener("blur", function () {
+            email.style.boxShadow = "none";
+        });
+
+        password.addEventListener("focus", function () {
+            password.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+        });
+
+        password.addEventListener("blur", function () {
+            password.style.boxShadow = "none";
+        });
+
+        // Remember Me
+        remember.addEventListener("change", function () {
+
+            if (remember.checked) {
+                console.log("Remember Me Enabled");
+            } else {
+                console.log("Remember Me Disabled");
+            }
+
+        });
+
+        // Forgot Password
+        forgotLink.addEventListener("click", function () {
+            console.log("Forgot Password clicked.");
+        });
+
+        // Sign Up
+        signupLink.addEventListener("click", function () {
+            console.log("Opening Sign Up page.");
+        });
+
+        // Form Validation
+        form.addEventListener("submit", function (event) {
+
+            const emailValue = email.value.trim();
+            const passwordValue = password.value.trim();
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailValue === "") {
+                event.preventDefault();
+                alert("Please enter your email.");
+                email.focus();
+                return;
+            }
+
+            if (!emailPattern.test(emailValue)) {
+                event.preventDefault();
+                alert("Please enter a valid email address.");
+                email.focus();
+                return;
+            }
+
+            if (passwordValue === "") {
+                event.preventDefault();
+                alert("Please enter your password.");
+                password.focus();
+                return;
+            }
+
+            if (passwordValue.length < 6) {
+                event.preventDefault();
+                alert("Password must contain at least 6 characters.");
+                password.focus();
+                return;
+            }
+
+            alert("Login Successful!");
+
+            console.log("Email:", emailValue);
+
+            // Remove the next two lines if Signin.php handles the login.
+            event.preventDefault();
+            window.location.href = "Home_Feed.html";
+
+        });
+
+        // Press Enter inside Email
+        email.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                password.focus();
+            }
+
+        });
+
+        // Press Enter inside Password
+        password.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                form.requestSubmit();
+            }
+
+        });
+
+    });
+</script>
 
 </body>
 

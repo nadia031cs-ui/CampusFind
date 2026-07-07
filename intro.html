@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusFind - Home</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f8f9fa;
+    color:#333;
+}
+
+
+header{
+    background:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 8%;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.logo{
+    color:#100656;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.auth-buttons{
+    display:flex;
+    gap:12px;
+}
+
+.auth-buttons button{
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
+
+#loginBtn{
+    background:#fff;
+    color:#100656;
+    border:2px solid #100656;
+}
+
+#loginBtn:hover{
+    background:#100656;
+    color:white;
+}
+
+#registerBtn{
+    background:#100656;
+    color:white;
+}
+
+#registerBtn:hover{
+    background:#100656;
+}
+
+
+main{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+    padding:35px 0;
+}
+
+#search{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+    margin-bottom:30px;
+    font-size:16px;
+}
+
+#search:focus{
+    border-color:#100656;
+}
+
+h2{
+    color:#100656;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:#666;
+    margin-bottom:30px;
+}
+
+
+.welcome{
+    background:white;
+    border-radius:12px;
+    padding:35px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    margin-bottom:35px;
+}
+
+.welcome h1{
+    color:#100656;
+    margin-bottom:15px;
+}
+
+.welcome p{
+    line-height:1.7;
+    margin-bottom:25px;
+}
+
+.welcome button{
+    padding:12px 24px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-right:10px;
+    transition:.3s;
+}
+
+#createPost{
+    background:#100656;
+    color:white;
+}
+
+#browseItems{
+    background:#ececec;
+}
+
+#createPost:hover{
+    background:#100656;
+}
+
+#browseItems:hover{
+    background:#dcdcdc;
+}
+
+
+
+.overview{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:40px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.card h3{
+    color:#100656;
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#555;
+}
+
+
+.recent-posts h2{
+    margin-bottom:20px;
+}
+
+.post{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+
+.post h3{
+    color:#160b68;
+    margin-bottom:10px;
+}
+
+.post p{
+    margin-bottom:8px;
+}
+
+.post button{
+    margin-top:15px;
+    padding:10px 20px;
+    background:#100656;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.post button:hover{
+    background:#100656;
+}
+
+
+
+@media(max-width:768px){
+
+header{
+    flex-direction:column;
+    gap:15px;
+}
+
+.auth-buttons{
+    width:100%;
+}
+
+.auth-buttons button{
+    flex:1;
+}
+
+main{
+    width:95%;
+}
+
+.welcome{
+    text-align:center;
+}
+
+.welcome button{
+    display:block;
+    width:100%;
+    margin:10px 0;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+CampusFind
+</div>
+
+<div class="auth-buttons">
+<button id="loginBtn">Login</button>
+<button id="registerBtn">SignUp</button>
+</div>
+
+</header>
+
+<main>
+
+<input id="search" type="text" placeholder="Search Anything">
+
+<h2>Home Feed</h2>
+
+<p class="subtitle">
+See the latest lost and found items posted by our university community.
+</p>
+
+<section class="welcome">
+
+<h1>CampusFind</h1>
+
+<p>
+Report lost items, post found belongings, and help students reconnect with their valuables quickly and safely.
+</p>
+
+<button id="createPost">Create Post</button>
+<button id="browseItems">Browse Items</button>
+
+</section>
+
+<section class="overview">
+
+<div class="card">
+<h3>120+</h3>
+<p>Lost Items</p>
+</div>
+
+<div class="card">
+<h3>95+</h3>
+<p>Found Items</p>
+</div>
+
+<div class="card">
+<h3>80+</h3>
+<p>Returned Successfully</p>
+</div>
+
+<div class="card">
+<h3>500+</h3>
+<p>Active Users</p>
+</div>
+
+</section>
+
+
+
+</main>
+
+<script>
+
+document.addEventListener("DOMContentLoaded",function(){
+
+console.log("Welcome to CampusFind!");
+
+document.getElementById("loginBtn").addEventListener("click",function(){
+
+window.location.href="Login.html";
+
+});
+
+document.getElementById("registerBtn").addEventListener("click",function(){
+
+window.location.href="signup.html";
+
+});
+
+document.getElementById("createPost").addEventListener("click",function(){
+
+alert("Create Post button clicked.");
+
+});
+
+document.getElementById("browseItems").addEventListener("click",function(){
+
+alert("Browsing all items.");
+
+});
+
+const search=document.getElementById("search");
+
+search.addEventListener("keyup",function(){
+
+console.log("Searching:",search.value);
+
+});
+
+const buttons=document.querySelectorAll(".details");
+
+buttons.forEach(function(btn){
+
+btn.addEventListener("click",function(){
+
+alert("Opening item details.");
+
+});
+
+});
+
+const cards=document.querySelectorAll(".card");
+
+cards.forEach(function(card){
+
+card.addEventListener("mouseenter",function(){
+
+card.style.transform="translateY(-8px)";
+
+});
+
+card.addEventListener("mouseleave",function(){
+
+card.style.transform="translateY(0)";
+
+});
+
+});
+
+});
+
+</script>
+
+</body>
+</html>

@@ -5,199 +5,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Friends</title>
-
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
 
-        body {
-            background: rgb(60, 45, 131);
-            display: flex;
-            min-height: 100vh;
-        }
+body {
+    background: rgb(60, 45, 131);
+    display: flex;
+    min-height: 100vh;
+}
 
-        aside {
-            width: 250px;
-            background: rgb(14, 3, 77);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+/* Sidebar */
 
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+aside {
+    width: 250px;
+    background: rgb(14, 3, 77);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
 
-        nav {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-        nav a {
-            text-decoration: none;
-            color: white;
-            background: rgb(20, 8, 91);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 18px;
-            transition: .3s;
-        }
+nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-        nav a:hover {
-            background: white;
-            color: black;
-        }
+nav a {
+    text-decoration: none;
+    color: white;
+    background: rgb(20, 8, 91);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: .3s;
+}
 
-        main {
-            flex: 1;
-            padding: 35px;
-        }
+nav a:hover {
+    background: white;
+    color: black;
+    transform: translateX(5px);
+}
 
-        .top-search {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
+/* Main */
 
-        .top-search input {
-            flex: 1;
-            padding: 13px;
-            border: none;
-            border-radius: 10px;
-            outline: none;
-            font-size: 16px;
-        }
+main {
+    flex: 1;
+    padding: 35px;
+}
 
-        .top-search button {
-            padding: 13px 25px;
-            border: none;
-            border-radius: 10px;
-            background: rgb(20, 8, 91);
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-            transition: .3s;
-        }
+/* Top Search */
 
-        .top-search button:hover {
-            background: rgb(12, 3, 62);
-        }
+.top-search {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
-        }
+.top-search input {
+    flex: 1;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    font-size: 16px;
+}
 
-        h2 {
-            color: rgb(60, 45, 131);
-            margin-bottom: 10px;
-        }
+.top-search button {
+    padding: 13px 25px;
+    border: none;
+    border-radius: 10px;
+    background: rgb(20, 8, 91);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
 
-        p {
-            color: #555;
-            margin-bottom: 25px;
-        }
+.top-search button:hover {
+    background: rgb(12, 3, 62);
+}
 
-        .search-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
+/* Card */
 
-        .field {
-            display: flex;
-            flex-direction: column;
-        }
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 6px 15px rgba(0,0,0,.2);
+}
 
-        label {
-            font-weight: bold;
-            color: rgb(60, 45, 131);
-            margin-bottom: 6px;
-        }
+.card h2 {
+    color: rgb(60, 45, 131);
+    margin-bottom: 10px;
+}
 
-        input,
-        select {
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            outline: none;
-            font-size: 15px;
-        }
+.card p {
+    color: #555;
+    margin-bottom: 25px;
+}
 
-        input:focus,
-        select:focus {
-            border-color: rgb(60, 45, 131);
-            box-shadow: 0 0 5px rgba(60, 45, 131, .25);
-        }
+/* Search Form */
 
-        .results {
-            grid-column: 1 / 3;
-            margin-top: 20px;
-            padding: 20px;
-            background: rgb(245, 245, 245);
-            border-radius: 10px;
-            min-height: 220px;
-        }
+.search-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
 
-        .results h3 {
-            color: rgb(60, 45, 131);
-            margin-bottom: 15px;
-        }
+.field {
+    display: flex;
+    flex-direction: column;
+}
 
-        .back {
-            margin-top: 25px;
-        }
+label {
+    font-weight: bold;
+    color: rgb(60, 45, 131);
+    margin-bottom: 6px;
+}
 
-        .back a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
+input,
+select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: none;
+    font-size: 15px;
+    transition: .3s;
+}
 
-        .back a:hover {
-            text-decoration: underline;
-        }
+input:focus,
+select:focus {
+    border-color: rgb(60,45,131);
+    box-shadow: 0 0 5px rgba(60,45,131,.3);
+}
 
-        @media(max-width:900px) {
+/* Results */
 
-            body {
-                flex-direction: column;
-            }
+.results {
+    grid-column: 1 / 3;
+    margin-top: 20px;
+    padding: 20px;
+    background: rgb(245,245,245);
+    border-radius: 10px;
+    min-height: 250px;
+}
 
-            aside {
-                width: 100%;
-            }
+.results h3 {
+    color: rgb(60,45,131);
+    margin-bottom: 15px;
+}
 
-            main {
-                padding: 20px;
-            }
+/* User Card */
 
-            .search-form {
-                grid-template-columns: 1fr;
-            }
+.user-card {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
 
-            .results {
-                grid-column: auto;
-            }
+.user-card h4 {
+    color: rgb(60,45,131);
+    margin-bottom: 10px;
+}
 
-            .top-search {
-                flex-direction: column;
-            }
+.user-card p {
+    margin: 5px 0;
+    color: #555;
+}
 
-            .top-search button {
-                width: 100%;
-            }
-        }
+.user-card button {
+    margin-top: 12px;
+    background: rgb(60,45,131);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.user-card button:hover {
+    background: rgb(20,8,91);
+}
+
+.user-card button:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
+
+/* Back */
+
+.back {
+    margin-top: 25px;
+}
+
+.back a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.back a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+
+@media (max-width:900px) {
+
+    body {
+        flex-direction: column;
+    }
+
+    aside {
+        width: 100%;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    .search-form {
+        grid-template-columns: 1fr;
+    }
+
+    .results {
+        grid-column: auto;
+    }
+
+    .top-search {
+        flex-direction: column;
+    }
+
+    .top-search button {
+        width: 100%;
+    }
+}
     </style>
 
+    <link rel="stylesheet" href="FindFriends.css">
 </head>
 
 <body>
@@ -205,7 +263,7 @@
     <aside>
 
         <div class="logo">
-            <img src="cmpLOGO.jpeg" alt="" width="180">
+            <img src="cmpLOGO.jpeg" alt="Logo" width="180">
         </div>
 
         <nav>
@@ -219,13 +277,13 @@
     <main>
 
         <div class="top-search">
-            <input type="text" placeholder="Search anything...">
-            <button>Go</button>
+            <input type="text" id="topSearch" placeholder="Search anything...">
+            <button id="topSearchBtn">Go</button>
         </div>
 
         <div class="card">
 
-            <h2>Friends</h2>
+            <h2>Find Friends</h2>
 
             <p>Search for students and teachers at the university and connect with them.</p>
 
@@ -233,33 +291,38 @@
 
                 <div class="field">
                     <label>Email Address</label>
-                    <input type="email" placeholder="Search Email">
+                    <input type="email" id="emailInput" placeholder="Search Email">
                 </div>
 
                 <div class="field">
                     <label>Department</label>
-                    <select>
-                        <option>CSE</option>
-                        <option>BBA</option>
-                        <option>ENG</option>
-                        <option>LAW</option>
-                        <option>SWE</option>
-                        <option>DS</option>
+                    <select id="departmentInput">
+                        <option value="">All Departments</option>
+                        <option value="CSE">CSE</option>
+                        <option value="BBA">BBA</option>
+                        <option value="ENG">ENG</option>
+                        <option value="LAW">LAW</option>
+                        <option value="SWE">SWE</option>
+                        <option value="DS">DS</option>
                     </select>
                 </div>
 
                 <div class="field">
                     <label>ID</label>
-                    <input type="text" placeholder="Search ID">
+                    <input type="text" id="idInput" placeholder="Search ID">
                 </div>
 
                 <div class="field">
                     <label>Name</label>
-                    <input type="text" placeholder="Search Name">
+                    <input type="text" id="nameInput" placeholder="Search Name">
                 </div>
 
-                <div class="results">
+                <div class="results" id="results">
+
                     <h3>Search Results</h3>
+
+                    <p>Use the search fields above to find students.</p>
+
                 </div>
 
             </div>
@@ -271,6 +334,8 @@
         </div>
 
     </main>
+
+    <script src="FindFriends.js"></script>
 
 </body>
 
