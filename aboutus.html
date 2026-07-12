@@ -1,21 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>About Us | CampusFind</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        body {
+            background: rgb(60, 45, 131);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 900px;
+            max-width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(60, 45, 131);
+            margin-bottom: 10px;
+        }
+
+        .intro {
+            text-align: center;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-left: 5px solid rgb(60, 45, 131);
+            background: #f8f8ff;
+            border-radius: 8px;
+            transition: .3s;
+        }
+
+        .section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, .15);
+        }
+
+        .section h2 {
+            color: rgb(60, 45, 131);
+            margin-bottom: 10px;
+        }
+
+        .section p {
+            color: #444;
+            line-height: 1.7;
+        }
+
+        ul {
+            margin-left: 20px;
+            color: #444;
+            line-height: 2;
+        }
+
+        .contact p {
+            margin: 8px 0;
+        }
+
+        .btn-area {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 13px 35px;
+            background: rgb(60, 45, 131);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        button:hover {
+            background: rgb(20, 8, 91);
+        }
+
+        @media(max-width:768px) {
+
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+        }
+    </style>
+
 </head>
+
 <body>
-    <form action="Submit.php">
-        <label for="name">Name</label>
-        <input type="text" placeholder="Enter Your Name" required>
-        <br>
-        <label for="id">ID</label>
-        <input type="text" placeholder="Enter Your ID" required>
-        <br>
-        <label for="Reports">Reports:</label>
-        <br>
-        <textarea id="Enter Your Reports">Enter Your Report</textarea>
-    </form>
+
+    <div class="container">
+
+        <h1>About CampusFind</h1>
+
+        <p class="intro">
+            CampusFind is a smart Lost & Found platform developed to help students,
+            teachers and university staff quickly report, search and recover lost
+            items across the campus.
+        </p>
+
+        <div class="section">
+            <h2>Our Mission</h2>
+
+            <p>
+                Our mission is to create a secure and reliable platform where anyone
+                can report lost or found items and reconnect them with their rightful
+                owners quickly and easily.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Our Vision</h2>
+
+            <p>
+                We believe every university should have a modern digital Lost & Found
+                system that saves time, improves communication and reduces the stress
+                of losing valuable belongings.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Our Features</h2>
+
+            <ul>
+                <li>Lost Item Posting</li>
+                <li>Found Item Posting</li>
+                <li>Search Lost & Found Items</li>
+                <li>Profile Dashboard</li>
+                <li>Messaging System</li>
+                <li>University Map</li>
+                <li>Secure Login & Registration</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Why CampusFind?</h2>
+
+            <p>
+                CampusFind provides an easy-to-use interface where users can post,
+                search and communicate securely. It helps reduce the time required to
+                recover lost belongings while making campus life more convenient.
+            </p>
+        </div>
+
+        <div class="section contact">
+            <h2>Contact Us</h2>
+
+            <p><strong>Email:</strong> support@campusfind.com</p>
+            <p><strong>Phone:</strong> +880 1712345678</p>
+            <p><strong>Location:</strong> Daffodil International University, Dhaka</p>
+        </div>
+
+        <div class="btn-area">
+            <button id="homeBtn">Back to Home</button>
+        </div>
+
+    </div>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            console.log("CampusFind About Us Loaded");
+
+            const sections = document.querySelectorAll(".section");
+
+            sections.forEach(function (section) {
+
+                section.addEventListener("mouseenter", function () {
+
+                    section.style.transform = "translateY(-5px)";
+                    section.style.boxShadow = "0 8px 15px rgba(0,0,0,.2)";
+
+                });
+
+                section.addEventListener("mouseleave", function () {
+
+                    section.style.transform = "translateY(0)";
+                    section.style.boxShadow = "none";
+
+                });
+
+            });
+
+            const homeBtn = document.getElementById("homeBtn");
+
+            homeBtn.addEventListener("click", function () {
+
+                console.log("Returning Home...");
+
+                window.location.href = "Home_Feed.html";
+
+            });
+
+            document.addEventListener("keydown", function (event) {
+
+                if (event.key === "Escape") {
+
+                    window.location.href = "Home_Feed.html";
+
+                }
+
+            });
+
+        });
+
+    </script>
+
 </body>
+
 </html>

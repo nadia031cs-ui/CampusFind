@@ -174,7 +174,7 @@
 
     </div>
 
-    
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -268,6 +268,25 @@
                     password.focus();
                     return;
                 }
+                // Save Signup Data
+                const profile = {
+                    name: fullName.value,
+                    age: age.value,
+                    gender: gender.value,
+                    phone: phone.value,
+                    dob: dob.value,
+                    email: email.value,
+
+                    // Default Values
+                    id: "221-15-XXXX",
+                    department: "CSE",
+                    semester: "Semester 7",
+                    batch: "61",
+                    photo: "default-profile.png"
+                };
+
+                // Save into Local Storage
+                localStorage.setItem("profile", JSON.stringify(profile));
 
                 alert("Registration Successful!");
 
@@ -286,23 +305,104 @@
             });
 
             // Press Enter to Submit
-            const inputs = document.querySelectorAll("input, select");
+            // Form Validation
+form.addEventListener("submit", function (event) {
 
-            inputs.forEach(function (input) {
+    event.preventDefault();
 
-                input.addEventListener("keydown", function (event) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^[0-9]{11}$/;
 
-                    if (event.key === "Enter") {
+    if (fullName.value.trim() === "") {
+        alert("Please enter your full name.");
+        fullName.focus();
+        return;
+    }
 
-                        event.preventDefault();
+    if (age.value.trim() === "" || isNaN(age.value) || age.value < 16) {
+        alert("Please enter a valid age.");
+        age.focus();
+        return;
+    }
 
-                        form.requestSubmit();
+    if (phone.value.trim() === "") {
+        alert("Please enter your phone number.");
+        phone.focus();
+        return;
+    }
 
-                    }
+    if (!phonePattern.test(phone.value)) {
+        alert("Phone number must contain exactly 11 digits.");
+        phone.focus();
+        return;
+    }
 
-                });
+    if (dob.value === "") {
+        alert("Please select your date of birth.");
+        dob.focus();
+        return;
+    }
 
-            });
+    if (email.value.trim() === "") {
+        alert("Please enter your email.");
+        email.focus();
+        return;
+    }
+
+    if (!emailPattern.test(email.value)) {
+        alert("Please enter a valid email address.");
+        email.focus();
+        return;
+    }
+
+    if (password.value.length < 6) {
+        alert("Password must contain at least 6 characters.");
+        password.focus();
+        return;
+    }
+
+    // Save Data
+    const profile = {
+        name: fullName.value,
+        age: age.value,
+        gender: gender.value,
+        phone: phone.value,
+        dob: dob.value,
+        email: email.value,
+        id: "221-15-XXXX",
+        department: "CSE",
+        semester: "Semester 7",
+        batch: "61",
+        photo: "default-profile.png"
+    };
+
+    localStorage.setItem("profile", JSON.stringify(profile));
+
+    alert("Registration Successful!");
+
+    window.location.href = "profiledashboard.html";
+});
+
+
+// Press Enter to Submit
+const inputs = document.querySelectorAll("input, select");
+
+inputs.forEach(function (input) {
+
+    input.addEventListener("keydown", function (event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            form.requestSubmit();   // Automatically triggers the submit event above
+
+        }
+
+    });
+
+});
+            
 
         });
     </script>
