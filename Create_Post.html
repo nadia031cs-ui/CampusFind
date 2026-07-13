@@ -174,6 +174,7 @@
     </div>
 
     <script>
+
         document.addEventListener("DOMContentLoaded", function () {
 
             const form = document.getElementById("postForm");
@@ -184,9 +185,6 @@
             const itemType = document.getElementById("itemType");
             const cancelBtn = document.getElementById("Cancel");
 
-            // ==========================
-            // Focus Effect
-            // ==========================
             const fields = document.querySelectorAll("textarea, input, select");
 
             fields.forEach(function (field) {
@@ -201,9 +199,6 @@
 
             });
 
-            // ==========================
-            // Image Selection
-            // ==========================
             image.addEventListener("change", function () {
 
                 if (this.files.length > 0) {
@@ -212,9 +207,6 @@
 
             });
 
-            // ==========================
-            // Cancel Button
-            // ==========================
             cancelBtn.addEventListener("click", function () {
 
                 if (confirm("Are you sure you want to cancel?")) {
@@ -223,14 +215,10 @@
 
             });
 
-            // ==========================
-            // Create Post
-            // ==========================
             form.addEventListener("submit", function (e) {
 
                 e.preventDefault();
 
-                // Validation
                 if (description.value.trim() === "") {
                     alert("Please enter a description.");
                     description.focus();
@@ -255,15 +243,17 @@
                     return;
                 }
 
-                // Save Post
                 function savePost(imageData) {
 
+                    const profile = JSON.parse(localStorage.getItem("profile")) || {};
+
                     const post = {
+
                         id: Date.now(),
 
-                        username: localStorage.getItem("username") || "Anonymous User",
+                        username: profile.name || "Anonymous User",
 
-                        profileImage: localStorage.getItem("profileImage") || "assets/default-profile.png",
+                        profileImage: profile.photo || "default-profile.png",
 
                         description: description.value.trim(),
 
@@ -280,14 +270,13 @@
                         likes: 0,
 
                         comments: []
+
                     };
 
-                    // ---------- Home Feed ----------
                     let posts = JSON.parse(localStorage.getItem("posts")) || [];
                     posts.unshift(post);
                     localStorage.setItem("posts", JSON.stringify(posts));
 
-                    // ---------- Personal Dashboard ----------
                     let myPosts = JSON.parse(localStorage.getItem("myPosts")) || [];
                     myPosts.unshift(post);
                     localStorage.setItem("myPosts", JSON.stringify(myPosts));
@@ -297,9 +286,9 @@
                     form.reset();
 
                     window.location.href = "Home_Feed.html";
+
                 }
 
-                // Read image if selected
                 if (image.files.length > 0) {
 
                     const reader = new FileReader();
@@ -319,6 +308,7 @@
             });
 
         });
+    </script>
 
 
     </script>
