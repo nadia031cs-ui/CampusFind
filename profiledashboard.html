@@ -205,6 +205,40 @@
             border-color: rgb(60, 45, 131);
         }
 
+        #myPostsContainer {
+            margin-top: 20px;
+        }
+
+        .postCard {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .2);
+        }
+
+        .postCard img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .deleteBtn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .deleteBtn:hover {
+            background: darkred;
+        }
+
         @media (max-width:900px) {
 
             body {
@@ -344,6 +378,7 @@
                 </div>
 
             </div>
+            <div id="myPostsContainer"></div>
             <div class="posts">
 
                 <h3>My Posts</h3>
@@ -480,7 +515,77 @@
 
             });
 
+            const myPostsContainer = document.getElementById("myPostsContainer");
+
+            const username = localStorage.getItem("username") || "Anonymous User";
+
+            let allPosts = JSON.parse(localStorage.getItem("posts")) || [];
+
+            const myPosts = allPosts.filter(post => post.username === username);
+
+            if (myPosts.length === 0) {
+
+                myPostsContainer.innerHTML = "<h3>No Posts Yet</h3>";
+
+            } else {
+
+                myPosts.forEach(function (post) {
+
+                    myPostsContainer.innerHTML += `
+
+        <div class="postCard">
+
+            <h3>${post.itemType}</h3>
+
+            <p>${post.description}</p>
+
+            <p><b>Location:</b> ${post.location}</p>
+
+            <p><b>Date:</b> ${post.date}</p>
+
+            ${post.image
+                            ?
+                            `<img src="${post.image}">`
+                            :
+                            ""
+                        }
+
+            <button class="deleteBtn" onclick="deletePost(${post.id})">
+                Delete Post
+            </button>
+
+        </div>
+
+        `;
+
+                });
+
+            }
+
         });
+        function deletePost(id) {
+
+            if (!confirm("Delete this post?")) {
+                return;
+            }
+
+            let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+            posts = posts.filter(function (post) {
+
+                return post.id !== id;
+
+            });
+
+            localStorage.setItem("posts", JSON.stringify(posts));
+
+            location.reload();
+
+        }
     </script>
 
+
+
 </body>
+
+</html>

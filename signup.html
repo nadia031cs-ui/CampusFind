@@ -176,236 +176,142 @@
 
 
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+   <script>
+document.addEventListener("DOMContentLoaded", function () {
 
-            console.log("CampusFind Registration Loaded.");
+    const form = document.querySelector("form");
 
-            const form = document.querySelector("form");
+    const fullName = document.querySelector('input[placeholder="Enter your full name"]');
+    const age = document.querySelector('input[placeholder="Age"]');
+    const gender = document.getElementById("Gender");
+    const phone = document.querySelector('input[type="tel"]');
+    const dob = document.querySelector('input[type="date"]');
+    const email = document.querySelector('input[placeholder="Enter Your Email Address"]');
+    const password = document.getElementById("Password");
 
-            const fullName = document.querySelector('input[placeholder="Enter your full name"]');
-            const age = document.querySelector('input[placeholder="Age"]');
-            const gender = document.getElementById("Gender");
-            const phone = document.querySelector('input[type="tel"]');
-            const dob = document.querySelector('input[type="date"]');
-            const email = document.querySelector('input[placeholder="Enter Your Email Address"]');
-            const password = document.getElementById("Password");
+    const loginLink = document.querySelector("a");
 
-            const loginLink = document.querySelector("a");
+    const fields = document.querySelectorAll("input, select");
 
-            // Focus Effect
-            const fields = document.querySelectorAll("input, select");
+    fields.forEach(function (field) {
 
-            fields.forEach(function (field) {
+        field.addEventListener("focus", function () {
+            field.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+        });
 
-                field.addEventListener("focus", function () {
-                    field.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
-                });
+        field.addEventListener("blur", function () {
+            field.style.boxShadow = "none";
+        });
 
-                field.addEventListener("blur", function () {
-                    field.style.boxShadow = "none";
-                });
+    });
 
-            });
+    loginLink.addEventListener("click", function () {
+        console.log("Opening Login Page...");
+    });
 
-            // Login Link
-            loginLink.addEventListener("click", function () {
-                console.log("Opening Login Page...");
-            });
+    form.addEventListener("submit", function (event) {
 
-            // Form Validation
-            form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-                event.preventDefault();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phonePattern = /^[0-9]{11}$/;
 
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const phonePattern = /^[0-9]{11}$/;
-
-                if (fullName.value.trim() === "") {
-                    alert("Please enter your full name.");
-                    fullName.focus();
-                    return;
-                }
-
-                if (age.value.trim() === "" || isNaN(age.value) || age.value < 16) {
-                    alert("Please enter a valid age.");
-                    age.focus();
-                    return;
-                }
-
-                if (phone.value.trim() === "") {
-                    alert("Please enter your phone number.");
-                    phone.focus();
-                    return;
-                }
-
-                if (!phonePattern.test(phone.value)) {
-                    alert("Phone number must contain exactly 11 digits.");
-                    phone.focus();
-                    return;
-                }
-
-                if (dob.value === "") {
-                    alert("Please select your date of birth.");
-                    dob.focus();
-                    return;
-                }
-
-                if (email.value.trim() === "") {
-                    alert("Please enter your email.");
-                    email.focus();
-                    return;
-                }
-
-                if (!emailPattern.test(email.value)) {
-                    alert("Please enter a valid email address.");
-                    email.focus();
-                    return;
-                }
-
-                if (password.value.length < 6) {
-                    alert("Password must contain at least 6 characters.");
-                    password.focus();
-                    return;
-                }
-                // Save Signup Data
-                const profile = {
-                    name: fullName.value,
-                    age: age.value,
-                    gender: gender.value,
-                    phone: phone.value,
-                    dob: dob.value,
-                    email: email.value,
-
-                    // Default Values
-                    id: "221-15-XXXX",
-                    department: "CSE",
-                    semester: "Semester 7",
-                    batch: "61",
-                    photo: "default-profile.png"
-                };
-
-                // Save into Local Storage
-                localStorage.setItem("profile", JSON.stringify(profile));
-
-                alert("Registration Successful!");
-
-                console.log({
-                    Name: fullName.value,
-                    Age: age.value,
-                    Gender: gender.value,
-                    Phone: phone.value,
-                    DOB: dob.value,
-                    Email: email.value
-                });
-
-                // Redirect to login page
-                window.location.href = "Login.html";
-
-            });
-
-            // Press Enter to Submit
-            // Form Validation
-form.addEventListener("submit", function (event) {
-
-    event.preventDefault();
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phonePattern = /^[0-9]{11}$/;
-
-    if (fullName.value.trim() === "") {
-        alert("Please enter your full name.");
-        fullName.focus();
-        return;
-    }
-
-    if (age.value.trim() === "" || isNaN(age.value) || age.value < 16) {
-        alert("Please enter a valid age.");
-        age.focus();
-        return;
-    }
-
-    if (phone.value.trim() === "") {
-        alert("Please enter your phone number.");
-        phone.focus();
-        return;
-    }
-
-    if (!phonePattern.test(phone.value)) {
-        alert("Phone number must contain exactly 11 digits.");
-        phone.focus();
-        return;
-    }
-
-    if (dob.value === "") {
-        alert("Please select your date of birth.");
-        dob.focus();
-        return;
-    }
-
-    if (email.value.trim() === "") {
-        alert("Please enter your email.");
-        email.focus();
-        return;
-    }
-
-    if (!emailPattern.test(email.value)) {
-        alert("Please enter a valid email address.");
-        email.focus();
-        return;
-    }
-
-    if (password.value.length < 6) {
-        alert("Password must contain at least 6 characters.");
-        password.focus();
-        return;
-    }
-
-    // Save Data
-    const profile = {
-        name: fullName.value,
-        age: age.value,
-        gender: gender.value,
-        phone: phone.value,
-        dob: dob.value,
-        email: email.value,
-        id: "221-15-XXXX",
-        department: "CSE",
-        semester: "Semester 7",
-        batch: "61",
-        photo: "default-profile.png"
-    };
-
-    localStorage.setItem("profile", JSON.stringify(profile));
-
-    alert("Registration Successful!");
-
-    window.location.href = "profiledashboard.html";
-});
-
-
-// Press Enter to Submit
-const inputs = document.querySelectorAll("input, select");
-
-inputs.forEach(function (input) {
-
-    input.addEventListener("keydown", function (event) {
-
-        if (event.key === "Enter") {
-
-            event.preventDefault();
-
-            form.requestSubmit();   // Automatically triggers the submit event above
-
+        if (fullName.value.trim() === "") {
+            alert("Please enter your full name.");
+            fullName.focus();
+            return;
         }
+
+        if (age.value.trim() === "" || isNaN(age.value) || age.value < 16) {
+            alert("Please enter a valid age.");
+            age.focus();
+            return;
+        }
+
+        if (phone.value.trim() === "") {
+            alert("Please enter your phone number.");
+            phone.focus();
+            return;
+        }
+
+        if (!phonePattern.test(phone.value)) {
+            alert("Phone number must contain exactly 11 digits.");
+            phone.focus();
+            return;
+        }
+
+        if (dob.value === "") {
+            alert("Please select your date of birth.");
+            dob.focus();
+            return;
+        }
+
+        if (email.value.trim() === "") {
+            alert("Please enter your email.");
+            email.focus();
+            return;
+        }
+
+        if (!emailPattern.test(email.value)) {
+            alert("Please enter a valid email address.");
+            email.focus();
+            return;
+        }
+
+        if (password.value.length < 6) {
+            alert("Password must contain at least 6 characters.");
+            password.focus();
+            return;
+        }
+
+        const existingUser = JSON.parse(localStorage.getItem("user"));
+
+        if (existingUser && existingUser.email === email.value.trim()) {
+            alert("An account with this email already exists.");
+            return;
+        }
+
+        const user = {
+            name: fullName.value.trim(),
+            age: age.value.trim(),
+            gender: gender.value,
+            phone: phone.value.trim(),
+            dob: dob.value,
+            email: email.value.trim(),
+            password: password.value,
+            id: "221-15-XXXX",
+            department: "CSE",
+            semester: "Semester 7",
+            batch: "61",
+            photo: "default-profile.png"
+        };
+
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("profile", JSON.stringify(user));
+
+        alert("Registration Successful!");
+
+        window.location.href = "Login.html";
+
+    });
+
+    const inputs = document.querySelectorAll("input, select");
+
+    inputs.forEach(function (input) {
+
+        input.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                form.requestSubmit();
+            }
+
+        });
 
     });
 
 });
-            
-
-        });
-    </script>
+</script>
 
 
 

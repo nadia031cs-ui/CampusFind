@@ -1,390 +1,830 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CampusFind - Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind</title>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
-body{
-    background:#f8f9fa;
-    color:#333;
-}
-
-
-header{
-    background:#fff;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:18px 8%;
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
-}
-
-.logo{
-    color:#100656;
-    font-size:28px;
-    font-weight:bold;
-}
-
-.auth-buttons{
-    display:flex;
-    gap:12px;
-}
-
-.auth-buttons button{
-    padding:10px 22px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:15px;
-    transition:.3s;
-}
-
-#loginBtn{
-    background:#fff;
-    color:#100656;
-    border:2px solid #100656;
-}
-
-#loginBtn:hover{
-    background:#100656;
-    color:white;
-}
-
-#registerBtn{
-    background:#100656;
-    color:white;
-}
-
-#registerBtn:hover{
-    background:#100656;
-}
-
-
-main{
-    width:90%;
-    max-width:1200px;
-    margin:auto;
-    padding:35px 0;
-}
-
-#search{
-    width:100%;
-    padding:14px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    outline:none;
-    margin-bottom:30px;
-    font-size:16px;
-}
-
-#search:focus{
-    border-color:#100656;
-}
-
-h2{
-    color:#100656;
-    margin-bottom:10px;
-}
-
-.subtitle{
-    color:#666;
-    margin-bottom:30px;
-}
-
-
-.welcome{
-    background:white;
-    border-radius:12px;
-    padding:35px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
-    margin-bottom:35px;
-}
-
-.welcome h1{
-    color:#100656;
-    margin-bottom:15px;
-}
-
-.welcome p{
-    line-height:1.7;
-    margin-bottom:25px;
-}
-
-.welcome button{
-    padding:12px 24px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin-right:10px;
-    transition:.3s;
-}
-
-#createPost{
-    background:#100656;
-    color:white;
-}
-
-#browseItems{
-    background:#ececec;
-}
-
-#createPost:hover{
-    background:#100656;
-}
-
-#browseItems:hover{
-    background:#dcdcdc;
-}
+    <link rel="stylesheet" href="LandingPage.css">
 
 
 
-.overview{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
-    margin-bottom:40px;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", sans-serif;
+        }
 
-.card{
-    background:white;
-    border-radius:12px;
-    padding:30px;
-    text-align:center;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
-    transition:.3s;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-.card:hover{
-    transform:translateY(-5px);
-}
+        body {
+            background-image: url("./Floors/uni.jpeg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
 
-.card h3{
-    color:#100656;
-    font-size:32px;
-    margin-bottom:10px;
-}
+        header {
+            background: white;
+            padding: 25px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+        }
 
-.card p{
-    color:#555;
-}
+        .ContainerNav {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
+        .logo img {
+            width: 180px;
+        }
 
-.recent-posts h2{
-    margin-bottom:20px;
-}
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 35px;
+        }
 
-.post{
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
-    margin-bottom:20px;
-}
+        nav ul li a {
+            text-decoration: none;
+            color: #575757;
+            font-size: 16px;
+            transition: .3s;
+        }
 
-.post h3{
-    color:#160b68;
-    margin-bottom:10px;
-}
+        nav ul li a:hover {
+            color: #1D4ED8;
+        }
 
-.post p{
-    margin-bottom:8px;
-}
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
 
-.post button{
-    margin-top:15px;
-    padding:10px 20px;
-    background:#100656;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
+        .login-btn,
+        .signup-btn,
+        .hero-btn,
+        .hero-btn2,
+        .post-content button,
+        .cta button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: .3s;
+        }
 
-.post button:hover{
-    background:#100656;
-}
+        .login-btn {
+            background: white;
+            border: 2px solid #1D4ED8;
+            color: #1D4ED8;
+        }
 
+        .login-btn:hover {
+            background: #1D4ED8;
+            color: white;
+        }
 
+        .signup-btn {
+            background: #1D4ED8;
+            color: white;
+        }
 
-@media(max-width:768px){
+        .signup-btn:hover {
+            background: #143aa9;
+        }
 
-header{
-    flex-direction:column;
-    gap:15px;
-}
+        .hero {
+            height: 700px;
+            background: url("./assets/banner.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
 
-.auth-buttons{
-    width:100%;
-}
+        .overlay {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.auth-buttons button{
-    flex:1;
-}
+        .hero-content {
+            text-align: center;
+            max-width: 850px;
+            padding: 20px;
+        }
 
-main{
-    width:95%;
-}
+        .hero-h2 {
+            color: white;
+            font-size: 65px;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            font-weight: 800;
+        }
 
-.welcome{
-    text-align:center;
-}
+        .hero-h2 span {
+            color: #60A5FA;
+        }
 
-.welcome button{
-    display:block;
-    width:100%;
-    margin:10px 0;
-}
+        .hero-content p {
+            color: white;
+            font-size: 19px;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: auto;
+        }
 
-}
-</style>
+        .hero-buttons {
+            margin-top: 45px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .hero-btn {
+            background: #1D4ED8;
+            color: white;
+        }
+
+        .hero-btn:hover {
+            background: #143aa9;
+        }
+
+        .hero-btn2 {
+            background: white;
+            color: #1D4ED8;
+        }
+
+        .hero-btn2:hover {
+            background: #e8eefc;
+        }
+
+        .overview {
+            max-width: 1200px;
+            margin: 80px auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        .card h3 {
+            font-size: 45px;
+            color: #1D4ED8;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 18px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .title h2 {
+            font-size: 42px;
+            color: #1D4ED8;
+            margin-bottom: 20px;
+        }
+
+        .title p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .how {
+            max-width: 1200px;
+            margin: 100px auto;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .step {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            transition: .3s;
+        }
+
+        .step:hover {
+            transform: translateY(-8px);
+        }
+
+        .step h3 {
+            width: 70px;
+            height: 70px;
+            background: #1D4ED8;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .step h4 {
+            margin-bottom: 15px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .step p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .recent-posts {
+            max-width: 1200px;
+            margin: 100px auto;
+        }
+
+        .posts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            transition: .3s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .post-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .post-content {
+            padding: 25px;
+        }
+
+        .post-content h3 {
+            margin-bottom: 15px;
+            color: #1D4ED8;
+        }
+
+        .post-content p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .post-content button {
+            margin-top: 15px;
+            background: #1D4ED8;
+            color: white;
+        }
+
+        .post-content button:hover {
+            background: #143aa9;
+        }
+
+        .cta {
+            background: #1D4ED8;
+            text-align: center;
+            padding: 90px 20px;
+            margin-top: 100px;
+        }
+
+        .cta h2 {
+            color: white;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            color: white;
+            max-width: 700px;
+            margin: auto;
+            line-height: 1.8;
+            margin-bottom: 35px;
+        }
+
+        .cta button {
+            background: white;
+            color: #1D4ED8;
+        }
+
+        .cta button:hover {
+            background: #f1f1f1;
+        }
+
+        footer {
+            background: #0D1B2A;
+            padding: 50px 0;
+        }
+
+        .ContainerFoot {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-foot img {
+            width: 170px;
+        }
+
+        footer ul {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+
+        footer ul li a {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        footer ul li a:hover {
+            color: white;
+        }
+
+        footer hr {
+            max-width: 1200px;
+            margin: 35px auto;
+            border: none;
+            height: 1px;
+            background: #555;
+        }
+
+        footer p {
+            text-align: center;
+            color: #ccc;
+            margin-top: 10px;
+        }
+
+        @media(max-width:992px) {
+            .ContainerNav {
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            .overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .posts {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            nav ul {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero {
+                height: auto;
+                padding: 120px 20px;
+            }
+
+            .hero-h2 {
+                font-size: 42px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .overview,
+            .steps,
+            .posts {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+            }
+
+            .ContainerFoot {
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            footer ul {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
+    <header>
 
-<div class="logo">
-CampusFind
-</div>
+        <div class="ContainerNav">
 
-<div class="auth-buttons">
-<button id="loginBtn">Login</button>
-<button id="registerBtn">SignUp</button>
-</div>
+            <div class="logo">
+                <img src="./cmpLOGO.jpeg" CampusFind Logo">
+            </div>
 
-</header>
+            <nav>
 
-<main>
+                <ul>
 
-<input id="search" type="text" placeholder="Search Anything">
+                    <li><a href="Home_Feed.html">Home</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
 
-<h2>Home Feed</h2>
 
-<p class="subtitle">
-See the latest lost and found items posted by our university community.
-</p>
+                </ul>
 
-<section class="welcome">
+            </nav>
 
-<h1>CampusFind</h1>
+            <div class="auth-buttons">
 
-<p>
-Report lost items, post found belongings, and help students reconnect with their valuables quickly and safely.
-</p>
+                <a href="Login.html">
+                    <button class="login-btn">Login</button>
+                </a>
 
-<button id="createPost">Create Post</button>
-<button id="browseItems">Browse Items</button>
+                <a href="signup.html">
+                    <button class="signup-btn">Sign Up</button>
+                </a>
 
-</section>
+            </div>
 
-<section class="overview">
+        </div>
 
-<div class="card">
-<h3>120+</h3>
-<p>Lost Items</p>
-</div>
-
-<div class="card">
-<h3>95+</h3>
-<p>Found Items</p>
-</div>
-
-<div class="card">
-<h3>80+</h3>
-<p>Returned Successfully</p>
-</div>
-
-<div class="card">
-<h3>500+</h3>
-<p>Active Users</p>
-</div>
-
-</section>
+    </header>
 
 
 
-</main>
+    <section class="hero">
 
-<script>
+        <div class="overlay">
 
-document.addEventListener("DOMContentLoaded",function(){
+            <div class="hero-content">
 
-console.log("Welcome to CampusFind!");
+                <h1 class="hero-h2">
 
-document.getElementById("loginBtn").addEventListener("click",function(){
+                    Find.
+                    <span><i>Recover.</i></span>
+                    Reconnect.
 
-window.location.href="Login.html";
+                </h1>
 
-});
+                <p>
 
-document.getElementById("registerBtn").addEventListener("click",function(){
+                    CampusFind helps students report lost belongings, post found
+                    items, and reconnect owners with their valuables safely inside
+                    the university community.
 
-window.location.href="signup.html";
+                </p>
 
-});
 
-document.getElementById("createPost").addEventListener("click",function(){
 
-alert("Create Post button clicked.");
+            </div>
 
-});
+        </div>
 
-document.getElementById("browseItems").addEventListener("click",function(){
+    </section>
 
-alert("Browsing all items.");
 
-});
 
-const search=document.getElementById("search");
 
-search.addEventListener("keyup",function(){
 
-console.log("Searching:",search.value);
+    <section class="how">
 
-});
+        <div class="title">
 
-const buttons=document.querySelectorAll(".details");
+            <h2>How CampusFind Works</h2>
 
-buttons.forEach(function(btn){
+            <p>
+                Recovering lost belongings has never been easier.
+            </p>
 
-btn.addEventListener("click",function(){
+        </div>
 
-alert("Opening item details.");
+        <div class="steps">
 
-});
+            <div class="step">
 
-});
+                <h3>1</h3>
 
-const cards=document.querySelectorAll(".card");
+                <h4>Report</h4>
 
-cards.forEach(function(card){
+                <p>
+                    Post details of your lost or found item.
+                </p>
 
-card.addEventListener("mouseenter",function(){
+            </div>
 
-card.style.transform="translateY(-8px)";
+            <div class="step">
 
-});
+                <h3>2</h3>
 
-card.addEventListener("mouseleave",function(){
+                <h4>Connect</h4>
 
-card.style.transform="translateY(0)";
+                <p>
+                    Browse posts and contact the owner.
+                </p>
 
-});
+            </div>
 
-});
+            <div class="step">
 
-});
+                <h3>3</h3>
 
-</script>
+                <h4>Verify</h4>
+
+                <p>
+                    Confirm ownership through item details.
+                </p>
+
+            </div>
+
+            <div class="step">
+
+                <h3>4</h3>
+
+                <h4>Return</h4>
+
+                <p>
+                    Safely return the item to its rightful owner.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="cta">
+
+        <h2>Ready to Help Someone Find Their Belongings?</h2>
+
+        <p>
+
+            Join CampusFind today and make your campus a safer,
+            more connected community.
+
+        </p>
+
+        <button class="hero-btn">
+
+            Get Started
+
+        </button>
+
+    </section>
+
+
+
+    <footer>
+
+        <div class="ContainerFoot">
+
+            <div class="logo-foot">
+
+                <img src="./assets/footer-logo.png" alt="">
+
+            </div>
+
+    
+
+        </div>
+
+        <hr>
+
+        <p>
+
+            Helping Students Find What Matters Most.
+
+        </p>
+
+        <div class="foot">
+
+            <p>
+
+                © 2026 CampusFind. All rights reserved.
+
+            </p>
+
+        </div>
+
+    </footer>
+
+    <script src="LandingPage.js">
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            console.log("CampusFind Landing Page Loaded.");
+
+            const loginBtn = document.querySelector(".login-btn");
+            const signupBtn = document.querySelector(".signup-btn");
+            const createPostBtn = document.querySelector(".hero-btn");
+            const browseBtn = document.querySelector(".hero-btn2");
+            const getStartedBtn = document.querySelector(".cta button");
+
+            loginBtn.addEventListener("click", function () {
+                window.location.href = "Login.html";
+            });
+
+            signupBtn.addEventListener("click", function () {
+                window.location.href = "signup.html";
+            });
+
+            createPostBtn.addEventListener("click", function () {
+                window.location.href = "Create_Post.html";
+            });
+
+            browseBtn.addEventListener("click", function () {
+                window.location.href = "Home_Feed.html";
+            });
+
+            getStartedBtn.addEventListener("click", function () {
+                window.location.href = "signup.html";
+            });
+
+            const navLinks = document.querySelectorAll("nav a");
+
+            navLinks.forEach(function (link) {
+
+                link.addEventListener("mouseenter", function () {
+                    link.style.color = "#1D4ED8";
+                });
+
+                link.addEventListener("mouseleave", function () {
+                    link.style.color = "#575757";
+                });
+
+                link.addEventListener("click", function (e) {
+
+                    e.preventDefault();
+
+                    const text = link.textContent.trim();
+
+                    if (text === "Home") {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+                    }
+
+                    if (text === "Browse Items") {
+                        window.location.href = "Home_Feed.html";
+                    }
+
+                    if (text === "How It Works") {
+                        document.querySelector(".how").scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+
+                    if (text === "About") {
+                        document.querySelector(".cta").scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+
+                    if (text === "Contact") {
+                        document.querySelector("footer").scrollIntoView({
+                            behavior: "smooth"
+                        });
+                    }
+
+                });
+
+            });
+
+            const cards = document.querySelectorAll(".card");
+
+            cards.forEach(function (card) {
+
+                card.addEventListener("mouseenter", function () {
+                    card.style.transform = "translateY(-10px)";
+                });
+
+                card.addEventListener("mouseleave", function () {
+                    card.style.transform = "translateY(0)";
+                });
+
+            });
+
+            const steps = document.querySelectorAll(".step");
+
+            steps.forEach(function (step) {
+
+                step.addEventListener("mouseenter", function () {
+                    step.style.transform = "translateY(-10px)";
+                });
+
+                step.addEventListener("mouseleave", function () {
+                    step.style.transform = "translateY(0)";
+                });
+
+            });
+
+            const postCards = document.querySelectorAll(".post-card");
+
+            postCards.forEach(function (card) {
+
+                card.addEventListener("mouseenter", function () {
+                    card.style.transform = "translateY(-10px)";
+                });
+
+                card.addEventListener("mouseleave", function () {
+                    card.style.transform = "translateY(0)";
+                });
+
+            });
+
+            const detailButtons = document.querySelectorAll(".post-content button");
+
+            detailButtons.forEach(function (button) {
+
+                button.addEventListener("click", function () {
+
+                    alert("Please login to view complete post details.");
+
+                    window.location.href = "Login.html";
+
+                });
+
+            });
+
+            const stats = document.querySelectorAll(".card h3");
+
+            const values = [120, 85, 67, 450];
+
+            stats.forEach(function (stat, index) {
+
+                let count = 0;
+
+                const target = values[index];
+
+                const interval = setInterval(function () {
+
+                    count++;
+
+                    stat.textContent = count;
+
+                    if (count >= target) {
+                        clearInterval(interval);
+                    }
+
+                }, 15);
+
+            });
+
+        });
+    </script>
 
 </body>
+
 </html>
