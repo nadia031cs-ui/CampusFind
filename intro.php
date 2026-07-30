@@ -1,3 +1,8 @@
+<?php
+// intro.php - CampusFind Landing Page
+// Converted from intro.html for use with XAMPP/PHP
+// No dynamic PHP logic needed yet; this wrapper lets you add PHP (sessions, includes, DB) later.
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,8 +16,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="LandingPage.css">
-
-
 
     <style>
         * {
@@ -470,7 +473,7 @@
         <div class="ContainerNav">
 
             <div class="logo">
-                <img src="./cmpLOGO.jpeg" CampusFind Logo">
+                <img src="./cmpLOGO.jpeg" alt="CampusFind Logo">
             </div>
 
             <nav>
@@ -479,7 +482,6 @@
 
                     <li><a href="Home_Feed.html">Home</a></li>
                     <li><a href="aboutus.html">About Us</a></li>
-
 
                 </ul>
 
@@ -500,8 +502,6 @@
         </div>
 
     </header>
-
-
 
     <section class="hero">
 
@@ -525,17 +525,11 @@
 
                 </p>
 
-
-
             </div>
 
         </div>
 
     </section>
-
-
-
-
 
     <section class="how">
 
@@ -603,7 +597,6 @@
 
     </section>
 
-
     <section class="cta">
 
         <h2>Ready to Help Someone Find Their Belongings?</h2>
@@ -623,19 +616,15 @@
 
     </section>
 
-
-
     <footer>
 
         <div class="ContainerFoot">
 
             <div class="logo-foot">
 
-                <img src="./assets/footer-logo.png" alt="">
+                <img src="./assets/footer-logo.png" alt="CampusFind Footer Logo">
 
             </div>
-
-    
 
         </div>
 
@@ -659,8 +648,7 @@
 
     </footer>
 
-    <script src="LandingPage.js">
-
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
 
             console.log("CampusFind Landing Page Loaded.");
@@ -683,9 +671,11 @@
                 window.location.href = "Create_Post.html";
             });
 
-            browseBtn.addEventListener("click", function () {
-                window.location.href = "Home_Feed.html";
-            });
+            if (browseBtn) {
+                browseBtn.addEventListener("click", function () {
+                    window.location.href = "Home_Feed.html";
+                });
+            }
 
             getStartedBtn.addEventListener("click", function () {
                 window.location.href = "signup.html";
