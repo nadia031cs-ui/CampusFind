@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat System</title>
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     <style>
         * {
             margin: 0;
@@ -150,14 +152,127 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            min-width: 0;
+        }
+
+        .chat-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
         }
 
         .chat-header {
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 15px;
             color: rgb(60, 45, 131);
             font-weight: bold;
             font-size: 20px;
+        }
+
+        #locationToggleBtn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            background: rgb(60, 45, 131);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #locationToggleBtn:hover {
+            background: rgb(20, 8, 91);
+        }
+
+        /* ===== Live location panel ===== */
+        #locationPanel {
+            display: none;
+            border-bottom: 1px solid #ddd;
+            padding: 16px 0;
+        }
+
+        #locationPanel.show {
+            display: block;
+        }
+
+        .location-panel-inner {
+            background: rgb(247, 247, 250);
+            border: 1px solid #e0e0e6;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .location-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .location-panel-header h4 {
+            color: rgb(60, 45, 131);
+            font-size: 15px;
+        }
+
+        .location-panel-header button {
+            border: none;
+            background: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #888;
+            line-height: 1;
+        }
+
+        #liveMap {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .location-coords {
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .location-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .location-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        #refreshLocationBtn {
+            background: rgb(235, 235, 235);
+            color: rgb(60, 45, 131);
+        }
+
+        #refreshLocationBtn:hover {
+            background: rgb(220, 220, 220);
+        }
+
+        #sendLocationBtn {
+            background: rgb(60, 45, 131);
+            color: white;
+        }
+
+        #sendLocationBtn:hover {
+            background: rgb(20, 8, 91);
         }
 
         .messages {
@@ -217,6 +332,16 @@
             transition: .3s;
         }
 
+        #locationBtnInline {
+            padding: 12px 16px;
+            background: rgb(235, 235, 235);
+            color: rgb(60, 45, 131);
+        }
+
+        #locationBtnInline:hover {
+            background: rgb(220, 220, 220);
+        }
+
         .message img {
             max-width: 220px;
             max-height: 220px;
@@ -227,6 +352,50 @@
 
         .message-box button:hover {
             background: rgb(20, 8, 91);
+        }
+
+        /* ===== Location message bubble (mini map + pulsing circle) ===== */
+        .location-message {
+            width: 220px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .location-message .mini-map {
+            width: 100%;
+            height: 130px;
+        }
+
+        .location-message .location-caption {
+            padding: 8px 10px;
+            font-size: 12.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .location-message.sent .location-caption {
+            color: white;
+        }
+
+        .location-message.received .location-caption {
+            color: #333;
+        }
+
+        .pulse-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgb(60, 45, 131);
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 rgba(60, 45, 131, 0.6);
+            animation: mapPulse 1.6s infinite;
+        }
+
+        @keyframes mapPulse {
+            0% { box-shadow: 0 0 0 0 rgba(60, 45, 131, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(60, 45, 131, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(60, 45, 131, 0); }
         }
 
         @media(max-width:500px) {
@@ -255,6 +424,12 @@
             .message-box input,
             .message-box button {
                 width: 100%;
+            }
+
+            .chat-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
     </style>
@@ -318,8 +493,33 @@
 
                 <div>
 
-                    <div class="chat-header">
-                        John Doe
+                    <div class="chat-header-row">
+                        <div class="chat-header">John Doe</div>
+                        <button id="locationToggleBtn" type="button">📍 Live Location</button>
+                    </div>
+
+                    <div id="locationPanel">
+                        <div class="location-panel-inner">
+
+                            <div class="location-panel-header">
+                                <h4>Your Live Location</h4>
+                                <button id="closeLocationBtn" type="button" title="Close">&times;</button>
+                            </div>
+
+                            <div id="liveMap"></div>
+
+                            <div class="location-coords">
+                                Lat: <span id="liveLat">--</span> &nbsp;|&nbsp;
+                                Lng: <span id="liveLng">--</span> &nbsp;|&nbsp;
+                                <span id="liveStatus">Waiting for location...</span>
+                            </div>
+
+                            <div class="location-actions">
+                                <button id="refreshLocationBtn" type="button">Refresh</button>
+                                <button id="sendLocationBtn" type="button">Send Location</button>
+                            </div>
+
+                        </div>
                     </div>
 
                     <div class="messages">
@@ -339,7 +539,8 @@
                 <div class="message-box">
                     <input type="text" placeholder="Write a message...">
                     <input type="file" accept="image/*">
-                    <button>Send</button>
+                    <button id="locationBtnInline" type="button" title="Share live location">📍</button>
+                    <button id="sendMsgBtn" type="button">Send</button>
                 </div>
 
             </div>
@@ -348,14 +549,26 @@
 
     </main>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
         const chatItems = document.querySelectorAll(".chat-item");
         const chatHeader = document.querySelector(".chat-header");
         const messages = document.querySelector(".messages");
         const messageInput = document.querySelector('.message-box input[type="text"]');
         const fileInput = document.querySelector('.message-box input[type="file"]');
-        const sendButton = document.querySelector(".message-box button");
+        const sendButton = document.getElementById("sendMsgBtn");
         const searchInput = document.querySelector("#left-panel input");
+
+        const locationToggleBtn = document.getElementById("locationToggleBtn");
+        const locationBtnInline = document.getElementById("locationBtnInline");
+        const closeLocationBtn = document.getElementById("closeLocationBtn");
+        const locationPanel = document.getElementById("locationPanel");
+        const refreshLocationBtn = document.getElementById("refreshLocationBtn");
+        const sendLocationBtn = document.getElementById("sendLocationBtn");
+        const liveLat = document.getElementById("liveLat");
+        const liveLng = document.getElementById("liveLng");
+        const liveStatus = document.getElementById("liveStatus");
 
         const chatData = {
             "John Doe": [
@@ -390,32 +603,80 @@
             messages.innerHTML = "";
 
             chatData[name].forEach(msg => {
-
-                const div = document.createElement("div");
-                div.className = "message " + msg.type;
-
-                if (msg.image) {
-
-                    const img = document.createElement("img");
-                    img.src = msg.image;
-                    img.style.maxWidth = "220px";
-                    img.style.borderRadius = "10px";
-                    img.style.display = "block";
-                    img.style.cursor = "pointer";
-
-                    div.appendChild(img);
-
-                } else {
-
-                    div.textContent = msg.text;
-
-                }
-
-                messages.appendChild(div);
-
+                renderMessage(msg, false);
             });
 
             messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Renders a single message. If it has msg.location = {lat, lng}, a mini
+        // Leaflet map with a pulsing marker is rendered instead of plain text.
+        function renderMessage(msg, scroll) {
+
+            const div = document.createElement("div");
+            div.className = "message " + msg.type;
+
+            if (msg.location) {
+
+                div.classList.add("location-message");
+
+                const mapId = "mini-map-" + Date.now() + "-" + Math.floor(Math.random() * 10000);
+
+                const mapDiv = document.createElement("div");
+                mapDiv.className = "mini-map";
+                mapDiv.id = mapId;
+                div.appendChild(mapDiv);
+
+                const caption = document.createElement("div");
+                caption.className = "location-caption";
+                caption.innerHTML = "📍 Live location shared";
+                div.appendChild(caption);
+
+                messages.appendChild(div);
+
+                // Initialize a small, non-interactive Leaflet map with a
+                // pulsing marker + accuracy circle for this message.
+                const miniMap = L.map(mapId, {
+                    zoomControl: false,
+                    dragging: false,
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    attributionControl: false
+                }).setView([msg.location.lat, msg.location.lng], 15);
+
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(miniMap);
+
+                const pulseIcon = L.divIcon({
+                    className: "",
+                    html: '<div class="pulse-dot"></div>',
+                    iconSize: [14, 14]
+                });
+
+                L.marker([msg.location.lat, msg.location.lng], { icon: pulseIcon }).addTo(miniMap);
+
+                L.circle([msg.location.lat, msg.location.lng], {
+                    radius: 120,
+                    color: "rgb(60,45,131)",
+                    fillColor: "rgb(60,45,131)",
+                    fillOpacity: 0.08,
+                    weight: 1
+                }).addTo(miniMap);
+
+            } else if (msg.image) {
+
+                const img = document.createElement("img");
+                img.src = msg.image;
+                div.appendChild(img);
+                messages.appendChild(div);
+
+            } else {
+
+                div.textContent = msg.text;
+                messages.appendChild(div);
+
+            }
+
+            if (scroll) messages.scrollTop = messages.scrollHeight;
         }
 
         chatItems.forEach(item => {
@@ -439,20 +700,9 @@
             const currentChat = chatHeader.textContent;
 
             if (text !== "") {
-
-                const msg = {
-                    type: "sent",
-                    text: text
-                };
-
+                const msg = { type: "sent", text: text };
                 chatData[currentChat].push(msg);
-
-                const div = document.createElement("div");
-                div.className = "message sent";
-                div.textContent = text;
-
-                messages.appendChild(div);
-
+                renderMessage(msg, true);
             }
 
             if (file) {
@@ -461,28 +711,9 @@
 
                 reader.onload = function (e) {
 
-                    const imageURL = e.target.result;
-
-                    chatData[currentChat].push({
-                        type: "sent",
-                        image: imageURL
-                    });
-
-                    const div = document.createElement("div");
-                    div.className = "message sent";
-
-                    const img = document.createElement("img");
-                    img.src = imageURL;
-                    img.style.maxWidth = "220px";
-                    img.style.borderRadius = "10px";
-                    img.style.display = "block";
-                    img.style.cursor = "pointer";
-
-                    div.appendChild(img);
-
-                    messages.appendChild(div);
-
-                    messages.scrollTop = messages.scrollHeight;
+                    const msg = { type: "sent", image: e.target.result };
+                    chatData[currentChat].push(msg);
+                    renderMessage(msg, true);
 
                 };
 
@@ -520,6 +751,135 @@
                 }
 
             });
+
+        });
+
+        /* ================= Live Location panel (Leaflet + Geolocation API) ================= */
+
+        let liveMap, liveMarker, liveCircle;
+        let currentLat = null;
+        let currentLng = null;
+
+        function initLiveMap(lat, lng) {
+
+            currentLat = lat;
+            currentLng = lng;
+
+            liveLat.textContent = lat.toFixed(6);
+            liveLng.textContent = lng.toFixed(6);
+            liveStatus.textContent = "Location found.";
+
+            if (!liveMap) {
+
+                liveMap = L.map("liveMap", { zoomControl: false }).setView([lat, lng], 15);
+
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: "&copy; OpenStreetMap contributors"
+                }).addTo(liveMap);
+
+                L.control.zoom({ position: "bottomright" }).addTo(liveMap);
+
+            } else {
+
+                liveMap.setView([lat, lng], 15);
+
+            }
+
+            if (liveMarker) liveMap.removeLayer(liveMarker);
+            if (liveCircle) liveMap.removeLayer(liveCircle);
+
+            const pulseIcon = L.divIcon({
+                className: "",
+                html: '<div class="pulse-dot"></div>',
+                iconSize: [14, 14]
+            });
+
+            liveMarker = L.marker([lat, lng], { icon: pulseIcon })
+                .addTo(liveMap)
+                .bindPopup("You are here");
+
+            liveCircle = L.circle([lat, lng], {
+                radius: 150,
+                color: "rgb(60,45,131)",
+                fillColor: "rgb(60,45,131)",
+                fillOpacity: 0.08,
+                weight: 1
+            }).addTo(liveMap);
+
+            // Leaflet needs a resize nudge since the panel may have been hidden
+            setTimeout(function () {
+                if (liveMap) liveMap.invalidateSize();
+            }, 150);
+
+        }
+
+        function fetchLiveLocation() {
+
+            if (!navigator.geolocation) {
+                liveStatus.textContent = "Geolocation is not supported by this browser.";
+                return;
+            }
+
+            liveStatus.textContent = "Getting your location...";
+
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    initLiveMap(position.coords.latitude, position.coords.longitude);
+                },
+                function () {
+                    liveStatus.textContent = "Location access denied.";
+                }
+            );
+
+        }
+
+        function openLocationPanel() {
+            locationPanel.classList.add("show");
+            if (!liveMap) {
+                fetchLiveLocation();
+            } else {
+                setTimeout(function () { liveMap.invalidateSize(); }, 150);
+            }
+        }
+
+        function closeLocationPanel() {
+            locationPanel.classList.remove("show");
+        }
+
+        locationToggleBtn.addEventListener("click", function () {
+            if (locationPanel.classList.contains("show")) {
+                closeLocationPanel();
+            } else {
+                openLocationPanel();
+            }
+        });
+
+        locationBtnInline.addEventListener("click", function () {
+            openLocationPanel();
+        });
+
+        closeLocationBtn.addEventListener("click", closeLocationPanel);
+
+        refreshLocationBtn.addEventListener("click", fetchLiveLocation);
+
+        sendLocationBtn.addEventListener("click", function () {
+
+            if (currentLat === null || currentLng === null) {
+                alert("Please wait for your location to load first.");
+                return;
+            }
+
+            const currentChat = chatHeader.textContent;
+
+            const msg = {
+                type: "sent",
+                location: { lat: currentLat, lng: currentLng }
+            };
+
+            chatData[currentChat].push(msg);
+            renderMessage(msg, true);
+
+            closeLocationPanel();
 
         });
 
