@@ -28,6 +28,21 @@
   --color-border: rgba(0, 0, 0, 0.08);
   --shadow-color: rgba(0, 0, 0, 0.08);
   --overlay-color: rgba(0, 0, 0, 0.55);
+
+  /* Purple sidebar app pages (Home_Feed, Messages, Settings, etc.) */
+  --color-app-bg: rgb(60, 45, 131);
+  --color-sidebar-bg: rgb(14, 3, 77);
+  --color-sidebar-item-bg: rgb(20, 8, 91);
+  --color-card-bg: #ffffff;
+  --color-card-text: #222222;
+  --color-muted-text: rgb(225, 225, 225);
+  --color-danger: rgb(220, 53, 69);
+  --color-danger-hover: rgb(180, 25, 40);
+  --color-list-item-bg: rgb(235, 235, 235);
+  --color-list-item-text: #333333;
+  --color-placeholder-bg: rgb(245, 245, 245);
+  --color-placeholder-border: #cccccc;
+  --color-icon-btn-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -54,6 +69,21 @@
   --color-border: rgba(255, 255, 255, 0.08);
   --shadow-color: rgba(0, 0, 0, 0.5);
   --overlay-color: rgba(0, 0, 0, 0.7);
+
+  /* Purple sidebar app pages (Home_Feed, Messages, Settings, etc.) */
+  --color-app-bg: #150c2e;
+  --color-sidebar-bg: #0a0620;
+  --color-sidebar-item-bg: #120a2b;
+  --color-card-bg: #1e293b;
+  --color-card-text: #e2e8f0;
+  --color-muted-text: #94a3b8;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-list-item-bg: #2d3b52;
+  --color-list-item-text: #e2e8f0;
+  --color-placeholder-bg: #1e293b;
+  --color-placeholder-border: #475569;
+  --color-icon-btn-bg: #e8ecf3;
 }
 
 /* Smooth theme switch, applied broadly but cheaply */
