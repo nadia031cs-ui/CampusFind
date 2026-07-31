@@ -300,6 +300,7 @@
                 <a href="Messages.html">Messages</a>
                 <a href="profiledashboard.html">Profile</a>
                 <a href="Settings.html">Settings</a>
+                <a href="Notifications.html">Notifications</a>
             </nav>
 
         </div>
@@ -401,6 +402,11 @@
     </main>
 
     <script>
+        // ---- Auth guard: must run before anything else on the page ----
+        if (localStorage.getItem("loggedIn") !== "true") {
+            window.location.href = "intro.html";
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
 
             console.log("Profile Dashboard Loaded");
@@ -413,8 +419,14 @@
                 const confirmLogout = confirm("Are you sure you want to logout?");
 
                 if (confirmLogout) {
+
+                    // Clear session/auth data
+                    localStorage.removeItem("loggedIn");
+                    localStorage.removeItem("username");
+
                     alert("You have been logged out.");
-                    window.location.href = "Login.html";
+                    window.location.href = "intro.html";
+
                 }
 
             });

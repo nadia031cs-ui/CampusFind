@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        body {
+            background: rgb(60, 45, 131);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 250px;
+            background: rgb(14, 3, 77);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: rgb(20, 8, 91);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            transition: .3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            background: white;
+            color: black;
+        }
+
+        nav a.active {
+            background: white;
+            color: rgb(60, 45, 131);
+            font-weight: bold;
+        }
+
+        .nav-badge {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgb(220, 53, 69);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .logout button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgb(220, 53, 69);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .logout button:hover {
+            background: rgb(180, 25, 40);
+        }
+
+        main {
+            flex: 1;
+            padding: 35px;
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgb(225, 225, 225);
+            margin-bottom: 25px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-header h3 {
+            color: rgb(60, 45, 131);
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            border: 1px solid rgb(60, 45, 131);
+            background: white;
+            color: rgb(60, 45, 131);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: rgb(60, 45, 131);
+            color: white;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-actions button {
+            border: none;
+            background: rgb(235, 235, 235);
+            color: rgb(60, 45, 131);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: .3s;
+        }
+
+        .header-actions button:hover {
+            background: rgb(60, 45, 131);
+            color: white;
+        }
+
+        .notif-list {
+            display: flex;
+            flex-direction: column;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .notif-item {
+            display: flex;
+            gap: 15px;
+            padding: 18px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: .2s;
+            position: relative;
+        }
+
+        .notif-item:hover {
+            background: rgb(245, 244, 251);
+        }
+
+        .notif-item.unread {
+            background: rgb(238, 236, 250);
+        }
+
+        .notif-item.unread:hover {
+            background: rgb(230, 227, 248);
+        }
+
+        .notif-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .icon-message { background: rgb(60, 45, 131); }
+        .icon-item { background: rgb(40, 160, 100); }
+        .icon-friend { background: rgb(230, 150, 30); }
+        .icon-admin { background: rgb(220, 53, 69); }
+        .icon-post { background: rgb(70, 130, 200); }
+        .icon-like { background: rgb(225, 60, 130); }
+        .icon-settings { background: rgb(110, 110, 120); }
+
+        .notif-body {
+            flex: 1;
+        }
+
+        .notif-text {
+            color: rgb(30, 30, 30);
+            margin-bottom: 4px;
+        }
+
+        .notif-time {
+            color: rgb(140, 140, 140);
+            font-size: 13px;
+        }
+
+        .unread-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgb(60, 45, 131);
+            align-self: center;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: rgb(180, 180, 180);
+            font-size: 18px;
+            cursor: pointer;
+            align-self: center;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: .2s;
+        }
+
+        .delete-btn:hover {
+            color: rgb(220, 53, 69);
+            background: rgb(250, 235, 236);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgb(150, 150, 150);
+        }
+
+        @media(max-width:500px) {
+
+            body {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+            }
+
+            .panel-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <aside>
+
+        <div>
+
+            <div class="logo">
+                <img src="cmpLOGO.jpeg" width="180">
+            </div>
+
+            <nav>
+                <a href="Home_Feed.html">Home Feed</a>
+                <a href="Create_Post.html">Post an Item</a>
+                <a href="University_Map.html">University Map</a>
+                <a href="Messages.html">Messages</a>
+                <a href="Notifications.html" class="active">Notifications <span class="nav-badge" id="navBadge">0</span>
+                </a>
+                <a href="profiledashboard.html">Profile</a>
+                <a href="Settings.html">Settings</a>
+            </nav>
+
+        </div>
+
+        <div class="logout">
+            <button>Logout</button>
+        </div>
+
+    </aside>
+
+    <main>
+
+        <h2>Notifications</h2>
+
+        <p class="subtitle">
+            Stay updated on messages, feed activity, likes, and account changes.
+        </p>
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="unread">Unread</button>
+                    <button class="filter-btn" data-filter="message">Messages</button>
+                    <button class="filter-btn" data-filter="item">Item Matches</button>
+                    <button class="filter-btn" data-filter="friend">Friend Requests</button>
+                    <button class="filter-btn" data-filter="admin">Admin</button>
+                    <button class="filter-btn" data-filter="post">Feed Posts</button>
+                    <button class="filter-btn" data-filter="like">Likes</button>
+                    <button class="filter-btn" data-filter="settings">Settings</button>
+                </div>
+
+                <div class="header-actions">
+                    <button id="markAllBtn">Mark all as read</button>
+                    <button id="clearAllBtn">Clear all</button>
+                </div>
+
+            </div>
+
+            <div class="notif-list" id="notifList"></div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // ---- Auth guard: must run before anything else on the page ----
+        if (localStorage.getItem("loggedIn") !== "true") {
+            window.location.href = "intro.html";
+        }
+
+        const currentUser = localStorage.getItem("username") || "Anonymous User";
+
+        // ============================================================
+        // NOTIFICATION STORE
+        // All notifications for ALL users live in one localStorage key,
+        // each tagged with a "recipient". This page only ever reads
+        // and renders the ones addressed to the logged-in user.
+        //
+        // On your real backend, this whole block is replaced by:
+        //   GET /api/notifications  -> returns only req.user's notifications
+        // because the server filters by recipient before sending anything
+        // to the client at all.
+        // ============================================================
+
+        function getAllNotifications() {
+            return JSON.parse(localStorage.getItem("notifications")) || [];
+        }
+
+        function saveAllNotifications(all) {
+            localStorage.setItem("notifications", JSON.stringify(all));
+        }
+
+        // Call this from ANY page to notify a specific user.
+        // e.g. createNotification("sarah_ahmed", "like", "John Doe liked your post.", "Home_Feed.html");
+        function createNotification(recipient, type, text, link) {
+            const all = getAllNotifications();
+            all.unshift({
+                id: Date.now() + Math.random(),
+                recipient: recipient,
+                type: type,
+                text: text,
+                time: "Just now",
+                read: false,
+                link: link
+            });
+            saveAllNotifications(all);
+        }
+
+        // Seed some demo data ONCE, for testing with multiple accounts.
+        // Remove this block once real events (posts/likes/messages/settings
+        // changes) are creating notifications themselves.
+        if (!localStorage.getItem("notifications")) {
+            saveAllNotifications([
+                {
+                    id: 1,
+                    recipient: currentUser,
+                    type: "message",
+                    text: "John Doe sent you a new message.",
+                    time: "2 minutes ago",
+                    read: false,
+                    link: "Messages.html"
+                },
+                {
+                    id: 2,
+                    recipient: currentUser,
+                    type: "item",
+                    text: "A new item matching your 'Blue Notebook' post was found.",
+                    time: "1 hour ago",
+                    read: false,
+                    link: "Home_Feed.html"
+                },
+                {
+                    id: 3,
+                    recipient: currentUser,
+                    type: "like",
+                    text: "John Doe liked your post 'Lost Black Wallet'.",
+                    time: "30 minutes ago",
+                    read: false,
+                    link: "Home_Feed.html"
+                },
+                {
+                    id: 4,
+                    recipient: currentUser,
+                    type: "settings",
+                    text: "Your account password was changed successfully.",
+                    time: "1 day ago",
+                    read: true,
+                    link: "Settings.html"
+                },
+                {
+                    id: 5,
+                    recipient: "some_other_user",
+                    type: "post",
+                    text: "This notification belongs to a different account and should NEVER show up here.",
+                    time: "5 minutes ago",
+                    read: false,
+                    link: "Home_Feed.html"
+                }
+            ]);
+        }
+
+        // Only this user's notifications, newest first
+        let notifications = getAllNotifications()
+            .filter(n => n.recipient === currentUser);
+
+        const notifList = document.getElementById("notifList");
+        const navBadge = document.getElementById("navBadge");
+        const filterBtns = document.querySelectorAll(".filter-btn");
+        const markAllBtn = document.getElementById("markAllBtn");
+        const clearAllBtn = document.getElementById("clearAllBtn");
+
+        let currentFilter = "all";
+
+        const icons = {
+            message: "💬",
+            item: "📦",
+            friend: "👥",
+            admin: "🛡️",
+            post: "📝",
+            like: "❤️",
+            settings: "⚙️"
+        };
+
+        // Persist this user's notifications back into the shared store,
+        // leaving every other user's notifications untouched.
+        function persistCurrentUserNotifications() {
+            const all = getAllNotifications();
+            const others = all.filter(n => n.recipient !== currentUser);
+            saveAllNotifications([...others, ...notifications]);
+        }
+
+        function updateBadge() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            navBadge.textContent = unreadCount;
+            navBadge.style.display = unreadCount === 0 ? "none" : "inline-block";
+        }
+
+        function renderNotifications() {
+
+            notifList.innerHTML = "";
+
+            let filtered = notifications;
+
+            if (currentFilter === "unread") {
+                filtered = notifications.filter(n => !n.read);
+            } else if (currentFilter !== "all") {
+                filtered = notifications.filter(n => n.type === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                notifList.innerHTML = `<div class="empty-state">No notifications here.</div>`;
+                updateBadge();
+                return;
+            }
+
+            filtered.forEach(n => {
+
+                const item = document.createElement("div");
+                item.className = "notif-item" + (n.read ? "" : " unread");
+
+                item.innerHTML = `
+                    <div class="notif-icon icon-${n.type}">${icons[n.type] || "🔔"}</div>
+                    <div class="notif-body">
+                        <div class="notif-text">${n.text}</div>
+                        <div class="notif-time">${n.time}</div>
+                    </div>
+                    ${!n.read ? '<div class="unread-dot"></div>' : ""}
+                    <button class="delete-btn" title="Delete">&times;</button>
+                `;
+
+                // Clicking the notification marks it read and goes to its link
+                item.addEventListener("click", (e) => {
+                    if (e.target.classList.contains("delete-btn")) return;
+                    n.read = true;
+                    persistCurrentUserNotifications();
+                    if (n.link) window.location.href = n.link;
+                    renderNotifications();
+                });
+
+                // Delete button removes just that notification
+                item.querySelector(".delete-btn").addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    notifications = notifications.filter(x => x.id !== n.id);
+                    persistCurrentUserNotifications();
+                    renderNotifications();
+                });
+
+                notifList.appendChild(item);
+
+            });
+
+            updateBadge();
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                currentFilter = btn.dataset.filter;
+                renderNotifications();
+            });
+        });
+
+        markAllBtn.addEventListener("click", () => {
+            notifications.forEach(n => n.read = true);
+            persistCurrentUserNotifications();
+            renderNotifications();
+        });
+
+        clearAllBtn.addEventListener("click", () => {
+            if (confirm("Clear all notifications?")) {
+                notifications = [];
+                persistCurrentUserNotifications();
+                renderNotifications();
+            }
+        });
+
+        // Logout Button
+        document.querySelector(".logout button").addEventListener("click", function () {
+            const confirmLogout = confirm("Are you sure you want to logout?");
+            if (confirmLogout) {
+                localStorage.removeItem("loggedIn");
+                localStorage.removeItem("username");
+                alert("You have been logged out.");
+                window.location.href = "intro.html";
+            }
+        });
+
+        renderNotifications();
+    </script>
+
+</body>
+
+</html>

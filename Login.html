@@ -199,131 +199,125 @@
 
     </div>
 
-    <script src="Signin.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-</body>
+            const form = document.querySelector("form");
+            const email = document.getElementById("email");
+            const password = document.getElementById("password");
+            const remember = document.getElementById("remember");
+            const forgotLink = document.querySelector(".options a");
+            const signupLink = document.querySelector(".signup a");
 
-</html>
+            email.addEventListener("focus", function () {
+                email.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+            });
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
+            email.addEventListener("blur", function () {
+                email.style.boxShadow = "none";
+            });
 
-    const form = document.querySelector("form");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const remember = document.getElementById("remember");
-    const forgotLink = document.querySelector(".options a");
-    const signupLink = document.querySelector(".signup a");
+            password.addEventListener("focus", function () {
+                password.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+            });
 
-    email.addEventListener("focus", function () {
-        email.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
-    });
+            password.addEventListener("blur", function () {
+                password.style.boxShadow = "none";
+            });
 
-    email.addEventListener("blur", function () {
-        email.style.boxShadow = "none";
-    });
+            remember.addEventListener("change", function () {
+                console.log(remember.checked ? "Remember Me Enabled" : "Remember Me Disabled");
+            });
 
-    password.addEventListener("focus", function () {
-        password.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
-    });
+            forgotLink.addEventListener("click", function () {
+                console.log("Forgot Password clicked.");
+            });
 
-    password.addEventListener("blur", function () {
-        password.style.boxShadow = "none";
-    });
+            signupLink.addEventListener("click", function () {
+                console.log("Opening Sign Up page.");
+            });
 
-    remember.addEventListener("change", function () {
-        console.log(remember.checked ? "Remember Me Enabled" : "Remember Me Disabled");
-    });
+            form.addEventListener("submit", function (event) {
 
-    forgotLink.addEventListener("click", function () {
-        console.log("Forgot Password clicked.");
-    });
+                event.preventDefault();
 
-    signupLink.addEventListener("click", function () {
-        console.log("Opening Sign Up page.");
-    });
+                const emailValue = email.value.trim();
+                const passwordValue = password.value.trim();
 
-    form.addEventListener("submit", function (event) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        event.preventDefault();
+                if (emailValue === "") {
+                    alert("Please enter your email.");
+                    email.focus();
+                    return;
+                }
 
-        const emailValue = email.value.trim();
-        const passwordValue = password.value.trim();
+                if (!emailPattern.test(emailValue)) {
+                    alert("Please enter a valid email address.");
+                    email.focus();
+                    return;
+                }
 
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (passwordValue === "") {
+                    alert("Please enter your password.");
+                    password.focus();
+                    return;
+                }
 
-        if (emailValue === "") {
-            alert("Please enter your email.");
-            email.focus();
-            return;
-        }
+                if (passwordValue.length < 6) {
+                    alert("Password must contain at least 6 characters.");
+                    password.focus();
+                    return;
+                }
 
-        if (!emailPattern.test(emailValue)) {
-            alert("Please enter a valid email address.");
-            email.focus();
-            return;
-        }
+                const savedUser = JSON.parse(localStorage.getItem("user"));
 
-        if (passwordValue === "") {
-            alert("Please enter your password.");
-            password.focus();
-            return;
-        }
+                if (!savedUser) {
+                    alert("No account found. Please Sign Up first.");
+                    window.location.href = "signup.html";
+                    return;
+                }
 
-        if (passwordValue.length < 6) {
-            alert("Password must contain at least 6 characters.");
-            password.focus();
-            return;
-        }
+                if (emailValue !== savedUser.email) {
+                    alert("Incorrect Email.");
+                    email.focus();
+                    return;
+                }
 
-        const savedUser = JSON.parse(localStorage.getItem("user"));
+                if (passwordValue !== savedUser.password) {
+                    alert("Incorrect Password.");
+                    password.focus();
+                    return;
+                }
 
-        if (!savedUser) {
-            alert("No account found. Please Sign Up first.");
-            window.location.href = "signup.html";
-            return;
-        }
+                localStorage.setItem("loggedIn", "true");
+                localStorage.setItem("username", savedUser.name);
 
-        if (emailValue !== savedUser.email) {
-            alert("Incorrect Email.");
-            email.focus();
-            return;
-        }
+                if (savedUser.photo) {
+                    localStorage.setItem("profileImage", savedUser.photo);
+                }
 
-        if (passwordValue !== savedUser.password) {
-            alert("Incorrect Password.");
-            password.focus();
-            return;
-        }
+                alert("Login Successful!");
+                window.location.href = "Home_Feed.html";
 
-        localStorage.setItem("loggedIn", "true");
-        localStorage.setItem("username", savedUser.name);
+            });
 
-        if (savedUser.photo) {
-            localStorage.setItem("profileImage", savedUser.photo);
-        }
+            email.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    password.focus();
+                }
+            });
 
-        alert("Login Successful!");
-        window.location.href = "Home_Feed.html";
+            password.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    form.requestSubmit();
+                }
+            });
 
-    });
-
-    email.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            password.focus();
-        }
-    });
-
-    password.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            form.requestSubmit();
-        }
-    });
-
-});
-</script>
+        });
+    </script>
 
 </body>
 
