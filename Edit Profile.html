@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
 
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -15,14 +26,14 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             display: flex;
             min-height: 100vh;
         }
 
         aside {
             width: 250px;
-            background: rgb(14, 3, 77);
+            background: var(--color-sidebar-bg);
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -38,7 +49,7 @@
             display: block;
             text-decoration: none;
             color: white;
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
             padding: 12px;
             border-radius: 8px;
             text-align: center;
@@ -48,8 +59,8 @@
         }
 
         .profile-link:hover {
-            background: white;
-            color: black;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         nav {
@@ -61,7 +72,7 @@
         nav a {
             text-decoration: none;
             color: white;
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
             padding: 12px;
             border-radius: 8px;
             transition: .3s;
@@ -69,8 +80,8 @@
         }
 
         nav a:hover {
-            background: white;
-            color: black;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .logout button {
@@ -106,22 +117,25 @@
             border-radius: 10px;
             outline: none;
             font-size: 16px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .card {
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         h2 {
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             margin-bottom: 10px;
         }
 
         p {
-            color: #555;
+            color: var(--color-card-text);
             margin-bottom: 25px;
         }
 
@@ -134,7 +148,7 @@
         label {
             display: block;
             margin-bottom: 6px;
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             font-weight: bold;
         }
 
@@ -142,16 +156,18 @@
         select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 10px;
             outline: none;
             font-size: 15px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         input:focus,
         select:focus {
-            border-color: rgb(60, 45, 131);
-            box-shadow: 0 0 5px rgba(60, 45, 131, .25);
+            border-color: var(--color-app-bg);
+            box-shadow: 0 0 5px var(--color-primary);
         }
 
         .full {
@@ -177,7 +193,7 @@
         }
 
         .save {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             border: none;
             padding: 12px 22px;
@@ -191,7 +207,7 @@
         }
 
         .save:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
 
         @media(max-width:600px) {
@@ -228,7 +244,7 @@
 
         #profilePhoto {
             padding: 10px;
-            background: white;
+            background: var(--color-card-bg);
             cursor: pointer;
         }
 
@@ -239,8 +255,8 @@
             height: 160px;
             object-fit: cover;
             border-radius: 50%;
-            border: 4px solid rgb(60, 45, 131);
-            background: #f2f2f2;
+            border: 4px solid var(--color-app-bg);
+            background: var(--color-panel-bg);
         }
 
         input[type="file"] {
@@ -250,7 +266,7 @@
         }
 
         input[type="file"]::file-selector-button {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             border: none;
             padding: 10px 18px;
@@ -261,7 +277,7 @@
         }
 
         input[type="file"]::file-selector-button:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
     </style>
 
@@ -317,7 +333,7 @@
                     <br><br>
 
                     <img id="previewImage" src="default-profile.png" alt="Profile Preview" width="150" height="150"
-                        style="border-radius:50%; object-fit:cover; border:4px solid rgb(60,45,131);">
+                        style="border-radius:50%; object-fit:cover; border:4px solid var(--color-app-bg);">
                 </div>
 
                 <div class="full">
@@ -558,13 +574,13 @@
 
                 input.addEventListener("focus", function () {
 
-                    input.style.backgroundColor = "#f5f5ff";
+                    input.style.backgroundColor = "var(--color-card-bg)";
 
                 });
 
                 input.addEventListener("blur", function () {
 
-                    input.style.backgroundColor = "white";
+                    input.style.backgroundColor = "var(--color-card-bg)";
 
                 });
 
