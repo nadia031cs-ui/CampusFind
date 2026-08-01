@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | CampusFind</title>
 
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -15,7 +26,7 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -26,21 +37,22 @@
         .container {
             width: 900px;
             max-width: 100%;
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+            box-shadow: 0 8px 20px var(--shadow-color);
         }
 
         h1 {
             text-align: center;
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             margin-bottom: 10px;
         }
 
         .intro {
             text-align: center;
-            color: #555;
+            color: var(--color-card-text);
             margin-bottom: 30px;
             line-height: 1.7;
         }
@@ -48,30 +60,30 @@
         .section {
             margin-bottom: 25px;
             padding: 20px;
-            border-left: 5px solid rgb(60, 45, 131);
-            background: #f8f8ff;
+            border-left: 5px solid var(--color-app-bg);
+            background: var(--color-panel-bg);
             border-radius: 8px;
             transition: .3s;
         }
 
         .section:hover {
             transform: translateY(-4px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, .15);
+            box-shadow: 0 5px 12px var(--shadow-color);
         }
 
         .section h2 {
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             margin-bottom: 10px;
         }
 
         .section p {
-            color: #444;
+            color: var(--color-card-text);
             line-height: 1.7;
         }
 
         ul {
             margin-left: 20px;
-            color: #444;
+            color: var(--color-card-text);
             line-height: 2;
         }
 
@@ -86,7 +98,7 @@
 
         button {
             padding: 13px 35px;
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             border: none;
             border-radius: 8px;
@@ -97,7 +109,7 @@
         }
 
         button:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
 
         @media(max-width:768px) {
