@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friends</title>
 
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -15,14 +26,14 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             display: flex;
             min-height: 100vh;
         }
 
         aside {
             width: 250px;
-            background: rgb(14, 3, 77);
+            background: var(--color-sidebar-bg);
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -30,7 +41,11 @@
 
         .logo {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+
+        .theme-toggle {
+            margin: 0 auto 20px auto;
         }
 
         nav {
@@ -42,7 +57,7 @@
         nav a {
             text-decoration: none;
             color: white;
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
             padding: 12px;
             border-radius: 8px;
             font-size: 18px;
@@ -72,37 +87,40 @@
             border-radius: 10px;
             outline: none;
             font-size: 16px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .search-bar button {
             padding: 13px 25px;
             border: none;
             border-radius: 10px;
-            background: white;
-            color: rgb(60, 45, 131);
+            background: var(--color-card-bg);
+            color: var(--color-app-bg);
             font-weight: bold;
             cursor: pointer;
             transition: .3s;
         }
 
         .search-bar button:hover {
-            background: rgb(225, 225, 225);
+            background: var(--color-muted-text);
         }
 
         .card {
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         h2 {
-            color: rgb(60, 45, 131);
+            color:var(--color-accent-text);
             margin-bottom: 10px;
         }
 
         .card p {
-            color: #555;
+            color: var(--color-text-muted);
             margin-bottom: 25px;
         }
 
@@ -112,7 +130,7 @@
         }
 
         th {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             padding: 15px;
             text-align: left;
@@ -120,15 +138,15 @@
 
         td {
             padding: 15px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--color-border);
         }
 
         tr:hover {
-            background: rgb(245, 245, 245);
+            background: var(--color-placeholder-bg);
         }
 
         .action-btn {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             border: none;
             padding: 8px 16px;
@@ -138,7 +156,7 @@
         }
 
         .action-btn:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
 
         .back {
@@ -195,6 +213,8 @@
             <img src="cmpLOGO.jpeg" alt="" width="180">
         </div>
 
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+
         <nav>
             <a href="friends.html">Friends</a>
             <a href="FindFriends.html">Find Friends</a>
@@ -229,7 +249,7 @@
 
                 <tbody>
                     <tr>
-                        <td colspan="4" style="text-align:center;color:#777;padding:40px;">
+                        <td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:40px;">
                             No friends to display.
                         </td>
                     </tr>
@@ -244,6 +264,8 @@
         </div>
 
     </main>
+
+    <script src="theme.js"></script>
 
     <script>
 
@@ -288,7 +310,7 @@
             if (list.length === 0) {
                 tbody.innerHTML = `
                 <tr>
-                    <td colspan="4" style="text-align:center;color:#777;padding:40px;">
+                    <td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:40px;">
                         No friends to display.
                     </td>
                 </tr>

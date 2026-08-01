@@ -5,7 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat System</title>
-
+    <script>
+    (function () {
+        var t = localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+<link rel="stylesheet" href="theme.css">
     <style>
         * {
             margin: 0;
@@ -15,14 +22,14 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             display: flex;
             min-height: 100vh;
         }
 
         aside {
             width: 250px;
-            background: rgb(14, 3, 77);
+            background: var(--color-sidebar-bg);
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -43,7 +50,7 @@
         nav a {
             text-decoration: none;
             color: white;
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
             padding: 12px;
             border-radius: 8px;
             font-size: 18px;
@@ -60,7 +67,7 @@
             padding: 12px;
             border: none;
             border-radius: 8px;
-            background: rgb(220, 53, 69);
+            background: var(--color-danger);
             color: white;
             font-size: 17px;
             font-weight: bold;
@@ -69,7 +76,7 @@
         }
 
         .logout button:hover {
-            background: rgb(180, 25, 40);
+            background: var(--color-danger-hover);
         }
 
         main {
@@ -83,7 +90,7 @@
         }
 
         .subtitle {
-            color: rgb(225, 225, 225);
+            color: var(--color-muted-text);
             margin-bottom: 25px;
         }
 
@@ -95,10 +102,11 @@
 
         #left-panel,
         #right-panel {
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         #left-panel {
@@ -108,21 +116,23 @@
         }
 
         #left-panel h3 {
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             margin-bottom: 15px;
         }
 
         #left-panel input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 10px;
             margin-bottom: 20px;
             outline: none;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         #left-panel h4 {
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             margin-bottom: 15px;
         }
 
@@ -134,14 +144,15 @@
 
         .chat-item {
             padding: 12px;
-            background: rgb(235, 235, 235);
+            background: var(--color-list-item-bg);
+            color: var(--color-list-item-text);
             border-radius: 8px;
             cursor: pointer;
             transition: .3s;
         }
 
         .chat-item:hover {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
         }
 
@@ -153,9 +164,9 @@
         }
 
         .chat-header {
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--color-border);
             padding-bottom: 15px;
-            color: rgb(60, 45, 131);
+            color:var(--color-accent-text);
             font-weight: bold;
             font-size: 20px;
         }
@@ -174,12 +185,12 @@
         }
 
         .received {
-            background: rgb(235, 235, 235);
-            color: black;
+            background: var(--color-list-item-bg);
+            color: var(--color-list-item-text);
         }
 
         .sent {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             margin-left: auto;
         }
@@ -188,29 +199,33 @@
             display: flex;
             gap: 10px;
             align-items: center;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid var(--color-border);
             padding-top: 20px;
         }
 
         .message-box input[type="text"] {
             flex: 1;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 10px;
             outline: none;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .message-box input[type="file"] {
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 10px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .message-box button {
             padding: 12px 22px;
             border: none;
             border-radius: 10px;
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             font-weight: bold;
             cursor: pointer;
@@ -226,7 +241,7 @@
         }
 
         .message-box button:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
 
         @media(max-width:500px) {

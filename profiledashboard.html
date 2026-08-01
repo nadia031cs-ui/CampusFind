@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Dashboard</title>
 
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -15,14 +26,14 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             display: flex;
             min-height: 100vh;
         }
 
         aside {
             width: 250px;
-            background: rgb(14, 3, 77);
+            background: var(--color-sidebar-bg);
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -38,7 +49,7 @@
             display: block;
             text-decoration: none;
             color: white;
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
             padding: 12px;
             border-radius: 8px;
             text-align: center;
@@ -48,8 +59,8 @@
         }
 
         .profile-link:hover {
-            background: white;
-            color: black;
+            background: var(--color-icon-btn-bg);
+            color: var(--color-app-bg);
         }
 
         nav {
@@ -61,7 +72,7 @@
         nav a {
             text-decoration: none;
             color: white;
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
             padding: 12px;
             border-radius: 8px;
             font-size: 18px;
@@ -69,8 +80,8 @@
         }
 
         nav a:hover {
-            background: white;
-            color: black;
+            background: var(--color-icon-btn-bg);
+            color: var(--color-app-bg);
         }
 
         .logout button {
@@ -78,7 +89,7 @@
             padding: 12px;
             border: none;
             border-radius: 8px;
-            background: rgb(220, 53, 69);
+            background: var(--color-danger);
             color: white;
             font-size: 17px;
             font-weight: bold;
@@ -87,7 +98,7 @@
         }
 
         .logout button:hover {
-            background: rgb(180, 25, 40);
+            background: var(--color-danger-hover);
         }
 
         main {
@@ -106,22 +117,25 @@
             border-radius: 10px;
             outline: none;
             font-size: 16px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .card {
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             border-radius: 12px;
             padding: 35px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         .card h2 {
-            color: rgb(60, 45, 131);
+            color:var(--color-accent-text);
             margin-bottom: 10px;
         }
 
         .subtitle {
-            color: #666;
+            color: var(--color-text-muted);
             margin-bottom: 30px;
         }
 
@@ -141,8 +155,8 @@
             height: 180px;
             object-fit: cover;
             border-radius: 50%;
-            border: 5px solid rgb(60, 45, 131);
-            background: #eee;
+            border: 5px solid var(--color-app-bg);
+            background: var(--color-placeholder-bg);
         }
 
         .profile-info {
@@ -153,17 +167,17 @@
             display: flex;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #e5e5e5;
+            border-bottom: 1px solid var(--color-border);
         }
 
         .info-title {
             width: 180px;
             font-weight: bold;
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
         }
 
         .info-value {
-            color: #444;
+            color: var(--color-card-text);
             font-size: 16px;
         }
 
@@ -171,7 +185,7 @@
             display: inline-block;
             margin-top: 30px;
             text-decoration: none;
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
@@ -180,7 +194,7 @@
         }
 
         .edit-btn:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
 
         .posts {
@@ -188,21 +202,23 @@
         }
 
         .posts h3 {
-            color: rgb(60, 45, 131);
+            color: var(--color-app-bg);
             margin-bottom: 15px;
         }
 
         .posts select {
             width: 250px;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 8px;
             outline: none;
             font-size: 15px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .posts select:focus {
-            border-color: rgb(60, 45, 131);
+            border-color: var(--color-app-bg);
         }
 
         #myPostsContainer {
@@ -210,11 +226,12 @@
         }
 
         .postCard {
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 20px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, .2);
+            box-shadow: 0 3px 10px var(--shadow-color);
         }
 
         .postCard img {
@@ -226,7 +243,7 @@
         }
 
         .deleteBtn {
-            background: red;
+            background: var(--color-danger);
             color: white;
             border: none;
             padding: 10px 18px;
@@ -236,7 +253,7 @@
         }
 
         .deleteBtn:hover {
-            background: darkred;
+            background: var(--color-danger-hover);
         }
 
         @media (max-width:900px) {
@@ -278,6 +295,8 @@
             }
         }
     </style>
+
+</head>
 
 <body>
 
@@ -475,7 +494,7 @@
             });
 
             searchBox.addEventListener("focus", function () {
-                searchBox.style.boxShadow = "0 0 8px white";
+                searchBox.style.boxShadow = "0 0 8px var(--color-primary)";
             });
 
             searchBox.addEventListener("blur", function () {

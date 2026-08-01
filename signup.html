@@ -5,6 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -14,7 +26,7 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
 
             background-image: url("./Floors/uni.jpeg");
             min-height: 100vh;
@@ -26,13 +38,13 @@
         }
 
         h1 {
-            color:rgb(60, 45, 131);
+            color: var(--color-app-bg);
             margin-bottom: 10px;
             text-align: center;
         }
 
         body>div:first-of-type p {
-            color: rgb(60, 45, 131);
+            color: var(--color-app-bg);
             margin-bottom: 25px;
             text-align: center;
         }
@@ -40,10 +52,11 @@
         form {
             width: 700px;
             max-width: 100%;
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         form div {
@@ -56,23 +69,25 @@
 
         label {
             font-weight: bold;
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
         }
 
         input,
         select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 10px;
             font-size: 15px;
             outline: none;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         input:focus,
         select:focus {
-            border-color: rgb(60, 45, 131);
-            box-shadow: 0 0 5px rgba(60, 45, 131, .25);
+            border-color: var(--color-accent-text);
+            box-shadow: 0 0 5px var(--color-primary);
         }
 
         button {
@@ -80,7 +95,7 @@
             max-width: 100%;
             margin-top: 20px;
             padding: 13px;
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             border: none;
             border-radius: 10px;
@@ -91,7 +106,7 @@
         }
 
         button:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
 
         body>div:last-of-type {
@@ -99,11 +114,11 @@
         }
 
         body>div:last-of-type p {
-            color: rgb(60, 45, 131);
+            color: var(--color-app-bg);
         }
 
         a {
-            color:rgb(60, 45, 131);
+            color: var(--color-app-bg);
             font-weight: bold;
             text-decoration: none;
         }
@@ -198,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fields.forEach(function (field) {
 
         field.addEventListener("focus", function () {
-            field.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+            field.style.boxShadow = "0 0 8px var(--color-primary)";
         });
 
         field.addEventListener("blur", function () {

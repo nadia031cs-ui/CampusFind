@@ -5,6 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
 <style>
 *{
     margin:0;
@@ -14,7 +26,7 @@
 }
 
 body{
-    background:rgb(60,45,131);
+    background:var(--color-app-bg);
     display:flex;
     min-height:100vh;
 }
@@ -30,7 +42,7 @@ img{
 aside{
     width:250px;
     min-height:100vh;
-    background:rgb(14,3,77);
+    background:var(--color-sidebar-bg);
     padding:140px 20px 20px;
     position:fixed;
     left:0;
@@ -46,7 +58,7 @@ aside nav{
 aside nav a{
     text-decoration:none;
     color:white;
-    background:rgb(20,8,91);
+    background:var(--color-sidebar-item-bg);
     padding:12px 15px;
     border-radius:8px;
     font-size:18px;
@@ -54,8 +66,8 @@ aside nav a{
 }
 
 aside nav a:hover{
-    background:white;
-    color:black;
+    background:var(--color-icon-btn-bg);
+    color:var(--color-app-bg);
 }
 
 main{
@@ -72,23 +84,26 @@ main input[type="text"]:first-child{
     margin-bottom:25px;
     font-size:16px;
     outline:none;
+    background:var(--color-card-bg);
+    color:var(--color-card-text);
 }
 
 form{
-    background:white;
+    background:var(--color-card-bg);
+    color:var(--color-card-text);
     padding:30px;
     border-radius:12px;
-    box-shadow:0 6px 15px rgba(0,0,0,.2);
+    box-shadow:0 6px 15px var(--shadow-color);
     margin-bottom:25px;
 }
 
 h2{
-    color:rgb(60,45,131);
+    color:var(--color-accent-text);
     margin-bottom:10px;
 }
 
 p{
-    color:#555;
+    color:var(--color-text-muted);
     margin-bottom:20px;
 }
 
@@ -97,21 +112,23 @@ label{
     margin-top:12px;
     margin-bottom:6px;
     font-weight:bold;
-    color:rgb(60,45,131);
+    color:var(--color-accent-text);
 }
 
 form input,
 form select{
     width:100%;
     padding:12px;
-    border:1px solid #ccc;
+    border:1px solid var(--color-placeholder-border);
     border-radius:10px;
     margin-bottom:15px;
     font-size:15px;
+    background:var(--color-card-bg);
+    color:var(--color-card-text);
 }
 
 button{
-    background:rgb(60,45,131);
+    background:var(--color-app-bg);
     color:white;
     border:none;
     padding:12px 20px;
@@ -123,7 +140,7 @@ button{
 }
 
 button:hover{
-    background:rgb(20,8,91);
+    background:var(--color-sidebar-item-bg);
 }
 
 @media(max-width:600px){
@@ -271,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
     inputs.forEach(function (input) {
 
         input.addEventListener("focus", function () {
-            input.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+            input.style.boxShadow = "0 0 8px var(--color-primary)";
         });
 
         input.addEventListener("blur", function () {
