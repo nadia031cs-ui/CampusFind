@@ -5,230 +5,246 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friend Requests</title>
+
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
 
-body {
-    background: rgb(60, 45, 131);
-    display: flex;
-    min-height: 100vh;
-}
+        body {
+            background: var(--color-app-bg);
+            display: flex;
+            min-height: 100vh;
+        }
 
-/* Sidebar */
+        /* Sidebar */
 
-aside {
-    width: 250px;
-    background: rgb(14, 3, 77);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
+        aside {
+            width: 250px;
+            background: var(--color-sidebar-bg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
 
-.logo {
-    text-align: center;
-    margin-bottom: 30px;
-}
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-nav a {
-    text-decoration: none;
-    color: white;
-    background: rgb(20, 8, 91);
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 18px;
-    transition: .3s;
-}
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: var(--color-sidebar-item-bg);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            transition: .3s;
+        }
 
-nav a:hover {
-    background: white;
-    color: black;
-}
+        nav a:hover {
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
+        }
 
-/* Main */
+        /* Main */
 
-main {
-    flex: 1;
-    padding: 35px;
-}
+        main {
+            flex: 1;
+            padding: 35px;
+        }
 
-/* Search */
+        /* Search */
 
-.search-bar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 25px;
-}
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
 
-.search-bar input {
-    flex: 1;
-    padding: 13px;
-    border: none;
-    border-radius: 10px;
-    outline: none;
-    font-size: 16px;
-}
+        .search-bar input {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 16px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
+        }
 
-.search-bar button {
-    padding: 13px 25px;
-    border: none;
-    border-radius: 10px;
-    background: white;
-    color: rgb(60, 45, 131);
-    font-weight: bold;
-    cursor: pointer;
-    transition: .3s;
-}
+        .search-bar button {
+            padding: 13px 25px;
+            border: none;
+            border-radius: 10px;
+            background: var(--color-card-bg);
+            color: var(--color-accent-text);
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
 
-.search-bar button:hover {
-    background: rgb(225, 225, 225);
-}
+        .search-bar button:hover {
+            background: var(--color-panel-bg);
+        }
 
-/* Card */
+        /* Card */
 
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 6px 15px rgba(0,0,0,.2);
-}
+        .card {
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 6px 15px var(--shadow-color);
+        }
 
-.card h2 {
-    color: rgb(60, 45, 131);
-    margin-bottom: 10px;
-}
+        .card h2 {
+            color: var(--color-accent-text);
+            margin-bottom: 10px;
+        }
 
-.card p {
-    color: #555;
-    margin-bottom: 25px;
-}
+        .card p {
+            color: var(--color-card-text);
+            margin-bottom: 25px;
+        }
 
-/* Table */
+        /* Table */
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-th {
-    background: rgb(60, 45, 131);
-    color: white;
-    padding: 15px;
-    text-align: left;
-}
+        th {
+            background: var(--color-app-bg);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
 
-td {
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-}
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--color-placeholder-border);
+            color: var(--color-card-text);
+        }
 
-tr:hover {
-    background: rgb(245,245,245);
-}
+        tr:hover {
+            background: var(--color-panel-bg);
+        }
 
-/* Buttons */
+        /* Buttons */
 
-.action-btn {
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    transition: .3s;
-    font-size: 14px;
-}
+        .action-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 14px;
+        }
 
-.accept-btn {
-    background: #28a745;
-}
+        .accept-btn {
+            background: #28a745;
+        }
 
-.accept-btn:hover {
-    background: #218838;
-}
+        .accept-btn:hover {
+            background: #218838;
+        }
 
-.delete-btn {
-    background: #dc3545;
-    margin-left: 8px;
-}
+        .delete-btn {
+            background: #dc3545;
+            margin-left: 8px;
+        }
 
-.delete-btn:hover {
-    background: #bb2d3b;
-}
+        .delete-btn:hover {
+            background: #bb2d3b;
+        }
 
-/* Empty message */
+        /* Empty message */
 
-.empty-message {
-    text-align: center;
-    color: #777;
-    padding: 40px;
-    font-size: 17px;
-}
+        .empty-message {
+            text-align: center;
+            color: var(--color-card-text);
+            padding: 40px;
+            font-size: 17px;
+        }
 
-/* Back */
+        /* Back */
 
-.back {
-    margin-top: 25px;
-    text-align: center;
-}
+        .back {
+            margin-top: 25px;
+            text-align: center;
+        }
 
-.back a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-}
+        .back a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-.back a:hover {
-    text-decoration: underline;
-}
+        .back a:hover {
+            text-decoration: underline;
+        }
 
-/* Responsive */
+        /* Responsive */
 
-@media(max-width:600px){
+        @media(max-width:600px){
 
-    body{
-        flex-direction: column;
-    }
+            body{
+                flex-direction: column;
+            }
 
-    aside{
-        width:100%;
-    }
+            aside{
+                width:100%;
+            }
 
-    main{
-        padding:20px;
-    }
+            main{
+                padding:20px;
+            }
 
-    table{
-        display:block;
-        overflow-x:auto;
-    }
+            table{
+                display:block;
+                overflow-x:auto;
+            }
 
-    .search-bar{
-        flex-direction:column;
-    }
+            .search-bar{
+                flex-direction:column;
+            }
 
-    .search-bar button{
-        width:100%;
-    }
+            .search-bar button{
+                width:100%;
+            }
 
-    .action-btn{
-        width:100%;
-        margin:5px 0;
-    }
+            .action-btn{
+                width:100%;
+                margin:5px 0;
+            }
 
-    .delete-btn{
-        margin-left:0;
-    }
-}
+            .delete-btn{
+                margin-left:0;
+            }
+        }
     </style>
 
     <link rel="stylesheet" href="Friend_req.css">

@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Second Floor</title>
 
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -15,7 +26,7 @@
         }
 
         body {
-            background-color: rgb(60, 45, 131);
+            background-color: var(--color-app-bg);
              background-image: url("./Floors/uni.jpeg");
             min-height: 100vh;
             padding: 25px;
@@ -32,15 +43,15 @@
             left: 25px;
             width: 50px;
             height: 50px;
-            background: white;
-            color: rgb(60, 45, 131);
+            background: var(--color-icon-btn-bg);
+            color: var(--color-app-bg);
             border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 30px;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
             z-index: 1001;
             transition: .3s;
         }
@@ -55,14 +66,14 @@
             left: -280px;
             width: 260px;
             height: 100vh;
-            background: rgb(14, 3, 77);
+            background: var(--color-sidebar-bg);
             display: flex;
             flex-direction: column;
             gap: 12px;
             padding: 80px 20px 20px;
             transition: .4s ease;
             z-index: 1000;
-            box-shadow: 5px 0 20px rgba(0, 0, 0, .3);
+            box-shadow: 5px 0 20px var(--shadow-color);
         }
 
         .navbar.active {
@@ -72,7 +83,7 @@
         .navbar a {
             text-decoration: none;
             color: white;
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
             padding: 12px 15px;
             border-radius: 8px;
             font-size: 18px;
@@ -107,6 +118,8 @@
             border-radius: 10px;
             font-size: 16px;
             outline: none;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         .logo {
@@ -126,27 +139,28 @@
 
         aside,
         main {
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         aside h3,
         main h3 {
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             margin-bottom: 15px;
         }
 
         aside h4 {
             margin-top: 20px;
             margin-bottom: 10px;
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
         }
 
         aside p {
             line-height: 1.6;
-            color: #444;
+            color: var(--color-text-muted);
         }
 
         ul {
@@ -156,8 +170,8 @@
         ul a {
             display: block;
             text-decoration: none;
-            color: #333;
-            background: rgb(235, 235, 235);
+            color: var(--color-list-item-text);
+            background: var(--color-list-item-bg);
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 10px;
@@ -165,7 +179,7 @@
         }
 
         ul a:hover {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
         }
 
@@ -176,11 +190,11 @@
         main img {
             width: 100%;
             height: 500px;
-            border: 2px dashed #ccc;
+            border: 2px dashed var(--color-placeholder-border);
             border-radius: 10px;
             object-fit: contain;
             margin-top: 20px;
-            background: rgb(245, 245, 245);
+            background: var(--color-placeholder-bg);
         }
 
         @media(max-width:900px) {

@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Post</title>
 
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -15,7 +26,7 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -34,16 +45,18 @@
         }
 
         form {
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         label {
             display: block;
             margin: 12px 0 6px;
             font-weight: bold;
+            color: var(--color-accent-text);
         }
 
         textarea,
@@ -51,11 +64,13 @@
         select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 10px;
             outline: none;
             margin-bottom: 15px;
             font-size: 15px;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         textarea {
@@ -66,8 +81,8 @@
         input:focus,
         textarea:focus,
         select:focus {
-            border-color: rgb(60, 45, 131);
-            box-shadow: 0 0 6px rgba(60, 45, 131, .3);
+            border-color: var(--color-app-bg);
+            box-shadow: 0 0 6px var(--color-primary);
         }
 
         #buttons {
@@ -87,12 +102,12 @@
         }
 
         #post {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
         }
 
         #post:hover {
-            background: rgb(20, 8, 91);
+            background: var(--color-sidebar-item-bg);
         }
 
         #Cancel {
@@ -190,7 +205,7 @@
             fields.forEach(function (field) {
 
                 field.addEventListener("focus", function () {
-                    field.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
+                    field.style.boxShadow = "0 0 8px var(--color-primary)";
                 });
 
                 field.addEventListener("blur", function () {
@@ -308,9 +323,6 @@
             });
 
         });
-    </script>
-
-
     </script>
 
 </body>
