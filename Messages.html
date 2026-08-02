@@ -293,6 +293,7 @@
                 <a href="Messages.html">Messages</a>
                 <a href="profiledashboard.html">Profile</a>
                 <a href="Settings.html">Settings</a>
+               
             </nav>
 
         </div>
@@ -364,6 +365,12 @@
     </main>
 
     <script>
+
+        // ---- Auth guard: must run before anything else on the page ----
+        if (localStorage.getItem("loggedIn") !== "true") {
+            window.location.href = "intro.html";
+        }
+
         const chatItems = document.querySelectorAll(".chat-item");
         const chatHeader = document.querySelector(".chat-header");
         const messages = document.querySelector(".messages");
@@ -371,6 +378,7 @@
         const fileInput = document.querySelector('.message-box input[type="file"]');
         const sendButton = document.querySelector(".message-box button");
         const searchInput = document.querySelector("#left-panel input");
+        const logoutBtn = document.querySelector(".logout button");
 
         const chatData = {
             "John Doe": [
@@ -535,6 +543,21 @@
                 }
 
             });
+
+        });
+
+        logoutBtn.addEventListener("click", function () {
+
+            if (confirm("Are you sure you want to logout?")) {
+
+                localStorage.removeItem("loggedIn");
+                localStorage.removeItem("username");
+
+                alert("You have been logged out.");
+
+                window.location.href = "intro.html";
+
+            }
 
         });
 

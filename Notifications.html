@@ -312,10 +312,11 @@
                 <a href="Create_Post.html">Post an Item</a>
                 <a href="University_Map.html">University Map</a>
                 <a href="Messages.html">Messages</a>
-                <a href="Notifications.html" class="active">Notifications <span class="nav-badge" id="navBadge">0</span>
-                </a>
+                
                 <a href="profiledashboard.html">Profile</a>
                 <a href="Settings.html">Settings</a>
+                <a href="Notifications.html" class="active">Notifications <span class="nav-badge" id="navBadge">0</span>
+                </a>
             </nav>
 
         </div>
@@ -377,7 +378,16 @@
         // each tagged with a "recipient". This page only ever reads
         // and renders the ones addressed to the logged-in user.
         //
-        // On your real backend, this whole block is replaced by:
+        // Real notifications get added by createNotification() being
+        // called from OTHER pages at the moment a real event happens:
+        //   - Create_Post.html  -> after a post is successfully submitted
+        //   - Home_Feed.html    -> when someone likes / comments on a post
+        //   - Settings.html     -> after settings are saved/changed
+        //   - Messages.html     -> when a new message is sent
+        // No demo/seed data here anymore — this list starts empty for
+        // every user until real actions create real notifications.
+        //
+        // On a real backend, this whole block is replaced by:
         //   GET /api/notifications  -> returns only req.user's notifications
         // because the server filters by recipient before sending anything
         // to the client at all.
@@ -405,59 +415,6 @@
                 link: link
             });
             saveAllNotifications(all);
-        }
-
-        // Seed some demo data ONCE, for testing with multiple accounts.
-        // Remove this block once real events (posts/likes/messages/settings
-        // changes) are creating notifications themselves.
-        if (!localStorage.getItem("notifications")) {
-            saveAllNotifications([
-                {
-                    id: 1,
-                    recipient: currentUser,
-                    type: "message",
-                    text: "John Doe sent you a new message.",
-                    time: "2 minutes ago",
-                    read: false,
-                    link: "Messages.html"
-                },
-                {
-                    id: 2,
-                    recipient: currentUser,
-                    type: "item",
-                    text: "A new item matching your 'Blue Notebook' post was found.",
-                    time: "1 hour ago",
-                    read: false,
-                    link: "Home_Feed.html"
-                },
-                {
-                    id: 3,
-                    recipient: currentUser,
-                    type: "like",
-                    text: "John Doe liked your post 'Lost Black Wallet'.",
-                    time: "30 minutes ago",
-                    read: false,
-                    link: "Home_Feed.html"
-                },
-                {
-                    id: 4,
-                    recipient: currentUser,
-                    type: "settings",
-                    text: "Your account password was changed successfully.",
-                    time: "1 day ago",
-                    read: true,
-                    link: "Settings.html"
-                },
-                {
-                    id: 5,
-                    recipient: "some_other_user",
-                    type: "post",
-                    text: "This notification belongs to a different account and should NEVER show up here.",
-                    time: "5 minutes ago",
-                    read: false,
-                    link: "Home_Feed.html"
-                }
-            ]);
         }
 
         // Only this user's notifications, newest first

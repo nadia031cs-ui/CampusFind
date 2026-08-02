@@ -110,13 +110,18 @@
             background: var(--color-sidebar-item-bg);
         }
 
+        #post:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
         #Cancel {
-            background: red;
+            background: var(--color-danger);
             color: white;
         }
 
         #Cancel:hover {
-            background: darkred;
+            background: var(--color-danger-hover);
         }
 
         @media(max-width:600px) {
@@ -190,6 +195,99 @@
 
     <script>
 
+        // ---- Auth guard: must run before anything else on the page ----
+        if (localStorage.getItem("loggedIn") !== "true") {
+            window.location.href = "intro.html";
+        }
+
+        // ============================================================
+        // NOTIFICATION HELPERS (shared logic, copied into every page
+        // that needs to create or read notifications).
+        // Recipient must match what Notifications.html reads:
+        //   localStorage.getItem("username")
+        // ============================================================
+
+        function getAllNotifications() {
+            return JSON.parse(localStorage.getItem("notifications")) || [];
+        }
+
+        function saveAllNotifications(all) {
+            localStorage.setItem("notifications", JSON.stringify(all));
+        }
+
+        function createNotification(recipient, type, text, link) {
+            const all = getAllNotifications();
+            all.unshift({
+                id: Date.now() + Math.random(),
+                recipient: recipient,
+                type: type,
+                text: text,
+                time: "Just now",
+                read: false,
+                link: link
+            });
+            saveAllNotifications(all);
+        }
+
+        // ============================================================
+        // IMAGE COMPRESSION
+        // Large phone-camera photos (several MB) turned into base64 and
+        // written into localStorage synchronously are what causes the
+        // page to "freeze" on Post. This resizes the image down to a
+        // reasonable max width and re-encodes it as a compressed JPEG
+        // before it ever touches localStorage — usually shrinking a
+        // multi-MB photo down to well under 300KB.
+        // ============================================================
+
+        function compressImage(file, maxWidth, quality) {
+
+            return new Promise(function (resolve, reject) {
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    const img = new Image();
+
+                    img.onload = function () {
+
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round(height * (maxWidth / width));
+                            width = maxWidth;
+                        }
+
+                        const canvas = document.createElement("canvas");
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        resolve(canvas.toDataURL("image/jpeg", quality));
+
+                    };
+
+                    img.onerror = function () {
+                        reject(new Error("Could not read the selected image."));
+                    };
+
+                    img.src = e.target.result;
+
+                };
+
+                reader.onerror = function () {
+                    reject(new Error("Could not read the selected file."));
+                };
+
+                reader.readAsDataURL(file);
+
+            });
+
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
 
             const form = document.getElementById("postForm");
@@ -199,6 +297,7 @@
             const date = document.getElementById("date");
             const itemType = document.getElementById("itemType");
             const cancelBtn = document.getElementById("Cancel");
+            const postBtn = document.getElementById("post");
 
             const fields = document.querySelectorAll("textarea, input, select");
 
@@ -217,7 +316,12 @@
             image.addEventListener("change", function () {
 
                 if (this.files.length > 0) {
-                    alert("Selected Image: " + this.files[0].name);
+
+                    const file = this.files[0];
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+
+                    alert("Selected Image: " + file.name + " (" + sizeMB + " MB — will be compressed before posting)");
+
                 }
 
             });
@@ -229,6 +333,84 @@
                 }
 
             });
+
+            function savePost(imageData) {
+
+                const profile = JSON.parse(localStorage.getItem("profile")) || {};
+                const currentUser = localStorage.getItem("username") || "Anonymous User";
+
+                const post = {
+
+                    id: Date.now(),
+
+                    username: profile.name || "Anonymous User",
+
+                    profileImage: profile.photo || "default-profile.png",
+
+                    description: description.value.trim(),
+
+                    location: location.value.trim(),
+
+                    date: date.value,
+
+                    itemType: itemType.value,
+
+                    image: imageData,
+
+                    createdAt: new Date().toLocaleString(),
+
+                    likes: 0,
+
+                    comments: []
+
+                };
+
+                try {
+
+                    // NOTE: posts are stored ONLY here, in "posts". A
+                    // separate "myPosts" key used to duplicate the exact
+                    // same object (including the base64 image) on every
+                    // single post — that key was never read anywhere
+                    // (profiledashboard.html builds "My Posts" by filtering
+                    // "posts" by username), so it was silently doubling
+                    // localStorage usage and eating the quota. Removed.
+                    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+                    posts.unshift(post);
+                    localStorage.setItem("posts", JSON.stringify(posts));
+
+                    // Notify the poster themselves that their post went up
+                    createNotification(
+                        currentUser,
+                        "post",
+                        "Your post has been posted successfully.",
+                        "Home_Feed.html"
+                    );
+
+                    alert("Post Created Successfully!");
+
+                    form.reset();
+
+                    window.location.href = "Home_Feed.html";
+
+                } catch (err) {
+
+                    // Most likely a localStorage quota error from too much
+                    // stored data (old posts with large images, etc).
+                    console.error("Failed to save post:", err);
+
+                    alert(
+                        "Couldn't save your post — local storage is full. " +
+                        "Try deleting a few old posts (with images) from your profile and post again."
+                    );
+
+                } finally {
+
+                    postBtn.disabled = false;
+                    postBtn.textContent = "Post";
+
+                }
+
+            }
 
             form.addEventListener("submit", function (e) {
 
@@ -258,61 +440,24 @@
                     return;
                 }
 
-                function savePost(imageData) {
-
-                    const profile = JSON.parse(localStorage.getItem("profile")) || {};
-
-                    const post = {
-
-                        id: Date.now(),
-
-                        username: profile.name || "Anonymous User",
-
-                        profileImage: profile.photo || "default-profile.png",
-
-                        description: description.value.trim(),
-
-                        location: location.value.trim(),
-
-                        date: date.value,
-
-                        itemType: itemType.value,
-
-                        image: imageData,
-
-                        createdAt: new Date().toLocaleString(),
-
-                        likes: 0,
-
-                        comments: []
-
-                    };
-
-                    let posts = JSON.parse(localStorage.getItem("posts")) || [];
-                    posts.unshift(post);
-                    localStorage.setItem("posts", JSON.stringify(posts));
-
-                    let myPosts = JSON.parse(localStorage.getItem("myPosts")) || [];
-                    myPosts.unshift(post);
-                    localStorage.setItem("myPosts", JSON.stringify(myPosts));
-
-                    alert("Post Created Successfully!");
-
-                    form.reset();
-
-                    window.location.href = "Home_Feed.html";
-
-                }
+                postBtn.disabled = true;
+                postBtn.textContent = "Posting...";
 
                 if (image.files.length > 0) {
 
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        savePost(e.target.result);
-                    };
-
-                    reader.readAsDataURL(image.files[0]);
+                    // Resize to max 800px wide, 70% JPEG quality — keeps
+                    // photos looking fine in the feed while staying small
+                    // enough that localStorage never chokes or freezes.
+                    compressImage(image.files[0], 800, 0.7)
+                        .then(function (compressedDataUrl) {
+                            savePost(compressedDataUrl);
+                        })
+                        .catch(function (err) {
+                            console.error("Image compression failed:", err);
+                            alert("Couldn't process that image. Please try a different photo.");
+                            postBtn.disabled = false;
+                            postBtn.textContent = "Post";
+                        });
 
                 } else {
 

@@ -66,11 +66,26 @@
             border-radius: 8px;
             transition: .3s;
             font-size: 18px;
+            position: relative;
         }
 
         nav a:hover {
             background: white;
             color: black;
+        }
+
+        .nav-badge {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--color-danger);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 999px;
+            display: none;
         }
 
         #logout button {
@@ -124,6 +139,57 @@
             border-radius: 12px;
             box-shadow: 0 6px 15px var(--shadow-color);
             padding: 25px;
+        }
+
+        /* ---- Filter toggle button (opens/closes the right panel) ---- */
+        .filter-toggle-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: var(--color-sidebar-item-bg);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px var(--shadow-color);
+            z-index: 1001;
+            transition: .3s;
+        }
+
+        .filter-toggle-btn:hover {
+            transform: scale(1.08);
+        }
+
+        /* ---- Right panel — slide-in / off-canvas, same pattern as University Map's .navbar ---- */
+        #right {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 80px 20px 20px;
+            z-index: 1000;
+            box-shadow: -5px 0 20px var(--shadow-color);
+            transition: .4s ease;
+        }
+
+        #right.active {
+            right: 0;
+        }
+
+        .close-filter-btn {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            color: white;
+            font-size: 34px;
+            cursor: pointer;
         }
 
         #right h3 {
@@ -239,12 +305,17 @@
                 flex-direction: column;
             }
 
-            aside {
+            aside:not(#right) {
                 width: 100%;
             }
 
             main {
                 padding: 20px;
+            }
+
+            #right {
+                width: 260px;
+                right: -280px;
             }
         }
     </style>
@@ -271,7 +342,7 @@
                 <a href="friends.html">Friends</a>
                 <a href="profiledashboard.html">Profile</a>
                 <a href="Settings.html">Settings</a>
-                <a href="Notifications.html">Notifications</a>
+                <a href="Notifications.html">Notifications <span class="nav-badge" id="navBadge">0</span></a>
             </nav>
 
         </div>
@@ -296,7 +367,11 @@
 
     </main>
 
+    <div class="filter-toggle-btn" onclick="toggleFilterBar()">▤</div>
+
     <aside id="right">
+
+        <span class="close-filter-btn" onclick="toggleFilterBar()">×</span>
 
         <div>
 
@@ -345,6 +420,65 @@
     <script src="theme.js"></script>
 
 <script>
+
+// ---- Auth guard: must run before anything else on the page ----
+if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "intro.html";
+}
+
+// ---- Slide-in Filter panel toggle (same off-canvas pattern as University Map's navbar) ----
+function toggleFilterBar() {
+    document.getElementById("right").classList.toggle("active");
+}
+
+// ============================================================
+// NOTIFICATION HELPERS (shared logic, copied into every page
+// that needs to create or read notifications).
+// Recipient must always match: localStorage.getItem("username")
+// ============================================================
+
+function getAllNotifications() {
+    return JSON.parse(localStorage.getItem("notifications")) || [];
+}
+
+function saveAllNotifications(all) {
+    localStorage.setItem("notifications", JSON.stringify(all));
+}
+
+function createNotification(recipient, type, text, link) {
+    const all = getAllNotifications();
+    all.unshift({
+        id: Date.now() + Math.random(),
+        recipient: recipient,
+        type: type,
+        text: text,
+        time: "Just now",
+        read: false,
+        link: link
+    });
+    saveAllNotifications(all);
+}
+
+// Refresh the sidebar red-dot badge with this user's unread count.
+// Called on every page load so the badge is always accurate,
+// no matter which page created the notification.
+function updateNavBadge() {
+
+    const currentUser = localStorage.getItem("username") || "Anonymous User";
+    const all = getAllNotifications();
+    const unreadCount = all.filter(function (n) {
+        return n.recipient === currentUser && !n.read;
+    }).length;
+
+    const navBadge = document.getElementById("navBadge");
+
+    if (navBadge) {
+        navBadge.textContent = unreadCount;
+        navBadge.style.display = unreadCount === 0 ? "none" : "inline-block";
+    }
+
+}
+
 function likePost(id) {
 
     let posts = JSON.parse(localStorage.getItem("posts")) || [];
@@ -389,15 +523,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Welcome to CampusFind!");
 
+    updateNavBadge();
+
     const logoutBtn = document.querySelector("#logout button");
 
     logoutBtn.addEventListener("click", function () {
 
         if (confirm("Are you sure you want to logout?")) {
 
+            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("username");
+
             alert("You have been logged out.");
 
-            window.location.href = "login.html";
+            window.location.href = "intro.html";
 
         }
 
@@ -537,6 +676,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const posts = JSON.parse(localStorage.getItem("posts")) || [];
 
+    // Always read the CURRENT profile photo here, instead of relying on
+    // the profileImage snapshot saved inside each post at creation time.
+    // This way, changing your profile picture in Settings/Profile
+    // immediately reflects on every post card in the feed, past and future.
+    const currentProfile = JSON.parse(localStorage.getItem("profile")) || {};
+
     if (posts.length === 0) {
 
         feedContainer.innerHTML = `
@@ -555,7 +700,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <div class="postHeader">
 
-                    <img class="profilePic" src="${post.profileImage || 'default-profile.png'}">
+                    <img class="profilePic" src="${currentProfile.photo || post.profileImage || 'default-profile.png'}">
 
                     <div>
 
@@ -606,7 +751,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
-//
+
 </script>
 </body>
 
