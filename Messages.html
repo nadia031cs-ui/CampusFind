@@ -55,11 +55,26 @@
             border-radius: 8px;
             font-size: 18px;
             transition: .3s;
+            position: relative;
         }
 
         nav a:hover {
             background: white;
             color: black;
+        }
+
+        .nav-badge {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--color-danger);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 999px;
+            display: none;
         }
 
         .logout button {
@@ -293,7 +308,8 @@
                 <a href="Messages.html">Messages</a>
                 <a href="profiledashboard.html">Profile</a>
                 <a href="Settings.html">Settings</a>
-               
+                <a href="Notifications.html">Notifications <span class="nav-badge" id="navBadge">0</span></a>
+
             </nav>
 
         </div>
@@ -370,6 +386,60 @@
         if (localStorage.getItem("loggedIn") !== "true") {
             window.location.href = "intro.html";
         }
+
+        const currentUser = localStorage.getItem("username") || "Anonymous User";
+
+        // ============================================================
+        // NOTIFICATION HELPERS (same shared logic used on every page)
+        // All notifications for ALL users live in one localStorage key,
+        // each tagged with a "recipient". Every page reads/creates from
+        // this same shared store so Notifications.html and the sidebar
+        // badge always stay in sync no matter which page triggered it.
+        // ============================================================
+
+        function getAllNotifications() {
+            return JSON.parse(localStorage.getItem("notifications")) || [];
+        }
+
+        function saveAllNotifications(all) {
+            localStorage.setItem("notifications", JSON.stringify(all));
+        }
+
+        // Call this to notify a specific user. Stores a real
+        // "createdAt" timestamp (not a frozen "Just now" string) so
+        // Notifications.html can show a live, increasing "time ago".
+        function createNotification(recipient, type, text, link) {
+            const all = getAllNotifications();
+            all.unshift({
+                id: Date.now() + Math.random(),
+                recipient: recipient,
+                type: type,
+                text: text,
+                createdAt: Date.now(),
+                read: false,
+                link: link
+            });
+            saveAllNotifications(all);
+        }
+
+        // Refresh the sidebar red-dot badge with this user's unread count.
+        function updateNavBadge() {
+
+            const all = getAllNotifications();
+            const unreadCount = all.filter(function (n) {
+                return n.recipient === currentUser && !n.read;
+            }).length;
+
+            const navBadge = document.getElementById("navBadge");
+
+            if (navBadge) {
+                navBadge.textContent = unreadCount;
+                navBadge.style.display = unreadCount === 0 ? "none" : "inline-block";
+            }
+
+        }
+
+        updateNavBadge();
 
         const chatItems = document.querySelectorAll(".chat-item");
         const chatHeader = document.querySelector(".chat-header");
@@ -476,6 +546,14 @@
 
                 messages.appendChild(div);
 
+                // Notify the chat partner that a new message arrived.
+                createNotification(
+                    currentChat,
+                    "message",
+                    currentUser + " sent you a message: \"" + text + "\"",
+                    "Messages.html"
+                );
+
             }
 
             if (file) {
@@ -506,6 +584,14 @@
                     messages.appendChild(div);
 
                     messages.scrollTop = messages.scrollHeight;
+
+                    // Notify the chat partner that an image was sent.
+                    createNotification(
+                        currentChat,
+                        "message",
+                        currentUser + " sent you an image.",
+                        "Messages.html"
+                    );
 
                 };
 

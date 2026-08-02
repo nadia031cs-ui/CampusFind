@@ -299,6 +299,23 @@
             const cancelBtn = document.getElementById("Cancel");
             const postBtn = document.getElementById("post");
 
+            // ============================================================
+            // FUTURE DATE RESTRICTION
+            // Lost/found items can't be reported for a date that hasn't
+            // happened yet. `max` blocks the native date picker from
+            // even showing future dates as selectable in most browsers,
+            // and the submit check below is the real enforcement in case
+            // `max` isn't respected (older browsers, dev tools tampering,
+            // manual typing where supported).
+            // ============================================================
+
+            const today = new Date();
+            const todayStr = today.getFullYear() + "-" +
+                String(today.getMonth() + 1).padStart(2, "0") + "-" +
+                String(today.getDate()).padStart(2, "0");
+
+            date.max = todayStr;
+
             const fields = document.querySelectorAll("textarea, input, select");
 
             fields.forEach(function (field) {
@@ -430,6 +447,12 @@
 
                 if (date.value === "") {
                     alert("Please select a date.");
+                    date.focus();
+                    return;
+                }
+
+                if (date.value > todayStr) {
+                    alert("The date can't be in the future. Please select today or an earlier date.");
                     date.focus();
                     return;
                 }

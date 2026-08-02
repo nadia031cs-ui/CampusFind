@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feedback Form</title>
 
+    <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="theme.css">
+
     <style>
         * {
             margin: 0;
@@ -15,30 +26,55 @@
         }
 
         body {
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 30px;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 46px;
+            height: 46px;
+            border: none;
+            border-radius: 10px;
+            background: var(--color-sidebar-item-bg);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 15px var(--shadow-color);
+            transition: .3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08);
         }
 
         form {
             width: 700px;
             max-width: 100%;
-            background: white;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, .2);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         h2 {
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
             margin-bottom: 10px;
         }
 
         p {
-            color: #666;
+            color: var(--color-text-muted);
             margin-bottom: 25px;
         }
 
@@ -58,17 +94,19 @@
 
         label {
             font-weight: bold;
-            color: rgb(60, 45, 131);
+            color: var(--color-accent-text);
         }
 
         input,
         textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-placeholder-border);
             border-radius: 10px;
             font-size: 15px;
             outline: none;
+            background: var(--color-card-bg);
+            color: var(--color-card-text);
         }
 
         textarea {
@@ -78,14 +116,14 @@
 
         input:focus,
         textarea:focus {
-            border-color: rgb(60, 45, 131);
-            box-shadow: 0 0 5px rgba(60, 45, 131, .25);
+            border-color: var(--color-accent-text);
+            box-shadow: 0 0 5px var(--shadow-color);
         }
 
-        button {
+        button[type="submit"] {
             width: 100%;
             padding: 13px;
-            background: rgb(60, 45, 131);
+            background: var(--color-app-bg);
             color: white;
             border: none;
             border-radius: 10px;
@@ -95,8 +133,8 @@
             transition: .3s;
         }
 
-        button:hover {
-            background: rgb(20, 8, 91);
+        button[type="submit"]:hover {
+            background: var(--color-sidebar-item-bg);
         }
 
         @media(max-width:768px) {
@@ -114,6 +152,8 @@
 </head>
 
 <body>
+
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
 
     <form action="Submit.php">
 
@@ -136,6 +176,8 @@
         <button type="submit">Submit</button>
 
     </form>
+
+    <script src="theme.js"></script>
 
 </body>
 

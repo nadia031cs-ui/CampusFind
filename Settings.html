@@ -66,11 +66,27 @@ aside nav a{
     border-radius:8px;
     font-size:18px;
     transition:.3s;
+    position:relative;
+    display:inline-block;
 }
 
 aside nav a:hover{
     background:var(--color-icon-btn-bg);
     color:var(--color-app-bg);
+}
+
+.nav-badge{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    background:var(--color-danger);
+    color:white;
+    font-size:12px;
+    font-weight:bold;
+    padding:2px 8px;
+    border-radius:999px;
+    display:none;
 }
 
 main{
@@ -190,7 +206,7 @@ button:hover{
         <br>
         <a href="Settings.html">Settings</a>
         <br>
-        <a href="Notifications.html">Notifications</a>
+        <a href="Notifications.html">Notifications <span class="nav-badge" id="navBadge">0</span></a>
 
         </nav>
     </aside>
@@ -251,7 +267,44 @@ button:hover{
   
     </main>
     <script>
+
+// ============================================================
+// NOTIFICATION HELPERS (same logic as Home Feed, so the badge
+// count stays consistent across every page).
+// Recipient must always match: localStorage.getItem("username")
+// ============================================================
+
+function getAllNotifications() {
+    return JSON.parse(localStorage.getItem("notifications")) || [];
+}
+
+function saveAllNotifications(all) {
+    localStorage.setItem("notifications", JSON.stringify(all));
+}
+
+// Refresh the sidebar red-dot badge with this user's unread count.
+// Called on every page load so the badge is always accurate,
+// no matter which page created the notification.
+function updateNavBadge() {
+
+    const currentUser = localStorage.getItem("username") || "Anonymous User";
+    const all = getAllNotifications();
+    const unreadCount = all.filter(function (n) {
+        return n.recipient === currentUser && !n.read;
+    }).length;
+
+    const navBadge = document.getElementById("navBadge");
+
+    if (navBadge) {
+        navBadge.textContent = unreadCount;
+        navBadge.style.display = unreadCount === 0 ? "none" : "inline-block";
+    }
+
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+
+    updateNavBadge();
 
     const form = document.querySelector("form");
 

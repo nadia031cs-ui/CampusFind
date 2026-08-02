@@ -378,19 +378,15 @@
         // each tagged with a "recipient". This page only ever reads
         // and renders the ones addressed to the logged-in user.
         //
-        // Real notifications get added by createNotification() being
-        // called from OTHER pages at the moment a real event happens:
-        //   - Create_Post.html  -> after a post is successfully submitted
-        //   - Home_Feed.html    -> when someone likes / comments on a post
-        //   - Settings.html     -> after settings are saved/changed
-        //   - Messages.html     -> when a new message is sent
-        // No demo/seed data here anymore — this list starts empty for
-        // every user until real actions create real notifications.
-        //
-        // On a real backend, this whole block is replaced by:
-        //   GET /api/notifications  -> returns only req.user's notifications
-        // because the server filters by recipient before sending anything
-        // to the client at all.
+        // TIME HANDLING:
+        // Notifications created going forward store a real "createdAt"
+        // timestamp. Notifications created by OLDER copies of
+        // createNotification() (on other pages that haven't been
+        // updated yet) won't have createdAt — but their "id" field is
+        // Date.now() + Math.random(), so we fall back to Math.floor(id)
+        // as an accurate stand-in timestamp. This is why the label was
+        // stuck on "Just now" before: there was no timestamp at all to
+        // compute a live "time ago" value against.
         // ============================================================
 
         function getAllNotifications() {
@@ -410,11 +406,47 @@
                 recipient: recipient,
                 type: type,
                 text: text,
-                time: "Just now",
+                createdAt: Date.now(), // real timestamp, used to compute live "time ago"
                 read: false,
                 link: link
             });
             saveAllNotifications(all);
+        }
+
+        // Returns the best available timestamp for a notification:
+        // createdAt if present, otherwise falls back to the id
+        // (id = Date.now() + Math.random(), so it's a valid stand-in).
+        function getNotifTimestamp(n) {
+            return n.createdAt || Math.floor(n.id) || null;
+        }
+
+        // Turns a timestamp into a human "time ago" label.
+        function formatTimeAgo(timestamp) {
+
+            if (!timestamp) return "Just now";
+
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+
+            if (seconds < 60) return "Just now";
+
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
+
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return hours + (hours === 1 ? " hour ago" : " hours ago");
+
+            const days = Math.floor(hours / 24);
+            if (days < 7) return days + (days === 1 ? " day ago" : " days ago");
+
+            const weeks = Math.floor(days / 7);
+            if (weeks < 4) return weeks + (weeks === 1 ? " week ago" : " weeks ago");
+
+            const months = Math.floor(days / 30);
+            if (months < 12) return months + (months === 1 ? " month ago" : " months ago");
+
+            const years = Math.floor(days / 365);
+            return years + (years === 1 ? " year ago" : " years ago");
+
         }
 
         // Only this user's notifications, newest first
@@ -473,6 +505,8 @@
 
             filtered.forEach(n => {
 
+                const ts = getNotifTimestamp(n);
+
                 const item = document.createElement("div");
                 item.className = "notif-item" + (n.read ? "" : " unread");
 
@@ -480,7 +514,7 @@
                     <div class="notif-icon icon-${n.type}">${icons[n.type] || "🔔"}</div>
                     <div class="notif-body">
                         <div class="notif-text">${n.text}</div>
-                        <div class="notif-time">${n.time}</div>
+                        <div class="notif-time" data-timestamp="${ts || ""}">${formatTimeAgo(ts)}</div>
                     </div>
                     ${!n.read ? '<div class="unread-dot"></div>' : ""}
                     <button class="delete-btn" title="Delete">&times;</button>
@@ -509,6 +543,21 @@
 
             updateBadge();
         }
+
+        // Re-calculates just the visible "X ago" labels, without
+        // rebuilding the whole list (so open list / scroll position
+        // isn't disturbed). This is what makes "Just now" keep
+        // increasing live while the page stays open.
+        function refreshTimeLabels() {
+            document.querySelectorAll(".notif-time").forEach(el => {
+                const ts = parseInt(el.dataset.timestamp, 10);
+                if (!isNaN(ts)) {
+                    el.textContent = formatTimeAgo(ts);
+                }
+            });
+        }
+
+        setInterval(refreshTimeLabels, 30000); // refresh every 30s
 
         filterBtns.forEach(btn => {
             btn.addEventListener("click", () => {
