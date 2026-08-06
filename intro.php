@@ -487,7 +487,7 @@
 
                 <ul>
 
-                    <li><a href="Home_Feed.html">Home</a></li>
+                    <li><a href="Home_Feed.html" id="homeNavLink">Home</a></li>
                     <li><a href="aboutus.html">About Us</a></li>
 
 
@@ -627,7 +627,7 @@
 
         </p>
 
-        <button class="hero-btn">
+        <button class="hero-btn" id="ctaGetStartedBtn">
 
             Get Started
 
@@ -673,6 +673,80 @@
 
     <script src="theme.js"></script>
     <script src="LandingPage.js"></script>
+
+    <script>
+
+        // ============================================================
+        // AUTH GUARD FOR THE "HOME" NAV LINK (and "Get Started" button)
+        // Without this, anyone could click straight from the landing
+        // page into Home_Feed.html without ever logging in — bypassing
+        // Home_Feed.html's own guard only works AFTER navigation starts,
+        // which is too late/inconsistent for a good user experience.
+        // This checks BEFORE navigating away from the landing page:
+        //   - If no account exists at all (no signup done yet) OR
+        //   - the user isn't currently logged in / has logged out,
+        // it stops the navigation and sends them to Login.html instead.
+        // ============================================================
+
+        function isLoggedIn() {
+            return localStorage.getItem("loggedIn") === "true";
+        }
+
+        function hasAnyAccount() {
+            // "users" is expected to be the array of registered accounts
+            // saved by signup.html. If it doesn't exist yet, nobody has
+            // ever signed up on this browser.
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            return users.length > 0;
+        }
+
+        function guardHomeNavigation(event) {
+
+            if (!hasAnyAccount()) {
+                event.preventDefault();
+                alert("You don't have an account yet. Please sign up first.");
+                window.location.href = "signup.html";
+                return;
+            }
+
+            if (!isLoggedIn()) {
+                event.preventDefault();
+                alert("Please login first to continue.");
+                window.location.href = "Login.html";
+                return;
+            }
+
+            // Logged in with an existing account — let the normal <a href> navigation proceed.
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const homeNavLink = document.getElementById("homeNavLink");
+            if (homeNavLink) {
+                homeNavLink.addEventListener("click", guardHomeNavigation);
+            }
+
+            // "Get Started" in the CTA section should behave the same way
+            const ctaBtn = document.getElementById("ctaGetStartedBtn");
+            if (ctaBtn) {
+                ctaBtn.addEventListener("click", function () {
+                    if (!hasAnyAccount()) {
+                        alert("You don't have an account yet. Please sign up first.");
+                        window.location.href = "signup.html";
+                        return;
+                    }
+                    if (!isLoggedIn()) {
+                        alert("Please login first to continue.");
+                        window.location.href = "Login.html";
+                        return;
+                    }
+                    window.location.href = "Home_Feed.html";
+                });
+            }
+
+        });
+
+    </script>
 
 </body>
 
