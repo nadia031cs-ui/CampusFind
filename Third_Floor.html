@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ground Floor</title>
+    <title>Second Floor</title>
 
     <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
     <script>
@@ -27,8 +27,7 @@
 
         body {
             background-color: var(--color-app-bg);
-            background-image: url("./Floors/uni.jpeg");
-
+             background-image: url("./Floors/uni.jpeg");
             min-height: 100vh;
             padding: 25px;
         }
@@ -59,13 +58,6 @@
 
         .menu-btn:hover {
             transform: scale(1.08);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            z-index: 1001;
         }
 
         .navbar {
@@ -163,7 +155,7 @@
         aside h4 {
             margin-top: 20px;
             margin-bottom: 10px;
-            color:var(--color-accent-text) ;
+            color: var(--color-accent-text);
         }
 
         aside p {
@@ -197,7 +189,7 @@
 
         main img {
             width: 100%;
-            height: 300px;
+            height: 500px;
             border: 2px dashed var(--color-placeholder-border);
             border-radius: 10px;
             object-fit: contain;
@@ -236,16 +228,14 @@
         ☰
     </div>
 
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
-
     <div class="navbar" id="navbar">
 
         <span class="close-btn" onclick="toggleMenu()">×</span>
 
-        <a href="Home_Feed.html">Home</a>
-        <a href="Create_Post.html">Create Post</a>
+        <a href="Home_Feed.php">Home</a>
+        <a href="Create_Post.php">Create Post</a>
         <a href="University_Map.html">Map</a>
-        <a href="profiledashboard.html">Profile</a>
+        <a href="profiledashboard.php">Profile</a>
 
     </div>
 
@@ -285,9 +275,9 @@
 
             <main>
 
-                <h3>Ground Floor</h3>
+                <h3>Third Floor</h3>
 
-                <img src="/Floors/G.F.jpeg" alt="G.F">
+                <img src="/Floors/F3.jpeg" alt="Third Floor Map">
 
             </main>
 
@@ -298,23 +288,23 @@
                 <h4>About this location</h4>
 
                 <p>
-                <ul>
-                    <li>Main Entry/Exit</li>
-                    
-                    <li>Nearby Access to Corridor</li>
+                   <li>Stairs (Front)</li>
+                    <li>Stairs(Back)</li>
+                     <li>Balcony</li>
+                      <li>Washroom (Female)</li>
+                       <li>Room-401</li>
+                        <li>Room-402</li>
+                         <li>Room-403</li>
+                        <li>Room-404</li>
+                         <li>Room-405</li>
+                        <li>Room-406</li>
+                         <li>Room-407</li>
+                        <li>Room-408</li>
+                         <li>Room-409</li>
+                     
+                        
+                         
 
-                    <li>Dept. of BBA</li>
-                    <li>Dept. of Economics</li>
-                    <li>Dept. of Law</li>
-                    <li>Dept. of English</li>
-                    <li>Dept. of EEE</li>
-                    <li>Dept. of CSE</li>
-                    <li>Dept. of SWE</li>
-
-                    <li>Stairs (Right Side)</li>
-                    <li>Room 108 - EEE Lab</li>
-                    <li>Canteen (Far Right)</li>
-                </ul>
                 </p>
 
             </aside>
@@ -322,8 +312,6 @@
         </div>
 
     </div>
-
-    <script src="theme.js"></script>
 
     <script>
         function toggleMenu() {

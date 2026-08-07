@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/auth.php';
+requireLogin();
+$me = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -216,9 +221,9 @@
         <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
 
         <nav>
-            <a href="friends.html">Friends</a>
-            <a href="FindFriends.html">Find Friends</a>
-            <a href="Friend_req.html">Friend Requests</a>
+            <a href="friends.php">Friends</a>
+            <a href="FindFriends.php">Find Friends</a>
+            <a href="Friend_req.php">Friend Requests</a>
         </nav>
 
     </aside>
@@ -226,8 +231,8 @@
     <main>
 
         <div class="search-bar">
-            <input type="text" placeholder="Search anything...">
-            <button>Go</button>
+            <input type="text" id="searchInput" placeholder="Search anything...">
+            <button id="searchBtn">Go</button>
         </div>
 
         <div class="card">
@@ -247,10 +252,10 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="friendsTable">
                     <tr>
                         <td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:40px;">
-                            No friends to display.
+                            Loading...
                         </td>
                     </tr>
                 </tbody>
@@ -260,7 +265,7 @@
         </div>
 
         <div class="back">
-            <p>Back to <a href="Home_Feed.html">Home</a></p>
+            <p>Back to <a href="Home_Feed.php">Home</a></p>
         </div>
 
     </main>
@@ -268,45 +273,14 @@
     <script src="theme.js"></script>
 
     <script>
+        // Real friends now (api/friends_list.php + api/friends_remove.php)
+        // instead of the old hardcoded/localStorage seed list.
 
-        // ---- Auth guard: must run before anything else on the page ----
-        if (localStorage.getItem("loggedIn") !== "true") {
-            window.location.href = "intro.html";
-        }
+        let friends = [];
 
-        const STORAGE_KEY = "campusfind_friends";
-
-        const seedFriends = [
-            { name: "John Doe", department: "Computer Science", id: "CSE115277" },
-            { name: "Aloy Deb", department: "Computer Science", id: "BBA22015" },
-            { name: "Sumaiya Islam", department: "Electrical Engineering", id: "EEE22010" },
-            { name: "Nusrat Jahan", department: "English", id: "ENG22005" },
-            { name: "Tanvir Hasan", department: "Civil Engineering", id: "CE22020" }
-        ];
-
-        function loadFriends() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                try {
-                    return JSON.parse(stored);
-                } catch (e) {
-                    return [];
-                }
-            }
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(seedFriends));
-            return seedFriends;
-        }
-
-        function saveFriends(list) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-        }
-
-        let friends = loadFriends();
-
-        const tbody = document.querySelector("tbody");
-        const searchInput = document.querySelector(".search-bar input");
-        const searchButton = document.querySelector(".search-bar button");
+        const tbody = document.getElementById("friendsTable");
+        const searchInput = document.getElementById("searchInput");
+        const searchButton = document.getElementById("searchBtn");
 
         function displayFriends(list) {
 
@@ -314,11 +288,11 @@
 
             if (list.length === 0) {
                 tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:40px;">
-                        No friends to display.
-                    </td>
-                </tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:40px;">
+                            No friends to display.
+                        </td>
+                    </tr>
                 `;
                 return;
             }
@@ -329,32 +303,26 @@
 
                 row.innerHTML = `
                     <td>${friend.name}</td>
-                    <td>${friend.department}</td>
-                    <td>${friend.id}</td>
+                    <td>${friend.department || 'N/A'}</td>
+                    <td>${friend.studentId || 'N/A'}</td>
                     <td>
-                        <button class="action-btn view-btn">View</button>
-                        <button class="action-btn remove-btn" style="background:#dc3545;margin-left:8px;">
-                            Unfriend
-                        </button>
+                        <button class="action-btn message-btn">Message</button>
+                        <button class="action-btn remove-btn" style="background:#dc3545;margin-left:8px;">Unfriend</button>
                     </td>
                 `;
 
-                row.querySelector(".view-btn").addEventListener("click", function () {
-                    alert(
-                        "Friend Profile\n\n" +
-                        "Name: " + friend.name +
-                        "\nDepartment: " + friend.department +
-                        "\nCampus ID: " + friend.id
-                    );
+                row.querySelector(".message-btn").addEventListener("click", () => {
+                    window.location.href = "Messages.php?with=" + friend.id;
                 });
 
-                row.querySelector(".remove-btn").addEventListener("click", function () {
-                    if (confirm("Remove " + friend.name + " from your friends?")) {
-
-                        friends = friends.filter(f => f.id !== friend.id);
-                        saveFriends(friends);
-                        searchFriends();
-                    }
+                row.querySelector(".remove-btn").addEventListener("click", async () => {
+                    if (!confirm("Remove " + friend.name + " from your friends?")) return;
+                    await fetch("api/friends_remove.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "friend_id=" + friend.id
+                    });
+                    loadFriends();
                 });
 
                 tbody.appendChild(row);
@@ -367,29 +335,25 @@
             const keyword = searchInput.value.toLowerCase();
             const filtered = friends.filter(friend =>
                 friend.name.toLowerCase().includes(keyword) ||
-                friend.department.toLowerCase().includes(keyword) ||
-                friend.id.toLowerCase().includes(keyword)
+                (friend.department || '').toLowerCase().includes(keyword) ||
+                (friend.studentId || '').toLowerCase().includes(keyword)
             );
             displayFriends(filtered);
         }
 
+        async function loadFriends() {
+            const res = await fetch("api/friends_list.php");
+            const data = await res.json();
+            if (!data.success) return;
+            friends = data.friends;
+            searchFriends();
+        }
+
         searchInput.addEventListener("keyup", searchFriends);
         searchButton.addEventListener("click", searchFriends);
+        window.addEventListener("focus", loadFriends);
 
-        window.addEventListener("storage", function (e) {
-            if (e.key === STORAGE_KEY) {
-                friends = loadFriends();
-                searchFriends();
-            }
-        });
-
-        window.addEventListener("focus", function () {
-            friends = loadFriends();
-            searchFriends();
-        });
-
-        displayFriends(friends);
-
+        loadFriends();
     </script>
 
 </body>

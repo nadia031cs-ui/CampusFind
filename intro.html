@@ -487,7 +487,7 @@
 
                 <ul>
 
-                    <li><a href="Home_Feed.html" id="homeNavLink">Home</a></li>
+                    <li><a href="Home_Feed.php" id="homeNavLink">Home</a></li>
                     <li><a href="aboutus.html">About Us</a></li>
 
 
@@ -499,11 +499,11 @@
 
                 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
 
-                <a href="Login.html">
+                <a href="Login.php">
                     <button class="login-btn">Login</button>
                 </a>
 
-                <a href="signup.html">
+                <a href="signup.php">
                     <button class="signup-btn">Sign Up</button>
                 </a>
 
@@ -679,13 +679,13 @@
         // ============================================================
         // AUTH GUARD FOR THE "HOME" NAV LINK (and "Get Started" button)
         // Without this, anyone could click straight from the landing
-        // page into Home_Feed.html without ever logging in — bypassing
-        // Home_Feed.html's own guard only works AFTER navigation starts,
+        // page into Home_Feed.php without ever logging in — bypassing
+        // Home_Feed.php's own guard only works AFTER navigation starts,
         // which is too late/inconsistent for a good user experience.
         // This checks BEFORE navigating away from the landing page:
         //   - If no account exists at all (no signup done yet) OR
         //   - the user isn't currently logged in / has logged out,
-        // it stops the navigation and sends them to Login.html instead.
+        // it stops the navigation and sends them to Login.php instead.
         // ============================================================
 
         function isLoggedIn() {
@@ -694,7 +694,7 @@
 
         function hasAnyAccount() {
             // "users" is expected to be the array of registered accounts
-            // saved by signup.html. If it doesn't exist yet, nobody has
+            // saved by signup.php. If it doesn't exist yet, nobody has
             // ever signed up on this browser.
             const users = JSON.parse(localStorage.getItem("users")) || [];
             return users.length > 0;
@@ -705,14 +705,14 @@
             if (!hasAnyAccount()) {
                 event.preventDefault();
                 alert("You don't have an account yet. Please sign up first.");
-                window.location.href = "signup.html";
+                window.location.href = "signup.php";
                 return;
             }
 
             if (!isLoggedIn()) {
                 event.preventDefault();
                 alert("Please login first to continue.");
-                window.location.href = "Login.html";
+                window.location.href = "Login.php";
                 return;
             }
 
@@ -732,15 +732,15 @@
                 ctaBtn.addEventListener("click", function () {
                     if (!hasAnyAccount()) {
                         alert("You don't have an account yet. Please sign up first.");
-                        window.location.href = "signup.html";
+                        window.location.href = "signup.php";
                         return;
                     }
                     if (!isLoggedIn()) {
                         alert("Please login first to continue.");
-                        window.location.href = "Login.html";
+                        window.location.href = "Login.php";
                         return;
                     }
-                    window.location.href = "Home_Feed.html";
+                    window.location.href = "Home_Feed.php";
                 });
             }
 

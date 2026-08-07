@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/auth.php';
+requireLogin();
+$me = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -284,9 +289,9 @@
         </div>
 
         <nav>
-            <a href="friends.html">Friends</a>
-            <a href="FindFriends.html">Find Friends</a>
-            <a href="Friend_req.html">Friend Requests</a>
+            <a href="friends.php">Friends</a>
+            <a href="FindFriends.php">Find Friends</a>
+            <a href="Friend_req.php">Friend Requests</a>
         </nav>
 
     </aside>
@@ -346,13 +351,91 @@
 
         </div>
 
-        <div class="back">
-            <a href="Home_Feed.html">← Back to Home</a>
-        </div>
-
     </main>
 
-    <script src="FindFriends.js"></script>
+    <script>
+        // Real users now (api/friends_search.php + api/friends_request_send.php)
+        // instead of the old hardcoded 7-user list.
+
+        const topSearch = document.getElementById("topSearch");
+        const topSearchBtn = document.getElementById("topSearchBtn");
+        const emailInput = document.getElementById("emailInput");
+        const departmentInput = document.getElementById("departmentInput");
+        const idInput = document.getElementById("idInput");
+        const nameInput = document.getElementById("nameInput");
+        const resultBox = document.getElementById("results");
+
+        async function searchUsers() {
+
+            const params = new URLSearchParams({
+                q: topSearch.value.trim(),
+                email: emailInput.value.trim(),
+                department: departmentInput.value,
+                id: idInput.value.trim(),
+                name: nameInput.value.trim(),
+            });
+
+            const res = await fetch("api/friends_search.php?" + params.toString());
+            const data = await res.json();
+
+            resultBox.innerHTML = "<h3>Search Results</h3>";
+
+            if (!data.success || data.users.length === 0) {
+                resultBox.innerHTML += "<p>No users found.</p>";
+                return;
+            }
+
+            data.users.forEach(user => {
+
+                const card = document.createElement("div");
+                card.className = "user-card";
+
+                card.innerHTML = `
+                    <h4>${user.name}</h4>
+                    <p><strong>ID:</strong> ${user.studentId || 'N/A'}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Department:</strong> ${user.department || 'N/A'}</p>
+                    <button ${user.requestSent ? "disabled" : ""}>
+                        ${user.requestSent ? "Request Sent" : "Add Friend"}
+                    </button>
+                `;
+
+                const btn = card.querySelector("button");
+
+                btn.addEventListener("click", async function () {
+                    const res = await fetch("api/friends_request_send.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "receiver_id=" + user.id
+                    });
+                    const result = await res.json();
+
+                    if (!result.success) {
+                        alert(result.message || "Couldn't send the request.");
+                        return;
+                    }
+
+                    btn.textContent = result.status === "friends" ? "Friends" : "Request Sent";
+                    btn.disabled = true;
+                    alert(result.message);
+                });
+
+                resultBox.appendChild(card);
+
+            });
+
+        }
+
+        topSearchBtn.addEventListener("click", searchUsers);
+        topSearch.addEventListener("keyup", function (e) { if (e.key === "Enter") searchUsers(); });
+        emailInput.addEventListener("input", searchUsers);
+        departmentInput.addEventListener("change", searchUsers);
+        idInput.addEventListener("input", searchUsers);
+        nameInput.addEventListener("input", searchUsers);
+        window.addEventListener("focus", searchUsers);
+
+        searchUsers();
+    </script>
 
 </body>
 

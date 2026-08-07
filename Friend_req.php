@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/auth.php';
+requireLogin();
+$me = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -259,9 +264,9 @@
         </div>
 
         <nav>
-            <a href="friends.html">Friends</a>
-            <a href="FindFriends.html">Find Friends</a>
-            <a href="Friend_req.html">Friend Requests</a>
+            <a href="friends.php">Friends</a>
+            <a href="FindFriends.php">Find Friends</a>
+            <a href="Friend_req.php">Friend Requests</a>
         </nav>
 
     </aside>
@@ -291,9 +296,6 @@
                 </thead>
 
                 <tbody id="requestTable">
-
-                   
-
                 </tbody>
 
             </table>
@@ -301,13 +303,106 @@
         </div>
 
         <div class="back">
-            <p>Back to <a href="Home_Feed.html">Home</a></p>
+            <p>Back to <a href="Home_Feed.php">Home</a></p>
         </div>
 
     </main>
 
-   
-    <script src="Friend_req.js"></script>
+    <script>
+        // Real, DB-backed friend requests now (api/friends_requests_list.php,
+        // api/friends_request_accept.php, api/friends_request_decline.php)
+        // instead of the old seeded-fake-users localStorage version.
+
+        let requests = [];
+
+        const table = document.getElementById("requestTable");
+        const searchInput = document.getElementById("searchInput");
+        const searchBtn = document.getElementById("searchBtn");
+
+        function displayRequests(list) {
+
+            table.innerHTML = "";
+
+            if (list.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="empty-message">No friend requests available.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            list.forEach(function (person) {
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${person.name}</td>
+                    <td>${person.department || 'N/A'}</td>
+                    <td>${person.studentId || 'N/A'}</td>
+                    <td>
+                        <button class="action-btn accept-btn">Accept</button>
+                        <button class="action-btn delete-btn">Delete</button>
+                    </td>
+                `;
+
+                row.querySelector(".accept-btn").addEventListener("click", async function () {
+                    const res = await fetch("api/friends_request_accept.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "request_id=" + person.requestId
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        alert(person.name + " is now your friend!");
+                        loadRequests();
+                    } else {
+                        alert(result.message || "Couldn't accept this request.");
+                    }
+                });
+
+                row.querySelector(".delete-btn").addEventListener("click", async function () {
+                    if (!confirm("Delete friend request from " + person.name + "?")) return;
+                    await fetch("api/friends_request_decline.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "request_id=" + person.requestId
+                    });
+                    loadRequests();
+                });
+
+                table.appendChild(row);
+
+            });
+
+        }
+
+        function searchRequests() {
+            const keyword = searchInput.value.toLowerCase();
+            const filtered = requests.filter(function (person) {
+                return (
+                    person.name.toLowerCase().includes(keyword) ||
+                    (person.department || '').toLowerCase().includes(keyword) ||
+                    (person.studentId || '').toLowerCase().includes(keyword)
+                );
+            });
+            displayRequests(filtered);
+        }
+
+        async function loadRequests() {
+            const res = await fetch("api/friends_requests_list.php");
+            const data = await res.json();
+            if (!data.success) return;
+            requests = data.requests;
+            searchRequests();
+        }
+
+        searchInput.addEventListener("keyup", searchRequests);
+        searchBtn.addEventListener("click", searchRequests);
+        window.addEventListener("focus", loadRequests);
+
+        loadRequests();
+    </script>
 
 </body>
 

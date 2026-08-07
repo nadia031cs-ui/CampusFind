@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/auth.php';
+requireLogin();
+$me = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -298,21 +303,23 @@
                 <img src="cmpLOGO.jpeg" alt="" width="180">
             </div>
 
-            <a href="profiledashboard.html" class="profile-link">Your Profile</a>
+            <a href="profiledashboard.php" class="profile-link">Your Profile</a>
 
             <nav>
-                <a href="Home_Feed.html">Home Feed</a>
-                <a href="Post_an_Item.html">Post an Item</a>
+                <a href="Home_Feed.php">Home Feed</a>
+                <a href="Create_Post.php">Post an Item</a>
                 <a href="University_Map.html">University Map</a>
-                <a href="Messages.html">Messages</a>
-                <a href="Profile.html">Profile</a>
-                <a href="Settings.html">Settings</a>
+                <a href="Messages.php">Messages</a>
+                <a href="profiledashboard.php">Profile</a>
+                <a href="Settings.php">Settings</a>
             </nav>
 
         </div>
 
         <div class="logout">
-            <button>Logout</button>
+            <form action="api/logout.php" method="post" onsubmit="return confirm('Are you sure you want to logout?');">
+                <button type="submit">Logout</button>
+            </form>
         </div>
 
     </aside>
@@ -328,7 +335,7 @@
             <h2>Edit Profile</h2>
             <p>Update your personal and academic information below.</p>
 
-            <form action="">
+            <form id="editProfileForm">
 
                 <div class="full">
                     <label>Profile Picture</label>
@@ -337,18 +344,18 @@
 
                     <br><br>
 
-                    <img id="previewImage" src="default-profile.png" alt="Profile Preview" width="150" height="150"
+                    <img id="previewImage" src="<?php echo htmlspecialchars($me['photo'] ?: 'default-profile.png'); ?>" alt="Profile Preview" width="150" height="150"
                         style="border-radius:50%; object-fit:cover; border:4px solid var(--color-app-bg);">
                 </div>
 
                 <div class="full">
                     <label>Name</label>
-                    <input type="text" id="name" placeholder="Enter Your Name">
+                    <input type="text" id="name" placeholder="Enter Your Name" value="<?php echo htmlspecialchars($me['full_name']); ?>">
                 </div>
 
                 <div>
                     <label>Campus ID</label>
-                    <input type="text" id="campusId" placeholder="Enter Your ID">
+                    <input type="text" id="campusId" placeholder="Enter Your ID" value="<?php echo htmlspecialchars($me['student_id'] ?? ''); ?>">
                 </div>
 
                 <div>
@@ -383,21 +390,21 @@
 
                 <div>
                     <label>University Email</label>
-                    <input type="email" id="email" placeholder="Enter Your Email">
+                    <input type="email" id="email" placeholder="Enter Your Email" value="<?php echo htmlspecialchars($me['email']); ?>">
                 </div>
 
                 <div>
                     <label>Batch</label>
-                    <input type="text" id="batch" placeholder="Enter Your Batch">
+                    <input type="text" id="batch" placeholder="Enter Your Batch" value="<?php echo htmlspecialchars($me['batch'] ?? ''); ?>">
                 </div>
 
                 <div class="full">
                     <label>Phone Number</label>
-                    <input type="tel" id="phone" placeholder="Enter Your Number">
+                    <input type="tel" id="phone" placeholder="Enter Your Number" value="<?php echo htmlspecialchars($me['phone'] ?? ''); ?>">
                 </div>
 
                 <div class="buttons">
-                    <button type="reset" class="cancel">Cancel</button>
+                    <button type="button" class="cancel" onclick="window.location.href='profiledashboard.php'">Cancel</button>
                     <button type="submit" class="save" id="saveBtn">Save Changes</button>
                 </div>
 
@@ -407,274 +414,110 @@
 
     </main>
 
-
     <script>
 
-        // ============================================================
-        // IMAGE COMPRESSION (same approach as Create_Post.html)
-        // Profile photos display small (circular, ~160px), so we can
-        // compress harder than post images: max 400px wide, 70% JPEG
-        // quality. This is what was missing before — the old code
-        // saved the raw, uncompressed file straight into localStorage,
-        // which is why `profile` grew to 1.75MB from a single photo.
-        // ============================================================
-
         function compressImage(file, maxWidth, quality) {
-
             return new Promise(function (resolve, reject) {
-
                 const reader = new FileReader();
-
                 reader.onload = function (e) {
-
                     const img = new Image();
-
                     img.onload = function () {
-
                         let width = img.width;
                         let height = img.height;
-
                         if (width > maxWidth) {
                             height = Math.round(height * (maxWidth / width));
                             width = maxWidth;
                         }
-
                         const canvas = document.createElement("canvas");
                         canvas.width = width;
                         canvas.height = height;
-
-                        const ctx = canvas.getContext("2d");
-                        ctx.drawImage(img, 0, 0, width, height);
-
+                        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
                         resolve(canvas.toDataURL("image/jpeg", quality));
-
                     };
-
-                    img.onerror = function () {
-                        reject(new Error("Could not read the selected image."));
-                    };
-
+                    img.onerror = reject;
                     img.src = e.target.result;
-
                 };
-
-                reader.onerror = function () {
-                    reject(new Error("Could not read the selected file."));
-                };
-
+                reader.onerror = reject;
                 reader.readAsDataURL(file);
-
             });
-
         }
 
         document.addEventListener("DOMContentLoaded", function () {
 
-            console.log("Edit Profile Page Loaded");
-
-            // Logout Button
-            const logoutBtn = document.querySelector(".logout button");
-
-            logoutBtn.addEventListener("click", function () {
-
-                if (confirm("Are you sure you want to logout?")) {
-                    alert("You have been logged out.");
-                    window.location.href = "Login.html";
-                }
-
-            });
-
-            // Navigation Hover
-            const navLinks = document.querySelectorAll("nav a");
-
-            navLinks.forEach(function (link) {
-
-                link.addEventListener("mouseenter", function () {
-                    link.style.transform = "translateX(5px)";
-                });
-
-                link.addEventListener("mouseleave", function () {
-                    link.style.transform = "translateX(0)";
-                });
-
-            });
-
-            // Search Box
+            const form = document.getElementById("editProfileForm");
             const searchBox = document.querySelector(".search input");
-
-            searchBox.addEventListener("keydown", function (event) {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    const keyword = searchBox.value.trim();
-
-                    if (keyword === "") {
-                        alert("Please enter something to search.");
-                        return;
-                    }
-
-                    alert("Searching for: " + keyword);
-
-                }
-
-            });
-
-            searchBox.addEventListener("focus", function () {
-                searchBox.style.boxShadow = "0 0 8px var(--color-primary)";
-            });
-
-            searchBox.addEventListener("blur", function () {
-                searchBox.style.boxShadow = "none";
-            });
-
-            // Profile Picture Preview — now compressed before it ever
-            // touches the <img> src, so what gets previewed is exactly
-            // what gets saved (small, and already the final version).
             const profilePhoto = document.getElementById("profilePhoto");
             const previewImage = document.getElementById("previewImage");
 
+            const name = document.getElementById("name");
+            const campusId = document.getElementById("campusId");
+            const semester = document.getElementById("semester");
+            const department = document.getElementById("department");
+            const email = document.getElementById("email");
+            const batch = document.getElementById("batch");
+            const phone = document.getElementById("phone");
+
+            semester.value = <?php echo json_encode($me['semester'] ?: 'Semester 1'); ?> || "Semester 1";
+            department.value = <?php echo json_encode($me['department'] ?: 'CSE'); ?> || "CSE";
+
+            let selectedPhotoFile = null;
+
             profilePhoto.addEventListener("change", function () {
-
-                const file = this.files[0];
-
-                if (!file) {
-                    return;
-                }
-
-                compressImage(file, 200, 0.4)
-                    .then(function (compressedDataUrl) {
-                        previewImage.src = compressedDataUrl;
-                    })
-                    .catch(function (err) {
-                        console.error("Image compression failed:", err);
-                        alert("Couldn't process that image. Please try a different photo.");
-                    });
-
+                const file = profilePhoto.files[0];
+                if (!file) return;
+                selectedPhotoFile = file;
+                compressImage(file, 400, 0.8).then(function (dataUrl) {
+                    previewImage.src = dataUrl;
+                }).catch(function () {
+                    alert("Couldn't preview that image.");
+                });
             });
 
-            // Load Saved Profile
-            const savedProfile = JSON.parse(localStorage.getItem("profile"));
+            searchBox.addEventListener("focus", function () { searchBox.style.boxShadow = "0 0 8px var(--color-primary)"; });
+            searchBox.addEventListener("blur", function () { searchBox.style.boxShadow = "none"; });
 
-            if (savedProfile) {
-
-                document.getElementById("name").value = savedProfile.name || "";
-                document.getElementById("campusId").value = savedProfile.id || "";
-                document.getElementById("semester").value = savedProfile.semester || "Semester 1";
-                document.getElementById("department").value = savedProfile.department || "CSE";
-                document.getElementById("email").value = savedProfile.email || "";
-                document.getElementById("batch").value = savedProfile.batch || "";
-                document.getElementById("phone").value = savedProfile.phone || "";
-
-                if (savedProfile.photo) {
-                    previewImage.src = savedProfile.photo;
-                }
-
-            }
-
-            // Save Profile
-            const form = document.querySelector("form");
-            const saveBtn = document.getElementById("saveBtn");
-
-            form.addEventListener("submit", function (event) {
+            form.addEventListener("submit", async function (event) {
 
                 event.preventDefault();
 
-                const profile = {
-
-                    name: document.getElementById("name").value.trim(),
-
-                    id: document.getElementById("campusId").value.trim(),
-
-                    semester: document.getElementById("semester").value,
-
-                    department: document.getElementById("department").value,
-
-                    email: document.getElementById("email").value.trim(),
-
-                    batch: document.getElementById("batch").value.trim(),
-
-                    phone: document.getElementById("phone").value.trim(),
-
-                    photo: previewImage.src
-
-                };
-
-                if (
-                    profile.name === "" ||
-                    profile.id === "" ||
-                    profile.email === "" ||
-                    profile.batch === "" ||
-                    profile.phone === ""
-                ) {
-
-                    alert("Please fill in all required fields.");
+                if (name.value.trim() === "") {
+                    alert("Please enter your name.");
+                    name.focus();
                     return;
-
                 }
 
-                saveBtn.disabled = true;
-                saveBtn.textContent = "Saving...";
-
-                try {
-
-                    localStorage.setItem("profile", JSON.stringify(profile));
-
-                    alert("Profile updated successfully!");
-
-                    window.location.href = "profiledashboard.html";
-
-                } catch (err) {
-
-                    console.error("Failed to save profile:", err);
-
-                    alert(
-                        "Couldn't save your profile — local storage is full. " +
-                        "Try deleting a few old posts (with images) from your profile and save again."
-                    );
-
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = "Save Changes";
-
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (email.value.trim() !== "" && !emailPattern.test(email.value.trim())) {
+                    alert("Please enter a valid email address.");
+                    email.focus();
+                    return;
                 }
 
-            });
+                const formData = new FormData();
+                formData.append("full_name", name.value.trim());
+                formData.append("student_id", campusId.value.trim());
+                formData.append("semester", semester.value);
+                formData.append("department", department.value);
+                formData.append("email", email.value.trim());
+                formData.append("batch", batch.value.trim());
+                formData.append("phone", phone.value.trim());
+                if (selectedPhotoFile) formData.append("photo", selectedPhotoFile);
 
-            // Reset Button
-            const resetBtn = document.querySelector(".cancel");
+                const res = await fetch("api/profile_update.php", { method: "POST", body: formData });
+                const result = await res.json();
 
-            resetBtn.addEventListener("click", function (event) {
-
-                if (!confirm("Are you sure you want to clear all fields?")) {
-                    event.preventDefault();
+                if (!result.success) {
+                    alert(result.message || "Couldn't save changes.");
+                    return;
                 }
 
-            });
-
-            // Input Highlight
-            const inputs = document.querySelectorAll("input, select");
-
-            inputs.forEach(function (input) {
-
-                input.addEventListener("focus", function () {
-
-                    input.style.backgroundColor = "var(--color-card-bg)";
-
-                });
-
-                input.addEventListener("blur", function () {
-
-                    input.style.backgroundColor = "var(--color-card-bg)";
-
-                });
+                alert("Profile updated successfully!");
+                window.location.href = "profiledashboard.php";
 
             });
 
         });
     </script>
-
-
 
 </body>
 

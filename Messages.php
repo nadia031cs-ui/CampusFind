@@ -1,3 +1,9 @@
+<?php
+require_once __DIR__ . '/includes/notifications.php';
+requireLogin();
+$me = currentUser();
+$openWith = isset($_GET['with']) ? (int) $_GET['with'] : 0;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -302,20 +308,22 @@
             </div>
 
             <nav>
-                <a href="Home_Feed.html">Home Feed</a>
-                <a href="Create_Post.html">Post an Item</a>
+                <a href="Home_Feed.php">Home Feed</a>
+                <a href="Create_Post.php">Post an Item</a>
                 <a href="University_Map.html">University Map</a>
-                <a href="Messages.html">Messages</a>
-                <a href="profiledashboard.html">Profile</a>
-                <a href="Settings.html">Settings</a>
-                <a href="Notifications.html">Notifications <span class="nav-badge" id="navBadge">0</span></a>
+                <a href="Messages.php">Messages</a>
+                <a href="profiledashboard.php">Profile</a>
+                <a href="Settings.php">Settings</a>
+                <a href="Notifications.php">Notifications <span class="nav-badge" id="navBadge"><?php echo unreadNotificationCount($me['id']); ?></span></a>
 
             </nav>
 
         </div>
 
         <div class="logout">
-            <button>Logout</button>
+            <form action="api/logout.php" method="post" onsubmit="return confirm('Are you sure you want to logout?');">
+                <button type="submit">Logout</button>
+            </form>
         </div>
 
     </aside>
@@ -334,14 +342,12 @@
 
                 <h3>Chats</h3>
 
-                <input type="text" placeholder="Search Conversation">
+                <input type="text" id="searchConvo" placeholder="Search Conversation">
 
                 <h4>Active Conversations</h4>
 
-                <div class="chat-list">
-                    <div class="chat-item">John Doe</div>
-                    <div class="chat-item">Sarah Ahmed</div>
-                    <div class="chat-item">Campus Admin</div>
+                <div class="chat-list" id="chatList">
+                    <p style="opacity:.6;padding:8px;">Loading...</p>
                 </div>
 
             </div>
@@ -350,28 +356,18 @@
 
                 <div>
 
-                    <div class="chat-header">
-                        John Doe
+                    <div class="chat-header" id="chatHeader">
+                        Select a friend to start chatting
                     </div>
 
-                    <div class="messages">
-
-                        <div class="message received">
-                            Hello! I think I found your ID card.
-                        </div>
-
-                        <div class="message sent">
-                            Really? Thank you! Where can I collect it?
-                        </div>
-
-                    </div>
+                    <div class="messages" id="messagesBox"></div>
 
                 </div>
 
                 <div class="message-box">
-                    <input type="text" placeholder="Write a message...">
-                    <input type="file" accept="image/*">
-                    <button>Send</button>
+                    <input type="text" id="messageInput" placeholder="Write a message...">
+                    <input type="file" id="fileInput" accept="image/*">
+                    <button id="sendBtn">Send</button>
                 </div>
 
             </div>
@@ -381,145 +377,113 @@
     </main>
 
     <script>
+        // Real friends + real messages now (api/messages_list.php, api/messages_thread.php,
+        // api/messages_send.php) instead of the old hardcoded chatData object.
 
-        // ---- Auth guard: must run before anything else on the page ----
-        if (localStorage.getItem("loggedIn") !== "true") {
-            window.location.href = "intro.html";
+        const openWithId = <?php echo json_encode($openWith); ?>;
+
+        const chatList = document.getElementById("chatList");
+        const chatHeader = document.getElementById("chatHeader");
+        const messagesBox = document.getElementById("messagesBox");
+        const messageInput = document.getElementById("messageInput");
+        const fileInput = document.getElementById("fileInput");
+        const sendButton = document.getElementById("sendBtn");
+        const searchInput = document.getElementById("searchConvo");
+
+        let conversations = [];
+        let currentFriendId = null;
+        let pollTimer = null;
+
+        function escapeHtml(str) {
+            const div = document.createElement("div");
+            div.textContent = str;
+            return div.innerHTML;
         }
 
-        const currentUser = localStorage.getItem("username") || "Anonymous User";
+        async function loadConversations(selectId) {
+            const res = await fetch("api/messages_list.php");
+            const data = await res.json();
+            if (!data.success) return;
+            conversations = data.conversations;
+            renderChatList();
 
-        // ============================================================
-        // NOTIFICATION HELPERS (same shared logic used on every page)
-        // All notifications for ALL users live in one localStorage key,
-        // each tagged with a "recipient". Every page reads/creates from
-        // this same shared store so Notifications.html and the sidebar
-        // badge always stay in sync no matter which page triggered it.
-        // ============================================================
-
-        function getAllNotifications() {
-            return JSON.parse(localStorage.getItem("notifications")) || [];
+            if (selectId && conversations.some(c => c.id === selectId)) {
+                openChat(selectId);
+            } else if (!currentFriendId && conversations.length > 0) {
+                openChat(conversations[0].id);
+            } else if (conversations.length === 0) {
+                chatHeader.textContent = "Add some friends to start chatting";
+            }
         }
 
-        function saveAllNotifications(all) {
-            localStorage.setItem("notifications", JSON.stringify(all));
-        }
+        function renderChatList() {
+            const keyword = searchInput.value.toLowerCase();
+            const filtered = conversations.filter(c => c.name.toLowerCase().includes(keyword));
 
-        // Call this to notify a specific user. Stores a real
-        // "createdAt" timestamp (not a frozen "Just now" string) so
-        // Notifications.html can show a live, increasing "time ago".
-        function createNotification(recipient, type, text, link) {
-            const all = getAllNotifications();
-            all.unshift({
-                id: Date.now() + Math.random(),
-                recipient: recipient,
-                type: type,
-                text: text,
-                createdAt: Date.now(),
-                read: false,
-                link: link
-            });
-            saveAllNotifications(all);
-        }
-
-        // Refresh the sidebar red-dot badge with this user's unread count.
-        function updateNavBadge() {
-
-            const all = getAllNotifications();
-            const unreadCount = all.filter(function (n) {
-                return n.recipient === currentUser && !n.read;
-            }).length;
-
-            const navBadge = document.getElementById("navBadge");
-
-            if (navBadge) {
-                navBadge.textContent = unreadCount;
-                navBadge.style.display = unreadCount === 0 ? "none" : "inline-block";
+            if (filtered.length === 0) {
+                chatList.innerHTML = '<p style="opacity:.6;padding:8px;">No conversations yet — add friends first.</p>';
+                return;
             }
 
+            chatList.innerHTML = filtered.map(c => `
+                <div class="chat-item${c.id === currentFriendId ? ' active' : ''}" data-id="${c.id}">
+                    ${c.name}${c.unread > 0 ? ` <span class="nav-badge">${c.unread}</span>` : ''}
+                </div>
+            `).join("");
+
+            chatList.querySelectorAll(".chat-item").forEach(el => {
+                el.addEventListener("click", () => openChat(parseInt(el.dataset.id, 10)));
+            });
         }
 
-        updateNavBadge();
+        async function openChat(friendId) {
+            currentFriendId = friendId;
+            renderChatList();
 
-        const chatItems = document.querySelectorAll(".chat-item");
-        const chatHeader = document.querySelector(".chat-header");
-        const messages = document.querySelector(".messages");
-        const messageInput = document.querySelector('.message-box input[type="text"]');
-        const fileInput = document.querySelector('.message-box input[type="file"]');
-        const sendButton = document.querySelector(".message-box button");
-        const searchInput = document.querySelector("#left-panel input");
-        const logoutBtn = document.querySelector(".logout button");
+            const res = await fetch("api/messages_thread.php?with=" + friendId);
+            const data = await res.json();
+            if (!data.success) {
+                chatHeader.textContent = data.message || "Couldn't load this conversation.";
+                return;
+            }
 
-        const chatData = {
-            "John Doe": [
-                {
-                    type: "received",
-                    text: "Hello! I think I found your ID card."
-                },
-                {
-                    type: "sent",
-                    text: "Really? Thank you! Where can I collect it?"
-                }
-            ],
+            chatHeader.textContent = data.with.name;
+            messagesBox.innerHTML = "";
 
-            "Sarah Ahmed": [
-                {
-                    type: "received",
-                    text: "Did you lose a blue notebook?"
-                }
-            ],
-
-            "Campus Admin": [
-                {
-                    type: "received",
-                    text: "Your lost item request has been received."
-                }
-            ]
-        };
-
-        function loadChat(name) {
-
-            chatHeader.textContent = name;
-            messages.innerHTML = "";
-
-            chatData[name].forEach(msg => {
-
+            data.messages.forEach(m => {
                 const div = document.createElement("div");
-                div.className = "message " + msg.type;
+                div.className = "message " + (m.fromMe ? "sent" : "received");
 
-                if (msg.image) {
-
+                if (m.image) {
                     const img = document.createElement("img");
-                    img.src = msg.image;
+                    img.src = m.image;
                     img.style.maxWidth = "220px";
                     img.style.borderRadius = "10px";
                     img.style.display = "block";
-                    img.style.cursor = "pointer";
-
                     div.appendChild(img);
-
+                    if (m.body) {
+                        const p = document.createElement("div");
+                        p.textContent = m.body;
+                        div.appendChild(p);
+                    }
                 } else {
-
-                    div.textContent = msg.text;
-
+                    div.textContent = m.body;
                 }
 
-                messages.appendChild(div);
-
+                messagesBox.appendChild(div);
             });
 
-            messages.scrollTop = messages.scrollHeight;
+            messagesBox.scrollTop = messagesBox.scrollHeight;
+
+            // clear the unread badge for this conversation locally, then refresh from server
+            loadConversations();
         }
 
-        chatItems.forEach(item => {
-
-            item.addEventListener("click", () => {
-                loadChat(item.textContent.trim());
-            });
-
-        });
-
-        function sendMessage() {
+        async function sendMessage() {
+            if (!currentFriendId) {
+                alert("Select a friend to message first.");
+                return;
+            }
 
             const text = messageInput.value.trim();
             const file = fileInput.files[0];
@@ -529,125 +493,40 @@
                 return;
             }
 
-            const currentChat = chatHeader.textContent;
+            const formData = new FormData();
+            formData.append("receiver_id", currentFriendId);
+            formData.append("body", text);
+            if (file) formData.append("image", file);
 
-            if (text !== "") {
+            const res = await fetch("api/messages_send.php", { method: "POST", body: formData });
+            const data = await res.json();
 
-                const msg = {
-                    type: "sent",
-                    text: text
-                };
-
-                chatData[currentChat].push(msg);
-
-                const div = document.createElement("div");
-                div.className = "message sent";
-                div.textContent = text;
-
-                messages.appendChild(div);
-
-                // Notify the chat partner that a new message arrived.
-                createNotification(
-                    currentChat,
-                    "message",
-                    currentUser + " sent you a message: \"" + text + "\"",
-                    "Messages.html"
-                );
-
-            }
-
-            if (file) {
-
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-
-                    const imageURL = e.target.result;
-
-                    chatData[currentChat].push({
-                        type: "sent",
-                        image: imageURL
-                    });
-
-                    const div = document.createElement("div");
-                    div.className = "message sent";
-
-                    const img = document.createElement("img");
-                    img.src = imageURL;
-                    img.style.maxWidth = "220px";
-                    img.style.borderRadius = "10px";
-                    img.style.display = "block";
-                    img.style.cursor = "pointer";
-
-                    div.appendChild(img);
-
-                    messages.appendChild(div);
-
-                    messages.scrollTop = messages.scrollHeight;
-
-                    // Notify the chat partner that an image was sent.
-                    createNotification(
-                        currentChat,
-                        "message",
-                        currentUser + " sent you an image.",
-                        "Messages.html"
-                    );
-
-                };
-
-                reader.readAsDataURL(file);
-
+            if (!data.success) {
+                alert(data.message || "Couldn't send that message.");
+                return;
             }
 
             messageInput.value = "";
             fileInput.value = "";
-
-            messages.scrollTop = messages.scrollHeight;
+            openChat(currentFriendId);
         }
 
         sendButton.addEventListener("click", sendMessage);
 
         messageInput.addEventListener("keydown", function (e) {
-
             if (e.key === "Enter") {
                 e.preventDefault();
                 sendMessage();
             }
-
         });
 
-        searchInput.addEventListener("keyup", function () {
+        searchInput.addEventListener("keyup", renderChatList);
 
-            const value = this.value.toLowerCase();
-
-            chatItems.forEach(item => {
-
-                if (item.textContent.toLowerCase().includes(value)) {
-                    item.style.display = "block";
-                } else {
-                    item.style.display = "none";
-                }
-
-            });
-
-        });
-
-        logoutBtn.addEventListener("click", function () {
-
-            if (confirm("Are you sure you want to logout?")) {
-
-                localStorage.removeItem("loggedIn");
-                localStorage.removeItem("username");
-
-                alert("You have been logged out.");
-
-                window.location.href = "intro.html";
-
-            }
-
-        });
-
-        loadChat("John Doe");
+        loadConversations(openWithId || null);
+        pollTimer = setInterval(() => {
+            if (currentFriendId) openChat(currentFriendId);
+            else loadConversations();
+        }, 15000);
     </script>
 
 </body>

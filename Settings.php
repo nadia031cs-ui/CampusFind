@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/notifications.php';
+requireLogin();
+$me = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -191,39 +196,40 @@ button:hover{
 </head>
 
 <body>
+
     <img src="cmpLOGO.jpeg" alt="" width="180">
     <aside>
         <nav>
-        <a href="Home_Feed.html">Home Feed</a>
+        <a href="Home_Feed.php">Home Feed</a>
         <br>
-        <a href="Create_Post.html">Post an Item</a>
+        <a href="Create_Post.php">Post an Item</a>
         <br>
         <a href="University_Map.html">University Map</a>
         <br>
-        <a href="Messages.html">Messages</a>
+        <a href="Messages.php">Messages</a>
         <br>
-        <a href="profiledashboard.html">Profile</a>
+        <a href="profiledashboard.php">Profile</a>
         <br>
-        <a href="Settings.html">Settings</a>
+        <a href="Settings.php">Settings</a>
         <br>
-        <a href="Notifications.html">Notifications <span class="nav-badge" id="navBadge">0</span></a>
+        <a href="Notifications.php">Notifications <span class="nav-badge" id="navBadge"><?php echo unreadNotificationCount($me['id']); ?></span></a>
 
         </nav>
     </aside>
     <main>
-         <form action="">
+         <form id="settingsForm">
         <input type="text" placeholder="Search anything...">
        <br>
        <h2>Settings</h2>
   <p> Manage your account preferences and application settings.</p>
-     <label for="Full Name">Full Name</label>
-     <input type="text" placeholder="Enter Your Name">
+     <label for="fullName">Full Name</label>
+     <input type="text" id="fullName" placeholder="Enter Your Name" value="<?php echo htmlspecialchars($me['full_name']); ?>">
      <br>
-     <label for="Campus ID">Campus ID</label>
-     <input type="text" placeholder="Campus ID">
+     <label for="campusId">Campus ID</label>
+     <input type="text" id="campusId" placeholder="Campus ID" value="<?php echo htmlspecialchars($me['student_id'] ?? ''); ?>">
      <br>
-     <label for="Email">Email Address</label>
-     <input type="email" placeholder="Enter Your Email">
+     <label for="email">Email Address</label>
+     <input type="email" id="email" placeholder="Enter Your Email" value="<?php echo htmlspecialchars($me['email']); ?>">
      <br>
      <label for="Department">Department</label>
      <select  id="Department">
@@ -235,15 +241,6 @@ button:hover{
             <option value="DS">DS</option>
      </select>
      <br>
-    <label for="Year">Year</label>
-    <select id="Year">
-        <option value="First Year"> First Year</option>
-        <option value="Second Year"> Second Year</option>
-        <option value="Third Year"> Third Year</option>
-        <option value="Fourth Year"> Fourth Year</option>
-        </select>
-        <br>
-
      <label for="Current Semester">Current Semester</label>
         <select id="Current Semester">
             <option value="Semester 1">Semester 1</option>
@@ -261,165 +258,85 @@ button:hover{
 
         </select>
         <br>
-        <button>Save Changes</button>
+
+        <label for="batch">Batch</label>
+        <input type="text" id="batch" placeholder="Batch" value="<?php echo htmlspecialchars($me['batch'] ?? ''); ?>">
+        <br>
+
+     <p style="margin-top:20px;"><a href="Forget_Password.php">Change Password</a></p>
+
+        <button type="submit">Save Changes</button>
 
     </form>
-  
+
     </main>
     <script>
 
-// ============================================================
-// NOTIFICATION HELPERS (same logic as Home Feed, so the badge
-// count stays consistent across every page).
-// Recipient must always match: localStorage.getItem("username")
-// ============================================================
+        document.addEventListener("DOMContentLoaded", function () {
 
-function getAllNotifications() {
-    return JSON.parse(localStorage.getItem("notifications")) || [];
-}
+            const form = document.getElementById("settingsForm");
+            const search = document.querySelector('main input[type="text"]:first-of-type');
 
-function saveAllNotifications(all) {
-    localStorage.setItem("notifications", JSON.stringify(all));
-}
+            const fullName = document.getElementById("fullName");
+            const campusId = document.getElementById("campusId");
+            const email = document.getElementById("email");
+            const department = document.getElementById("Department");
+            const semester = document.getElementById("Current Semester");
+            const batch = document.getElementById("batch");
 
-// Refresh the sidebar red-dot badge with this user's unread count.
-// Called on every page load so the badge is always accurate,
-// no matter which page created the notification.
-function updateNavBadge() {
+            department.value = <?php echo json_encode($me['department'] ?? 'CSE'); ?> || "CSE";
+            semester.value = <?php echo json_encode($me['semester'] ?? 'Semester 1'); ?> || "Semester 1";
 
-    const currentUser = localStorage.getItem("username") || "Anonymous User";
-    const all = getAllNotifications();
-    const unreadCount = all.filter(function (n) {
-        return n.recipient === currentUser && !n.read;
-    }).length;
+            const inputs = document.querySelectorAll("input, select");
 
-    const navBadge = document.getElementById("navBadge");
+            inputs.forEach(function (input) {
+                input.addEventListener("focus", function () {
+                    input.style.boxShadow = "0 0 8px var(--color-primary)";
+                });
+                input.addEventListener("blur", function () {
+                    input.style.boxShadow = "none";
+                });
+            });
 
-    if (navBadge) {
-        navBadge.textContent = unreadCount;
-        navBadge.style.display = unreadCount === 0 ? "none" : "inline-block";
-    }
-
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    updateNavBadge();
-
-    const form = document.querySelector("form");
-
-    const search = document.querySelector('main input[type="text"]');
-
-    const fullName = document.querySelector('input[placeholder="Enter Your Name"]');
-    const campusId = document.querySelector('input[placeholder="Campus ID"]');
-    const email = document.querySelector('input[type="email"]');
-
-    const department = document.getElementById("Department");
-    const year = document.getElementById("Year");
-    const semester = document.getElementById("Current Semester");
-
-    const inputs = document.querySelectorAll("input, select");
-
-    const savedProfile = JSON.parse(localStorage.getItem("profile"));
-
-    if (savedProfile) {
-
-        fullName.value = savedProfile.name || "";
-        campusId.value = savedProfile.id || "";
-        email.value = savedProfile.email || "";
-        department.value = savedProfile.department || "CSE";
-        semester.value = savedProfile.semester || "Semester 1";
-
-        if (savedProfile.batch) {
-
-            if (savedProfile.batch.includes("1")) year.value = "First Year";
-            else if (savedProfile.batch.includes("2")) year.value = "Second Year";
-            else if (savedProfile.batch.includes("3")) year.value = "Third Year";
-            else if (savedProfile.batch.includes("4")) year.value = "Fourth Year";
-
-        }
-
-    }
-
-    inputs.forEach(function (input) {
-
-        input.addEventListener("focus", function () {
-            input.style.boxShadow = "0 0 8px var(--color-primary)";
-        });
-
-        input.addEventListener("blur", function () {
-            input.style.boxShadow = "none";
-        });
-
-    });
-
-    search.addEventListener("keyup", function () {
-        console.log("Searching:", search.value);
-    });
-
-    form.addEventListener("submit", function (event) {
-
-        event.preventDefault();
-
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (fullName.value.trim() === "") {
-            alert("Please enter your full name.");
-            fullName.focus();
-            return;
-        }
-
-        if (campusId.value.trim() === "") {
-            alert("Please enter your Campus ID.");
-            campusId.focus();
-            return;
-        }
-
-        if (email.value.trim() === "") {
-            alert("Please enter your email address.");
-            email.focus();
-            return;
-        }
-
-        if (!emailPattern.test(email.value.trim())) {
-            alert("Please enter a valid email address.");
-            email.focus();
-            return;
-        }
-
-        const profile = JSON.parse(localStorage.getItem("profile")) || {};
-
-        profile.name = fullName.value.trim();
-        profile.id = campusId.value.trim();
-        profile.email = email.value.trim();
-        profile.department = department.value;
-        profile.semester = semester.value;
-        profile.year = year.value;
-
-        localStorage.setItem("profile", JSON.stringify(profile));
-
-        alert("Settings updated successfully!");
-
-        window.location.href = "profiledashboard.html";
-
-    });
-
-    inputs.forEach(function (input) {
-
-        input.addEventListener("keydown", function (event) {
-
-            if (event.key === "Enter") {
+            form.addEventListener("submit", async function (event) {
 
                 event.preventDefault();
-                form.requestSubmit();
 
-            }
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (fullName.value.trim() === "") {
+                    alert("Please enter your full name.");
+                    fullName.focus();
+                    return;
+                }
+                if (email.value.trim() !== "" && !emailPattern.test(email.value.trim())) {
+                    alert("Please enter a valid email address.");
+                    email.focus();
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("full_name", fullName.value.trim());
+                formData.append("student_id", campusId.value.trim());
+                formData.append("email", email.value.trim());
+                formData.append("department", department.value);
+                formData.append("semester", semester.value);
+                formData.append("batch", batch.value.trim());
+
+                const res = await fetch("api/profile_update.php", { method: "POST", body: formData });
+                const result = await res.json();
+
+                if (!result.success) {
+                    alert(result.message || "Couldn't save changes.");
+                    return;
+                }
+
+                alert("Settings updated successfully!");
+                window.location.href = "profiledashboard.php";
+
+            });
 
         });
-
-    });
-
-});
-</script>
+    </script>
 </body>
 </html>

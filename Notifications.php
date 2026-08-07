@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/notifications.php';
+requireLogin();
+$me = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -308,21 +313,22 @@
             </div>
 
             <nav>
-                <a href="Home_Feed.html">Home Feed</a>
-                <a href="Create_Post.html">Post an Item</a>
+                <a href="Home_Feed.php">Home Feed</a>
+                <a href="Create_Post.php">Post an Item</a>
                 <a href="University_Map.html">University Map</a>
-                <a href="Messages.html">Messages</a>
-                
-                <a href="profiledashboard.html">Profile</a>
-                <a href="Settings.html">Settings</a>
-                <a href="Notifications.html" class="active">Notifications <span class="nav-badge" id="navBadge">0</span>
+                <a href="Messages.php">Messages</a>
+                <a href="profiledashboard.php">Profile</a>
+                <a href="Settings.php">Settings</a>
+                <a href="Notifications.php" class="active">Notifications <span class="nav-badge" id="navBadge"><?php echo unreadNotificationCount($me['id']); ?></span>
                 </a>
             </nav>
 
         </div>
 
         <div class="logout">
-            <button>Logout</button>
+            <form action="api/logout.php" method="post" onsubmit="return confirm('Are you sure you want to logout?');">
+                <button type="submit">Logout</button>
+            </form>
         </div>
 
     </aside>
@@ -343,12 +349,9 @@
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="unread">Unread</button>
                     <button class="filter-btn" data-filter="message">Messages</button>
-                    <button class="filter-btn" data-filter="item">Item Matches</button>
                     <button class="filter-btn" data-filter="friend">Friend Requests</button>
-                    <button class="filter-btn" data-filter="admin">Admin</button>
                     <button class="filter-btn" data-filter="post">Feed Posts</button>
                     <button class="filter-btn" data-filter="like">Likes</button>
-                    <button class="filter-btn" data-filter="settings">Settings</button>
                 </div>
 
                 <div class="header-actions">
@@ -365,93 +368,8 @@
     </main>
 
     <script>
-        // ---- Auth guard: must run before anything else on the page ----
-        if (localStorage.getItem("loggedIn") !== "true") {
-            window.location.href = "intro.html";
-        }
-
-        const currentUser = localStorage.getItem("username") || "Anonymous User";
-
-        // ============================================================
-        // NOTIFICATION STORE
-        // All notifications for ALL users live in one localStorage key,
-        // each tagged with a "recipient". This page only ever reads
-        // and renders the ones addressed to the logged-in user.
-        //
-        // TIME HANDLING:
-        // Notifications created going forward store a real "createdAt"
-        // timestamp. Notifications created by OLDER copies of
-        // createNotification() (on other pages that haven't been
-        // updated yet) won't have createdAt — but their "id" field is
-        // Date.now() + Math.random(), so we fall back to Math.floor(id)
-        // as an accurate stand-in timestamp. This is why the label was
-        // stuck on "Just now" before: there was no timestamp at all to
-        // compute a live "time ago" value against.
-        // ============================================================
-
-        function getAllNotifications() {
-            return JSON.parse(localStorage.getItem("notifications")) || [];
-        }
-
-        function saveAllNotifications(all) {
-            localStorage.setItem("notifications", JSON.stringify(all));
-        }
-
-        // Call this from ANY page to notify a specific user.
-        // e.g. createNotification("sarah_ahmed", "like", "John Doe liked your post.", "Home_Feed.html");
-        function createNotification(recipient, type, text, link) {
-            const all = getAllNotifications();
-            all.unshift({
-                id: Date.now() + Math.random(),
-                recipient: recipient,
-                type: type,
-                text: text,
-                createdAt: Date.now(), // real timestamp, used to compute live "time ago"
-                read: false,
-                link: link
-            });
-            saveAllNotifications(all);
-        }
-
-        // Returns the best available timestamp for a notification:
-        // createdAt if present, otherwise falls back to the id
-        // (id = Date.now() + Math.random(), so it's a valid stand-in).
-        function getNotifTimestamp(n) {
-            return n.createdAt || Math.floor(n.id) || null;
-        }
-
-        // Turns a timestamp into a human "time ago" label.
-        function formatTimeAgo(timestamp) {
-
-            if (!timestamp) return "Just now";
-
-            const seconds = Math.floor((Date.now() - timestamp) / 1000);
-
-            if (seconds < 60) return "Just now";
-
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
-
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return hours + (hours === 1 ? " hour ago" : " hours ago");
-
-            const days = Math.floor(hours / 24);
-            if (days < 7) return days + (days === 1 ? " day ago" : " days ago");
-
-            const weeks = Math.floor(days / 7);
-            if (weeks < 4) return weeks + (weeks === 1 ? " week ago" : " weeks ago");
-
-            const months = Math.floor(days / 30);
-            if (months < 12) return months + (months === 1 ? " month ago" : " months ago");
-
-            const years = Math.floor(days / 365);
-            return years + (years === 1 ? " year ago" : " years ago");
-
-        }
-
-        // Only this user's notifications, newest first
-        let notifications = getAllNotifications()
-            .filter(n => n.recipient === currentUser);
+        // Notifications are now real, DB-backed (api/notifications_list.php / notifications_read.php / notifications_delete.php)
+        // instead of the old shared-localStorage simulation.
 
         const notifList = document.getElementById("notifList");
         const navBadge = document.getElementById("navBadge");
@@ -459,6 +377,7 @@
         const markAllBtn = document.getElementById("markAllBtn");
         const clearAllBtn = document.getElementById("clearAllBtn");
 
+        let notifications = [];
         let currentFilter = "all";
 
         const icons = {
@@ -471,18 +390,36 @@
             settings: "⚙️"
         };
 
-        // Persist this user's notifications back into the shared store,
-        // leaving every other user's notifications untouched.
-        function persistCurrentUserNotifications() {
-            const all = getAllNotifications();
-            const others = all.filter(n => n.recipient !== currentUser);
-            saveAllNotifications([...others, ...notifications]);
+        function formatTimeAgo(isoTime) {
+            const timestamp = new Date(isoTime.replace(" ", "T")).getTime();
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            if (seconds < 60) return "Just now";
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return minutes + (minutes === 1 ? " minute ago" : " minutes ago");
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return hours + (hours === 1 ? " hour ago" : " hours ago");
+            const days = Math.floor(hours / 24);
+            if (days < 7) return days + (days === 1 ? " day ago" : " days ago");
+            const weeks = Math.floor(days / 7);
+            if (weeks < 4) return weeks + (weeks === 1 ? " week ago" : " weeks ago");
+            const months = Math.floor(days / 30);
+            if (months < 12) return months + (months === 1 ? " month ago" : " months ago");
+            const years = Math.floor(days / 365);
+            return years + (years === 1 ? " year ago" : " years ago");
         }
 
-        function updateBadge() {
-            const unreadCount = notifications.filter(n => !n.read).length;
+        function updateBadge(unreadCount) {
             navBadge.textContent = unreadCount;
             navBadge.style.display = unreadCount === 0 ? "none" : "inline-block";
+        }
+
+        async function loadNotifications() {
+            const res = await fetch("api/notifications_list.php");
+            const data = await res.json();
+            if (!data.success) return;
+            notifications = data.notifications;
+            updateBadge(data.unreadCount);
+            renderNotifications();
         }
 
         function renderNotifications() {
@@ -490,7 +427,6 @@
             notifList.innerHTML = "";
 
             let filtered = notifications;
-
             if (currentFilter === "unread") {
                 filtered = notifications.filter(n => !n.read);
             } else if (currentFilter !== "all") {
@@ -499,13 +435,10 @@
 
             if (filtered.length === 0) {
                 notifList.innerHTML = `<div class="empty-state">No notifications here.</div>`;
-                updateBadge();
                 return;
             }
 
             filtered.forEach(n => {
-
-                const ts = getNotifTimestamp(n);
 
                 const item = document.createElement("div");
                 item.className = "notif-item" + (n.read ? "" : " unread");
@@ -514,50 +447,40 @@
                     <div class="notif-icon icon-${n.type}">${icons[n.type] || "🔔"}</div>
                     <div class="notif-body">
                         <div class="notif-text">${n.text}</div>
-                        <div class="notif-time" data-timestamp="${ts || ""}">${formatTimeAgo(ts)}</div>
+                        <div class="notif-time">${formatTimeAgo(n.time)}</div>
                     </div>
                     ${!n.read ? '<div class="unread-dot"></div>' : ""}
                     <button class="delete-btn" title="Delete">&times;</button>
                 `;
 
-                // Clicking the notification marks it read and goes to its link
-                item.addEventListener("click", (e) => {
+                item.addEventListener("click", async (e) => {
                     if (e.target.classList.contains("delete-btn")) return;
-                    n.read = true;
-                    persistCurrentUserNotifications();
+                    if (!n.read) {
+                        await fetch("api/notifications_read.php", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            body: "id=" + n.id
+                        });
+                    }
                     if (n.link) window.location.href = n.link;
-                    renderNotifications();
+                    else loadNotifications();
                 });
 
-                // Delete button removes just that notification
-                item.querySelector(".delete-btn").addEventListener("click", (e) => {
+                item.querySelector(".delete-btn").addEventListener("click", async (e) => {
                     e.stopPropagation();
-                    notifications = notifications.filter(x => x.id !== n.id);
-                    persistCurrentUserNotifications();
-                    renderNotifications();
+                    await fetch("api/notifications_delete.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "id=" + n.id
+                    });
+                    loadNotifications();
                 });
 
                 notifList.appendChild(item);
 
             });
 
-            updateBadge();
         }
-
-        // Re-calculates just the visible "X ago" labels, without
-        // rebuilding the whole list (so open list / scroll position
-        // isn't disturbed). This is what makes "Just now" keep
-        // increasing live while the page stays open.
-        function refreshTimeLabels() {
-            document.querySelectorAll(".notif-time").forEach(el => {
-                const ts = parseInt(el.dataset.timestamp, 10);
-                if (!isNaN(ts)) {
-                    el.textContent = formatTimeAgo(ts);
-                }
-            });
-        }
-
-        setInterval(refreshTimeLabels, 30000); // refresh every 30s
 
         filterBtns.forEach(btn => {
             btn.addEventListener("click", () => {
@@ -568,32 +491,20 @@
             });
         });
 
-        markAllBtn.addEventListener("click", () => {
-            notifications.forEach(n => n.read = true);
-            persistCurrentUserNotifications();
-            renderNotifications();
+        markAllBtn.addEventListener("click", async () => {
+            await fetch("api/notifications_read.php", { method: "POST" });
+            loadNotifications();
         });
 
-        clearAllBtn.addEventListener("click", () => {
+        clearAllBtn.addEventListener("click", async () => {
             if (confirm("Clear all notifications?")) {
-                notifications = [];
-                persistCurrentUserNotifications();
-                renderNotifications();
+                await fetch("api/notifications_delete.php", { method: "POST" });
+                loadNotifications();
             }
         });
 
-        // Logout Button
-        document.querySelector(".logout button").addEventListener("click", function () {
-            const confirmLogout = confirm("Are you sure you want to logout?");
-            if (confirmLogout) {
-                localStorage.removeItem("loggedIn");
-                localStorage.removeItem("username");
-                alert("You have been logged out.");
-                window.location.href = "intro.html";
-            }
-        });
-
-        renderNotifications();
+        loadNotifications();
+        setInterval(loadNotifications, 30000);
     </script>
 
 </body>

@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/includes/auth.php';
+requireLogin();
+$me = currentUser();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -180,9 +185,9 @@
         </div>
 
         <nav>
-            <a href="Home_Feed.html">Home Feed</a>
-            <a href="profiledashboard.html">Profile</a>
-            <a href="Settings.html">Settings</a>
+            <a href="Home_Feed.php">Home Feed</a>
+            <a href="profiledashboard.php">Profile</a>
+            <a href="Settings.php">Settings</a>
         </nav>
 
     </aside>
@@ -197,7 +202,7 @@
                 Update your password to keep your CampusFind account secure.
             </p>
 
-            <form action="ChangePassword">
+            <form id="changePasswordForm">
 
                 <label for="currentPassword">Current Password</label>
                 <input type="password" id="currentPassword" placeholder="Enter Current Password" required>
@@ -213,7 +218,7 @@
             </form>
 
             <div class="back">
-                <p>Back to <a href="Settings.html">Settings</a></p>
+                <p>Back to <a href="Settings.php">Settings</a></p>
             </div>
 
         </div>
@@ -223,31 +228,19 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.querySelector("form");
+    const form = document.getElementById("changePasswordForm");
     const currentPassword = document.getElementById("currentPassword");
     const newPassword = document.getElementById("newPassword");
     const confirmPassword = document.getElementById("confirmPassword");
-    const settingsLink = document.querySelector(".back a");
 
     const fields = [currentPassword, newPassword, confirmPassword];
 
     fields.forEach(function (field) {
-
-        field.addEventListener("focus", function () {
-            field.style.boxShadow = "0 0 8px rgba(60,45,131,.5)";
-        });
-
-        field.addEventListener("blur", function () {
-            field.style.boxShadow = "none";
-        });
-
+        field.addEventListener("focus", function () { field.style.boxShadow = "0 0 8px rgba(60,45,131,.5)"; });
+        field.addEventListener("blur", function () { field.style.boxShadow = "none"; });
     });
 
-    settingsLink.addEventListener("click", function () {
-        console.log("Returning to Settings...");
-    });
-
-    form.addEventListener("submit", function (event) {
+    form.addEventListener("submit", async function (event) {
 
         event.preventDefault();
 
@@ -255,69 +248,35 @@ document.addEventListener("DOMContentLoaded", function () {
         const newValue = newPassword.value.trim();
         const confirmValue = confirmPassword.value.trim();
 
-        if (currentValue === "") {
-            alert("Please enter your current password.");
-            currentPassword.focus();
-            return;
-        }
+        if (currentValue === "") { alert("Please enter your current password."); currentPassword.focus(); return; }
+        if (newValue === "") { alert("Please enter a new password."); newPassword.focus(); return; }
+        if (newValue.length < 6) { alert("New password must contain at least 6 characters."); newPassword.focus(); return; }
+        if (confirmValue !== newValue) { alert("New passwords do not match."); confirmPassword.focus(); return; }
 
-        if (newValue === "") {
-            alert("Please enter a new password.");
-            newPassword.focus();
-            return;
-        }
+        const params = new URLSearchParams({
+            currentPassword: currentValue,
+            newPassword: newValue,
+            confirmPassword: confirmValue
+        });
 
-        if (newValue.length < 6) {
-            alert("New password must contain at least 6 characters.");
-            newPassword.focus();
-            return;
-        }
+        const res = await fetch("api/profile_password.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: params.toString()
+        });
+        const result = await res.json();
 
-        if (confirmValue === "") {
-            alert("Please confirm your new password.");
-            confirmPassword.focus();
-            return;
-        }
-
-        if (newValue !== confirmValue) {
-            alert("New password and confirm password do not match.");
-            confirmPassword.focus();
-            return;
-        }
-
-        if (currentValue === newValue) {
-            alert("Your new password must be different from the current password.");
-            newPassword.focus();
+        if (!result.success) {
+            alert(result.message || "Couldn't change your password.");
             return;
         }
 
         alert("Password changed successfully!");
-
-        console.log({
-            CurrentPassword: currentValue,
-            NewPassword: newValue
-        });
-
-        window.location.href = "Login.html";
-
-    });
-
-    fields.forEach(function (field) {
-
-        field.addEventListener("keydown", function (event) {
-
-            if (event.key === "Enter") {
-                event.preventDefault();
-                form.requestSubmit();
-            }
-
-        });
+        window.location.href = "Settings.php";
 
     });
 
 });
 </script>
-
 </body>
-
 </html>

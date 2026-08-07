@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Second Floor</title>
+    <title>First Floor</title>
 
     <!-- Apply saved/preferred theme BEFORE first paint, to avoid a flash of the wrong theme -->
     <script>
@@ -59,6 +59,13 @@
 
         .menu-btn:hover {
             transform: scale(1.08);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 1001;
         }
 
         .navbar {
@@ -156,7 +163,7 @@
         aside h4 {
             margin-top: 20px;
             margin-bottom: 10px;
-            color: var(--color-accent-text);
+            color:var(--color-accent-text) ;
         }
 
         aside p {
@@ -221,6 +228,7 @@
             }
         }
     </style>
+
 </head>
 
 <body>
@@ -229,14 +237,16 @@
         ☰
     </div>
 
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+
     <div class="navbar" id="navbar">
 
         <span class="close-btn" onclick="toggleMenu()">×</span>
 
-        <a href="Home_Feed.html">Home</a>
-        <a href="Create_Post.html">Create Post</a>
+        <a href="Home_Feed.php">Home</a>
+        <a href="Create_Post.php">Create Post</a>
         <a href="University_Map.html">Map</a>
-        <a href="profiledashboard.html">Profile</a>
+        <a href="profiledashboard.php">Profile</a>
 
     </div>
 
@@ -269,16 +279,18 @@
 
                 <div>
                     <h4>How it works?</h4>
-                    <p>Select a floor and click on any room to view or report lost items in that location.</p>
+                    <p>
+                        Select a floor and click on any room to view or report lost items in that location.
+                    </p>
                 </div>
 
             </aside>
 
             <main>
 
-                <h3>Fourth Floor</h3>
+                <h3>First Floor</h3>
 
-                <img src="/Floors/F4.jpeg" alt="Fourth Floor Map">
+                <img src="/Floors/F1.jpeg" alt="First Floor Map">
 
             </main>
 
@@ -289,22 +301,22 @@
                 <h4>About this location</h4>
 
                 <p>
-                   <ul>
-                    <li>Stairs (Front)</li>
-                    <li>Room 401</li>
-                    <li>Room 402</li>
-                    <li>WASHROOM</li>
-                    <li>Room 403</li>
-                    <li>Room 404</li>
-                    <li>Room 405</li>
-                    <li>Room 406</li>
-                    <li>Room 407</li>
-                    <li>Room 408</li>
-                    <li>Room 409</li>
-                    <li>Stairs (Back)</li>
-                    <li>Balcony</li>
+                    <ul>
+                        <li>Stairs (Front)</li>
+                        <li>Stairs(Back)</li>
+                        <li>Prayers Room (Male)</li>
+                        <li>Library</li>
+                        <li>VC Room</li>
+                        <li>WASHROOM</li>
+                        <li>Prayers Room -202 (Female)</li>
+                        <li>Room-203</li>
+                        <li>Room-204</li>
+                        <li>Room-205</li>
+                        <li>Room-206 (Conference Room)</li>
 
-                   </ul>
+                    
+
+                    </ul>
                 </p>
 
             </aside>
@@ -312,6 +324,8 @@
         </div>
 
     </div>
+
+    <script src="theme.js"></script>
 
     <script>
         function toggleMenu() {

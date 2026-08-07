@@ -1,3 +1,12 @@
+<?php
+require_once __DIR__ . '/includes/auth.php';
+requireLogin();
+$me = currentUser();
+
+$postsStmt = $pdo->prepare('SELECT id, description, location, item_date, item_type, image_path FROM items WHERE user_id = ? ORDER BY created_at DESC');
+$postsStmt->execute([$me['id']]);
+$myPosts = $postsStmt->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -308,24 +317,26 @@
                 <img src="cmpLOGO.jpeg" alt="CampusFind Logo" width="180">
             </div>
 
-            <a href="profiledashboard.html" class="profile-link">
+            <a href="profiledashboard.php" class="profile-link">
                 Your Profile
             </a>
 
             <nav>
-                <a href="Home_Feed.html">Home Feed</a>
-                <a href="Create_Post.html">Post an Item</a>
+                <a href="Home_Feed.php">Home Feed</a>
+                <a href="Create_Post.php">Post an Item</a>
                 <a href="University_Map.html">University Map</a>
-                <a href="Messages.html">Messages</a>
-                <a href="profiledashboard.html">Profile</a>
-                <a href="Settings.html">Settings</a>
-                <a href="Notifications.html">Notifications</a>
+                <a href="Messages.php">Messages</a>
+                <a href="profiledashboard.php">Profile</a>
+                <a href="Settings.php">Settings</a>
+                <a href="Notifications.php">Notifications</a>
             </nav>
 
         </div>
 
-        <div class="logout">     
-            <button>Logout</button>
+        <div class="logout">
+            <form action="api/logout.php" method="post" onsubmit="return confirm('Are you sure you want to logout?');">
+                <button type="submit">Logout</button>
+            </form>
         </div>
 
     </aside>
@@ -347,275 +358,145 @@
             <div class="profile-section">
 
                 <div class="profile-image">
-                    <img id="profilePic" src="default-profile.png" alt="Profile Picture">
+                    <img id="profilePic" src="<?php echo htmlspecialchars($me['photo'] ?: 'default-profile.png'); ?>" alt="Profile Picture">
                 </div>
 
                 <div class="profile-info">
 
                     <div class="info-row">
                         <div class="info-title">Name</div>
-                        <div class="info-value" id="userName">Your Name</div>
+                        <div class="info-value"><?php echo htmlspecialchars($me['full_name']); ?></div>
                     </div>
 
                     <div class="info-row">
                         <div class="info-title">Campus ID</div>
-                        <div class="info-value" id="campusId">221-15-XXXX</div>
+                        <div class="info-value"><?php echo htmlspecialchars($me['student_id'] ?: 'N/A'); ?></div>
                     </div>
 
                     <div class="info-row">
                         <div class="info-title">Department</div>
-                        <div class="info-value" id="department">CSE</div>
+                        <div class="info-value"><?php echo htmlspecialchars($me['department'] ?: 'N/A'); ?></div>
                     </div>
 
                     <div class="info-row">
                         <div class="info-title">Semester</div>
-                        <div class="info-value" id="semester">Semester 7</div>
+                        <div class="info-value"><?php echo htmlspecialchars($me['semester'] ?: 'N/A'); ?></div>
                     </div>
 
                     <div class="info-row">
                         <div class="info-title">Batch</div>
-                        <div class="info-value" id="batch">61</div>
+                        <div class="info-value"><?php echo htmlspecialchars($me['batch'] ?: 'N/A'); ?></div>
                     </div>
 
                     <div class="info-row">
                         <div class="info-title">University Email</div>
-                        <div class="info-value" id="email">
-                            example@university.edu
+                        <div class="info-value">
+                            <?php echo htmlspecialchars($me['email']); ?>
                         </div>
                     </div>
 
                     <div class="info-row">
                         <div class="info-title">Phone Number</div>
-                        <div class="info-value" id="phone">
-                            01XXXXXXXXX
+                        <div class="info-value">
+                            <?php echo htmlspecialchars($me['phone'] ?: 'N/A'); ?>
                         </div>
                     </div>
 
-                    <a href="Edit Profile.html" class="edit-btn">
+                    <a href="Edit Profile.php" class="edit-btn">
                         Edit Profile
                     </a>
 
                 </div>
 
             </div>
-            <div id="myPostsContainer"></div>
+
             <div class="posts">
 
                 <h3>My Posts</h3>
 
-                <form id="postForm">
-
-                    <select id="AllPosts">
-
-                        <option>All Posts</option>
-                        <option>Lost Items</option>
-                        <option>Found Items</option>
-
-                    </select>
-
-                </form>
+                <select id="AllPosts">
+                    <option>All Posts</option>
+                    <option>Lost Items</option>
+                    <option>Found Items</option>
+                </select>
 
             </div>
+
+            <div id="myPostsContainer">
+                <?php if (empty($myPosts)): ?>
+                    <h3>No Posts Yet</h3>
+                <?php else: foreach ($myPosts as $post): ?>
+                    <div class="postCard" data-type="<?php echo htmlspecialchars($post['item_type']); ?>">
+                        <h3><?php echo htmlspecialchars($post['item_type']); ?></h3>
+                        <p><?php echo htmlspecialchars($post['description']); ?></p>
+                        <p><b>Location:</b> <?php echo htmlspecialchars($post['location']); ?></p>
+                        <p><b>Date:</b> <?php echo htmlspecialchars($post['item_date']); ?></p>
+                        <?php if ($post['image_path']): ?>
+                            <img src="<?php echo htmlspecialchars($post['image_path']); ?>">
+                        <?php endif; ?>
+                        <button class="deleteBtn" data-id="<?php echo (int) $post['id']; ?>">Delete Post</button>
+                    </div>
+                <?php endforeach; endif; ?>
+            </div>
+
         </div>
 
     </main>
 
     <script>
-        // ---- Auth guard: must run before anything else on the page ----
-        if (localStorage.getItem("loggedIn") !== "true") {
-            window.location.href = "intro.html";
-        }
 
         document.addEventListener("DOMContentLoaded", function () {
 
-            console.log("Profile Dashboard Loaded");
-
-            // Logout Button
             const logoutBtn = document.querySelector(".logout button");
-
-            logoutBtn.addEventListener("click", function () {
-
-                const confirmLogout = confirm("Are you sure you want to logout?");
-
-                if (confirmLogout) {
-
-                    // Clear session/auth data
-                    localStorage.removeItem("loggedIn");
-                    localStorage.removeItem("username");
-
-                    alert("You have been logged out.");
-                    window.location.href = "intro.html";
-
-                }
-
-            });
-
-            // Navigation Links
             const navLinks = document.querySelectorAll("nav a");
 
             navLinks.forEach(function (link) {
-
-                link.addEventListener("mouseenter", function () {
-                    link.style.transform = "translateX(5px)";
-                });
-
-                link.addEventListener("mouseleave", function () {
-                    link.style.transform = "translateX(0)";
-                });
-
-                link.addEventListener("click", function () {
-                    console.log("Opening: " + link.textContent);
-                });
-
+                link.addEventListener("mouseenter", function () { link.style.transform = "translateX(5px)"; });
+                link.addEventListener("mouseleave", function () { link.style.transform = "translateX(0)"; });
             });
 
-            // Search Box
             const searchBox = document.querySelector(".search input");
+            searchBox.addEventListener("focus", function () { searchBox.style.boxShadow = "0 0 8px var(--color-primary)"; });
+            searchBox.addEventListener("blur", function () { searchBox.style.boxShadow = "none"; });
 
-            searchBox.addEventListener("keydown", function (event) {
+            // My Posts Filter (client-side, over the server-rendered posts)
+            const postsSelect = document.getElementById("AllPosts");
+            const postCards = document.querySelectorAll(".postCard");
 
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    const keyword = searchBox.value.trim();
-
-                    if (keyword === "") {
-                        alert("Please enter something to search.");
-                        return;
+            postsSelect.addEventListener("change", function () {
+                const filter = postsSelect.value;
+                postCards.forEach(card => {
+                    const type = card.dataset.type;
+                    if (filter === "All Posts") {
+                        card.style.display = "";
+                    } else if (filter === "Lost Items") {
+                        card.style.display = "";
+                    } else if (filter === "Found Items") {
+                        card.style.display = "";
                     }
-
-                    alert("Searching for: " + keyword);
-
-                    console.log("Searching:", keyword);
-
-                }
-
-            });
-
-            searchBox.addEventListener("focus", function () {
-                searchBox.style.boxShadow = "0 0 8px var(--color-primary)";
-            });
-
-            searchBox.addEventListener("blur", function () {
-                searchBox.style.boxShadow = "none";
-            });
-
-            // Load Profile Data
-            const profile = JSON.parse(localStorage.getItem("profile"));
-
-            if (profile) {
-
-                document.getElementById("userName").textContent = profile.name || "Your Name";
-
-                document.getElementById("campusId").textContent = profile.id || "N/A";
-
-                document.getElementById("department").textContent = profile.department || "N/A";
-
-                document.getElementById("semester").textContent = profile.semester || "N/A";
-
-                document.getElementById("batch").textContent = profile.batch || "N/A";
-
-                document.getElementById("email").textContent = profile.email || "N/A";
-
-                document.getElementById("phone").textContent = profile.phone || "N/A";
-
-                if (profile.photo) {
-                    document.getElementById("profilePic").src = profile.photo;
-                }
-
-            }
-
-            // My Posts Filter
-            const posts = document.getElementById("AllPosts");
-
-            posts.addEventListener("change", function () {
-
-                alert("Showing: " + posts.value);
-
-                console.log("Filter:", posts.value);
-
-            });
-
-            // Edit Profile Button
-            const editBtn = document.querySelector(".edit-btn");
-
-            editBtn.addEventListener("click", function () {
-
-                console.log("Opening Edit Profile");
-
-            });
-
-            const myPostsContainer = document.getElementById("myPostsContainer");
-
-            const username = localStorage.getItem("username") || "Anonymous User";
-
-            let allPosts = JSON.parse(localStorage.getItem("posts")) || [];
-
-            const myPosts = allPosts.filter(post => post.username === username);
-
-            if (myPosts.length === 0) {
-
-                myPostsContainer.innerHTML = "<h3>No Posts Yet</h3>";
-
-            } else {
-
-                myPosts.forEach(function (post) {
-
-                    myPostsContainer.innerHTML += `
-
-        <div class="postCard">
-
-            <h3>${post.itemType}</h3>
-
-            <p>${post.description}</p>
-
-            <p><b>Location:</b> ${post.location}</p>
-
-            <p><b>Date:</b> ${post.date}</p>
-
-            ${post.image
-                            ?
-                            `<img src="${post.image}">`
-                            :
-                            ""
-                        }
-
-            <button class="deleteBtn" onclick="deletePost(${post.id})">
-                Delete Post
-            </button>
-
-        </div>
-
-        `;
-
                 });
+            });
 
-            }
+            // Delete post buttons
+            document.querySelectorAll(".deleteBtn").forEach(btn => {
+                btn.addEventListener("click", async function () {
+                    if (!confirm("Delete this post?")) return;
+                    const res = await fetch("api/items_delete.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "id=" + btn.dataset.id
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message || "Couldn't delete this post.");
+                    }
+                });
+            });
 
         });
-        function deletePost(id) {
-
-            if (!confirm("Delete this post?")) {
-                return;
-            }
-
-            let posts = JSON.parse(localStorage.getItem("posts")) || [];
-
-            posts = posts.filter(function (post) {
-
-                return post.id !== id;
-
-            });
-
-            localStorage.setItem("posts", JSON.stringify(posts));
-
-            location.reload();
-
-        }
     </script>
-
-
 
 </body>
 
